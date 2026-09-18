@@ -8,40 +8,51 @@ Responsibilities
 - Initialise all components (environment, navigation graph, agents,
   metrics collector) from a ``SimulationConfig``.
 - Advance the simulation by one timestep at a time.
-- Detect termination conditions (all evacuated or max_timesteps reached).
-- Delegate movement decisions to a pluggable ``MovementStrategy``.
+- Coordinate the full movement pipeline each step:
+    1. Collect movement requests from the strategy.
+    2. Validate requests against the environment.
+    3. Resolve conflicts deterministically.
+    4. Apply approved movements.
+    5. Detect and record evacuations.
+    6. Check termination conditions.
 - Report events to the ``MetricsCollector``.
 
 Non-responsibilities (intentionally excluded)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Pathfinding algorithms           → pathfinding.py (later stage)
-- Agent decision-making            → movement strategy (later stage)
-- Visualization / rendering        → outside the core package
+- Pathfinding algorithms       → pathfinding.py
+- Movement decision-making     → strategy.py
+- Request validation/conflicts → movement.py
+- Visualization / rendering    → outside the core package
 
 Design notes
 ~~~~~~~~~~~~
-- The ``MovementStrategy`` protocol defines a single method that the
-  simulation calls each timestep.  The foundation ships with a
-  ``NullMovementStrategy`` (agents do not move) so that the simulation
-  loop can be exercised without any movement logic.
-- The simulation exposes a ``run()`` convenience method *and* a
-  ``step()`` method so that external drivers (dashboards, debuggers,
-  tests) can control the loop granularity.
-- Random state is isolated in ``numpy.random.Generator`` (seeded from
-  the scenario config) and passed to the strategy; it is never global.
+- The ``MovementStrategy`` protocol defines a ``move_agents`` method that
+  returns a ``dict[str, GridCell]`` (agent_id → requested next cell).
+  Strategies must NOT mutate agents directly — the simulation owns all
+  state changes.  This makes strategies independently testable.
+- ``NullMovementStrategy`` returns an empty dict (agents stay put).
+- Random state is isolated in a seeded ``numpy.random.Generator`` and
+  passed to the strategy; it is never global.
+- The simulation exposes both ``step()`` (single timestep) and ``run()``
+  (run to completion) so external drivers can control granularity.
 """
 
 from __future__ import annotations
 
-import random
 from typing import Protocol, runtime_checkable
 
 import numpy as np
 
 from evacuation_simulation.simulation.agent import Agent, AgentState
-from evacuation_simulation.simulation.config import SimulationConfig
+from evacuation_simulation.simulation.config import GridCell, SimulationConfig
 from evacuation_simulation.simulation.environment import Environment
 from evacuation_simulation.simulation.metrics import MetricsCollector, SimulationResult
+from evacuation_simulation.simulation.movement import (
+    MovementRequest,
+    apply_movements,
+    resolve_conflicts,
+    validate_request,
+)
 from evacuation_simulation.simulation.pathfinding import NavigationGraph
 
 
@@ -53,16 +64,21 @@ from evacuation_simulation.simulation.pathfinding import NavigationGraph
 @runtime_checkable
 class MovementStrategy(Protocol):
     """
-    Protocol defining the interface for agent movement logic.
+    Protocol defining the interface for agent movement strategies.
 
-    Implementors decide how each active agent moves on a given timestep.
-    The strategy receives the full environment, navigation graph, and
-    agent list so it can implement any algorithm without coupling to the
-    simulation internals.
+    A strategy receives the full environment, navigation graph, and active
+    agent list for the current timestep, and returns a mapping of
+    ``agent_id → requested_next_cell``.
+
+    **Strategies must not mutate agents, the environment, or the graph.**
+    All state changes are applied by the simulation layer after conflict
+    resolution.
+
+    Returning an empty dict is valid (e.g. ``NullMovementStrategy``).
 
     Future concrete implementations might include:
-    - ``ShortestPathStrategy``   (greedy BFS / A*)
-    - ``PotentialFieldStrategy`` (vector-field following)
+    - ``ShortestPathStrategy``        (greedy BFS — Stage 2)
+    - ``PotentialFieldStrategy``      (vector-field following)
     - ``ReinforcementLearningStrategy`` (policy network, far future)
     """
 
@@ -73,27 +89,44 @@ class MovementStrategy(Protocol):
         nav_graph: NavigationGraph,
         rng: np.random.Generator,
         timestep: int,
-    ) -> None:
+    ) -> dict[str, GridCell]:
         """
-        Update agent positions in-place for a single timestep.
+        Compute movement requests for active agents.
 
-        Implementations must not modify *environment* or *nav_graph*.
-        Only active (non-evacuated) agents should be considered.
+        Parameters
+        ----------
+        agents : list[Agent]
+            Active (non-evacuated) agents for this timestep.
+        environment : Environment
+            The grid environment (read-only).
+        nav_graph : NavigationGraph
+            Navigation graph (read-only).
+        rng : np.random.Generator
+            Seeded random generator for stochastic strategies.
+        timestep : int
+            Current simulation timestep.
+
+        Returns
+        -------
+        dict[str, GridCell]
+            Mapping from agent_id to the requested next cell.
+            Absent agents are not requesting a move.
         """
         ...
 
 
 # ---------------------------------------------------------------------------
-# Null movement strategy (foundation stub)
+# Null movement strategy
 # ---------------------------------------------------------------------------
 
 
 class NullMovementStrategy:
     """
-    A no-op movement strategy used during the foundation stage.
+    A no-op movement strategy.
 
-    Agents remain stationary.  This allows the simulation loop to be
-    fully exercised without requiring pathfinding or movement logic.
+    Agents produce no movement requests and remain stationary.  Useful
+    for testing the simulation loop independently of movement logic, and
+    as the default strategy in the foundation stage.
     """
 
     def move_agents(
@@ -103,9 +136,9 @@ class NullMovementStrategy:
         nav_graph: NavigationGraph,
         rng: np.random.Generator,
         timestep: int,
-    ) -> None:
-        """Do nothing — agents do not move."""
-        pass
+    ) -> dict[str, GridCell]:
+        """Return an empty dict — no movement requests."""
+        return {}
 
 
 # ---------------------------------------------------------------------------
@@ -115,16 +148,17 @@ class NullMovementStrategy:
 
 class SimulationState:
     """
-    Snapshot of a simulation at the current timestep.
+    Mutable snapshot of a simulation's current progress.
 
     Attributes
     ----------
-    timestep:
-        The current (just-completed) timestep index.
-    is_terminated:
-        True if the simulation has reached a termination condition.
-    termination_reason:
-        Human-readable reason for termination, or empty string.
+    timestep : int
+        The index of the most recently completed timestep (0 = not started).
+    is_terminated : bool
+        True once a termination condition has been reached.
+    termination_reason : str
+        Human-readable reason for termination, or empty string if still
+        running.
     """
 
     def __init__(self) -> None:
@@ -142,30 +176,33 @@ class Simulation:
     """
     Discrete-timestep evacuation simulation.
 
+    Coordinates the full movement pipeline each timestep:
+    collect → validate → resolve → apply → evacuate → check termination.
+
     Parameters
     ----------
-    config:
+    config : SimulationConfig
         Fully-validated scenario configuration.
-    movement_strategy:
-        Strategy object responsible for moving agents each timestep.
-        Defaults to ``NullMovementStrategy``.
+    movement_strategy : MovementStrategy, optional
+        Strategy responsible for generating movement requests each
+        timestep.  Defaults to ``NullMovementStrategy``.
 
     Attributes
     ----------
-    config:
-        The scenario configuration (read-only after init).
-    environment:
+    config : SimulationConfig
+        Scenario configuration (read-only after construction).
+    environment : Environment
         The grid environment.
-    nav_graph:
+    nav_graph : NavigationGraph
         Navigation graph over traversable cells.
-    agents:
-        List of all agents (active and evacuated).
-    metrics:
-        The metrics collector accumulating events during the run.
-    state:
-        Mutable simulation state (current timestep, termination info).
-    _rng:
-        NumPy random generator seeded from the scenario config.
+    agents : list[Agent]
+        All agents (active and evacuated).
+    metrics : MetricsCollector
+        Accumulates evacuation events during the run.
+    state : SimulationState
+        Mutable simulation state (timestep, termination info).
+    _rng : np.random.Generator
+        Seeded random generator, passed to the strategy each step.
     """
 
     def __init__(
@@ -188,7 +225,7 @@ class Simulation:
         self.state: SimulationState = SimulationState()
         self._strategy: MovementStrategy = movement_strategy or NullMovementStrategy()
 
-        # Seeded random generator — isolated, not global
+        # Seeded random generator — isolated, never global
         seed = config.parameters.random_seed
         self._rng: np.random.Generator = np.random.default_rng(seed)
 
@@ -200,19 +237,22 @@ class Simulation:
         """
         Advance the simulation by one discrete timestep.
 
+        Each call executes the full coordinated movement pipeline:
+
+        1. Collect movement requests from the strategy (dict).
+        2. Build ``MovementRequest`` objects from the dict.
+        3. Validate each request against the environment.
+        4. Resolve conflicts deterministically (lex-first agent_id wins).
+        5. Apply approved movements (update agent positions).
+        6. Detect agents now on exit cells and mark them evacuated.
+        7. Record evacuations in the metrics collector.
+        8. Check termination conditions.
+
         Returns
         -------
         bool
-            True if the simulation should continue, False if it has
-            reached a termination condition.
-
-        Side effects
-        ------------
-        - Delegates agent movement to the strategy.
-        - Checks if any agent is now on an exit cell and marks them
-          evacuated.
-        - Checks termination conditions.
-        - Increments ``state.timestep``.
+            ``True`` if the simulation should continue running.
+            ``False`` if a termination condition has been reached.
         """
         if self.state.is_terminated:
             return False
@@ -220,17 +260,45 @@ class Simulation:
         self.state.timestep += 1
         current_step = self.state.timestep
 
-        # Let the strategy move active agents
+        # --- 1. Identify active agents ------------------------------------
         active_agents = [a for a in self.agents if a.is_active]
-        self._strategy.move_agents(
-            agents=active_agents,
-            environment=self.environment,
-            nav_graph=self.nav_graph,
-            rng=self._rng,
-            timestep=current_step,
+        agents_by_id: dict[str, Agent] = {
+            a.agent_id: a for a in active_agents
+        }
+
+        # --- 2. Collect raw movement requests from strategy ---------------
+        raw_requests: dict[str, GridCell] = (
+            self._strategy.move_agents(
+                agents=active_agents,
+                environment=self.environment,
+                nav_graph=self.nav_graph,
+                rng=self._rng,
+                timestep=current_step,
+            )
+            or {}  # guard against strategies that return None
         )
 
-        # Check for evacuations (agents now on exit cells)
+        # --- 3. Build and validate MovementRequest objects ----------------
+        valid_requests: list[MovementRequest] = []
+        for agent_id, to_cell in raw_requests.items():
+            if agent_id not in agents_by_id:
+                continue
+            agent = agents_by_id[agent_id]
+            req = MovementRequest(
+                agent_id=agent_id,
+                from_cell=agent.position,
+                to_cell=to_cell,
+            )
+            if validate_request(req, self.environment):
+                valid_requests.append(req)
+
+        # --- 4. Resolve conflicts deterministically -----------------------
+        approved, _rejected = resolve_conflicts(valid_requests)
+
+        # --- 5. Apply approved movements ----------------------------------
+        apply_movements(approved, agents_by_id)
+
+        # --- 6 & 7. Detect evacuations and record -------------------------
         for agent in active_agents:
             if self.environment.is_exit(agent.row, agent.col):
                 agent.mark_evacuated(timestep=current_step)
@@ -238,15 +306,15 @@ class Simulation:
                     agent_id=agent.agent_id, timestep=current_step
                 )
 
-        # Check termination conditions
+        # --- 8. Check termination -----------------------------------------
         return self._check_termination()
 
     def run(self) -> SimulationResult:
         """
         Run the simulation to completion.
 
-        The loop continues until all agents have evacuated or the
-        maximum number of timesteps is reached.
+        Continues stepping until all agents have evacuated or the
+        maximum timestep limit is reached.
 
         Returns
         -------
@@ -275,9 +343,12 @@ class Simulation:
 
     def _check_termination(self) -> bool:
         """
-        Check termination conditions and update ``state`` accordingly.
+        Evaluate termination conditions and update ``state``.
 
-        Returns True if the simulation should continue, False if done.
+        Returns
+        -------
+        bool
+            ``True`` if the simulation should continue, ``False`` if done.
         """
         if self.metrics.is_fully_evacuated():
             self.state.is_terminated = True

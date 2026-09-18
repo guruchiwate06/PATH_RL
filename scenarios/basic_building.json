@@ -5,27 +5,23 @@
     "cols": 10
   },
   "walls": [
-    [2, 0], [2, 1], [2, 2], [2, 3], [2, 4],
-    [2, 6], [2, 7], [2, 8], [2, 9],
-    [5, 0], [5, 1], [5, 2], [5, 3],
-    [5, 6], [5, 7], [5, 8], [5, 9],
-    [0, 4], [1, 4], [3, 4], [4, 4],
-    [0, 5], [1, 5], [3, 5], [4, 5]
+    [4, 0], [4, 1], [4, 2], [4, 3],
+    [4, 6], [4, 7], [4, 8], [4, 9]
   ],
   "exits": [
     [9, 4],
     [9, 5]
   ],
   "agents": [
-    {"agent_id": "agent_0", "row": 0, "col": 0},
-    {"agent_id": "agent_1", "row": 0, "col": 9},
-    {"agent_id": "agent_2", "row": 3, "col": 0},
-    {"agent_id": "agent_3", "row": 3, "col": 9},
-    {"agent_id": "agent_4", "row": 6, "col": 2},
-    {"agent_id": "agent_5", "row": 6, "col": 7}
+    {"agent_id": "agent_0", "row": 0, "col": 1},
+    {"agent_id": "agent_1", "row": 0, "col": 8},
+    {"agent_id": "agent_2", "row": 2, "col": 4},
+    {"agent_id": "agent_3", "row": 6, "col": 1},
+    {"agent_id": "agent_4", "row": 6, "col": 8},
+    {"agent_id": "agent_5", "row": 7, "col": 5}
   ],
   "parameters": {
-    "max_timesteps": 500,
+    "max_timesteps": 200,
     "random_seed": 42
   }
 }
