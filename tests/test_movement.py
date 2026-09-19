@@ -129,25 +129,26 @@ class TestResolveConflicts:
     def test_no_conflict_both_approved(self) -> None:
         req_a = MovementRequest("a0", (0, 0), (0, 1))
         req_b = MovementRequest("a1", (1, 0), (1, 1))
-        approved, rejected = resolve_conflicts([req_a, req_b])
+        approved, rejected, _ = resolve_conflicts([req_a, req_b])
         assert len(approved) == 2
         assert len(rejected) == 0
 
     def test_single_request_always_approved(self) -> None:
         req = MovementRequest("a0", (0, 0), (0, 1))
-        approved, rejected = resolve_conflicts([req])
+        approved, rejected, _ = resolve_conflicts([req])
         assert len(approved) == 1
         assert len(rejected) == 0
 
     def test_empty_input(self) -> None:
-        approved, rejected = resolve_conflicts([])
+        approved, rejected, reasons = resolve_conflicts([])
         assert approved == []
         assert rejected == []
+        assert reasons == {}
 
     def test_conflict_one_wins_one_rejected(self) -> None:
         req_a = MovementRequest("a0", (0, 0), (0, 1))
         req_b = MovementRequest("a1", (0, 2), (0, 1))  # same destination!
-        approved, rejected = resolve_conflicts([req_a, req_b])
+        approved, rejected, _ = resolve_conflicts([req_a, req_b])
         assert len(approved) == 1
         assert len(rejected) == 1
 
@@ -155,7 +156,7 @@ class TestResolveConflicts:
         """Lexicographically smallest agent_id wins."""
         req_a0 = MovementRequest("a0", (0, 0), (0, 1))
         req_a1 = MovementRequest("a1", (0, 2), (0, 1))
-        approved, rejected = resolve_conflicts([req_a0, req_a1])
+        approved, rejected, _ = resolve_conflicts([req_a0, req_a1])
         assert approved[0].agent_id == "a0"
         assert rejected[0].agent_id == "a1"
 
@@ -166,8 +167,8 @@ class TestResolveConflicts:
         req_a0 = MovementRequest("a0", (0, 0), (0, 1))
         req_a1 = MovementRequest("a1", (0, 2), (0, 1))
 
-        approved1, _ = resolve_conflicts([req_a0, req_a1])
-        approved2, _ = resolve_conflicts([req_a1, req_a0])
+        approved1, _, _ = resolve_conflicts([req_a0, req_a1])
+        approved2, _, _ = resolve_conflicts([req_a1, req_a0])
 
         assert approved1[0].agent_id == approved2[0].agent_id == "a0"
 
@@ -178,7 +179,7 @@ class TestResolveConflicts:
             MovementRequest("a0", (0, 0), (0, 1)),
             MovementRequest("a1", (1, 1), (0, 1)),
         ]
-        approved, rejected = resolve_conflicts(reqs)
+        approved, rejected, _ = resolve_conflicts(reqs)
         assert len(approved) == 1
         assert len(rejected) == 2
         assert approved[0].agent_id == "a0"
@@ -188,7 +189,7 @@ class TestResolveConflicts:
         req_a0 = MovementRequest("a0", (0, 0), (0, 1))
         req_a1 = MovementRequest("a1", (0, 2), (0, 1))  # conflict with a0
         req_a2 = MovementRequest("a2", (2, 0), (2, 1))  # no conflict
-        approved, rejected = resolve_conflicts([req_a0, req_a1, req_a2])
+        approved, rejected, _ = resolve_conflicts([req_a0, req_a1, req_a2])
         assert len(approved) == 2
         assert len(rejected) == 1
         approved_ids = {r.agent_id for r in approved}

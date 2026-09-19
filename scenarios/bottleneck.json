@@ -1,0 +1,98 @@
+{
+  "scenario_name": "bottleneck",
+  "grid": {
+    "rows": 10,
+    "cols": 5
+  },
+  "walls": [
+    [
+      4,
+      0
+    ],
+    [
+      4,
+      1
+    ],
+    [
+      4,
+      3
+    ],
+    [
+      4,
+      4
+    ]
+  ],
+  "exits": [
+    [
+      9,
+      2
+    ]
+  ],
+  "agents": [
+    {
+      "agent_id": "a00",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "agent_id": "a01",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "agent_id": "a02",
+      "row": 0,
+      "col": 2
+    },
+    {
+      "agent_id": "a03",
+      "row": 0,
+      "col": 3
+    },
+    {
+      "agent_id": "a04",
+      "row": 0,
+      "col": 4
+    },
+    {
+      "agent_id": "a05",
+      "row": 1,
+      "col": 0
+    },
+    {
+      "agent_id": "a06",
+      "row": 1,
+      "col": 1
+    },
+    {
+      "agent_id": "a07",
+      "row": 1,
+      "col": 2
+    },
+    {
+      "agent_id": "a08",
+      "row": 1,
+      "col": 3
+    },
+    {
+      "agent_id": "a09",
+      "row": 1,
+      "col": 4
+    },
+    {
+      "agent_id": "a10",
+      "row": 2,
+      "col": 0
+    },
+    {
+      "agent_id": "a11",
+      "row": 2,
+      "col": 2
+    }
+  ],
+  "parameters": {
+    "max_timesteps": 200,
+    "random_seed": 42,
+    "default_cell_capacity": 1
+  }
+}

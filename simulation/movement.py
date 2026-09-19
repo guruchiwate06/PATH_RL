@@ -6,29 +6,39 @@ and application.
 
 Responsibilities
 ~~~~~~~~~~~~~~~~
-- Define ``MovementRequest`` — the data carrier for a single agent's
+- Define ``MovementRequest`` -- the data carrier for a single agent's
   desired move.
 - Validate that a request is physically legal (in bounds, passable,
   exactly one cell away).
 - Resolve conflicts when multiple agents want the same cell, using a
   deterministic rule (lexicographically first agent_id wins).
+- Enforce cell-capacity constraints during conflict resolution (Stage 3).
 - Apply approved requests by updating agent positions in-place.
 
 Non-responsibilities (intentionally excluded)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Deciding *where* an agent wants to go  → strategy.py
-- Simulation loop coordination           → simulation.py
-- Pathfinding                            → pathfinding.py
+- Deciding *where* an agent wants to go  -> strategy.py
+- Simulation loop coordination           -> simulation.py
+- Pathfinding                            -> pathfinding.py
 
 Design notes
 ~~~~~~~~~~~~
-- All four functions are pure / stateless so they are independently
+- All functions are pure / stateless so they are independently
   testable without instantiating a ``Simulation``.
 - ``resolve_conflicts`` is deterministic and order-independent: the
   winner is always the lexicographically smallest ``agent_id`` among
   competing agents, regardless of the order they appear in the input
   list.  This means the same scenario + seed always produces the same
   outcome.
+- Stage 3 adds capacity awareness to ``resolve_conflicts``.  The new
+  parameters are all optional with defaults that reproduce Stage 2
+  behaviour exactly when omitted -- full backward compatibility.
+- Cell capacity rule: ``free_slots = capacity(D) - current_occupancy(D)``.
+  A cell is enterable only if its current occupancy is strictly below its
+  capacity.  Simultaneous vacating is NOT credited -- if an agent's
+  departure request is later rejected (due to conflict at its own
+  destination), it would remain, so crediting the slot in advance would
+  be unsafe and lead to over-occupancy.
 - The ``MovementRequest`` dataclass is frozen (immutable) to prevent
   accidental mutation after creation.
 """
@@ -36,7 +46,8 @@ Design notes
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from enum import Enum
+from typing import TYPE_CHECKING, Callable, Optional
 
 from evacuation_simulation.simulation.config import GridCell
 
@@ -119,40 +130,86 @@ def validate_request(
 
 
 # ---------------------------------------------------------------------------
+# Rejection reasons (Stage 3)
+# ---------------------------------------------------------------------------
+
+
+class RejectionReason(Enum):
+    """
+    Reason a movement request was rejected during conflict resolution.
+
+    Values
+    ------
+    DESTINATION_CONFLICT:
+        Another agent (with a lexicographically smaller agent_id) was
+        approved for the same destination cell.  (Stage 2 behaviour.)
+    DESTINATION_CAPACITY:
+        The destination cell does not have sufficient free slots to
+        accommodate this agent given current occupancy and simultaneous
+        vacating movements.  (Stage 3 addition.)
+    """
+
+    DESTINATION_CONFLICT = "DESTINATION_CONFLICT"
+    DESTINATION_CAPACITY = "DESTINATION_CAPACITY"
+
+
+# ---------------------------------------------------------------------------
 # Conflict resolution
 # ---------------------------------------------------------------------------
 
 
 def resolve_conflicts(
     requests: list[MovementRequest],
-) -> tuple[list[MovementRequest], list[MovementRequest]]:
+    *,
+    capacity_fn: Optional[Callable[[GridCell], int]] = None,
+    current_occupancy: Optional[dict[GridCell, int]] = None,
+) -> tuple[list[MovementRequest], list[MovementRequest], dict[str, RejectionReason]]:
     """
     Resolve competing movement requests deterministically.
 
-    When multiple agents request the same destination cell, exactly one
-    is approved and the rest are rejected.  The winner is the agent whose
-    ``agent_id`` is lexicographically smallest among the competitors.
+    When multiple agents request the same destination cell, candidates are
+    sorted by ``agent_id`` (lexicographic ascending).  Requests are approved
+    in order until the cell's available capacity is exhausted; the remainder
+    are rejected.
 
-    This rule is:
-    - **Deterministic**: the same set of requests always yields the same
-      winner, regardless of input ordering.
-    - **Order-independent**: processing Agent A before Agent B never gives
-      A an inherent advantage unless A wins on ``agent_id`` ordering.
-    - **Isolated**: the logic is here and nowhere else, making it easy
-      to replace with a more sophisticated model in a future stage.
+    **Stage 3 capacity rule**::
+
+        free_slots = capacity(D) - current_occupancy(D)
+
+    Simultaneous vacating is NOT credited.  If an agent's departure request
+    is rejected (due to conflict at its own destination), it remains in its
+    current cell.  Crediting its departure in advance would be unsafe and
+    lead to over-occupancy.
+
+    **Backward compatibility**: all new keyword-only parameters default to
+    ``None``.  When all are ``None`` (the Stage 2 call signature),
+    the behaviour is identical to Stage 2: capacity defaults to 1, occupancy
+    defaults to 0 -- so exactly one request per destination is approved.
 
     Parameters
     ----------
     requests : list[MovementRequest]
         All validated movement requests for a single timestep.
+    capacity_fn : Callable[[GridCell], int] or None
+        Function returning the capacity of a given cell.  Defaults to
+        ``lambda _: 1`` when ``None`` (Stage 2 equivalent).
+    current_occupancy : dict[GridCell, int] or None
+        Pre-movement occupancy counts.  Missing keys are treated as 0.
+        Defaults to empty dict when ``None``.
 
     Returns
     -------
     approved : list[MovementRequest]
         Requests that were granted.
     rejected : list[MovementRequest]
-        Requests that were denied due to cell conflict.
+        Requests that were denied.
+    rejection_reasons : dict[str, RejectionReason]
+        Mapping ``{agent_id: reason}`` for every rejected request.
     """
+    # Resolve defaults
+    _cap_fn: Callable[[GridCell], int] = capacity_fn if capacity_fn is not None else (lambda _: 1)
+    _occ: dict[GridCell, int] = current_occupancy if current_occupancy is not None else {}
+
     # Group by destination
     by_destination: dict[GridCell, list[MovementRequest]] = {}
     for req in requests:
@@ -160,17 +217,31 @@ def resolve_conflicts(
 
     approved: list[MovementRequest] = []
     rejected: list[MovementRequest] = []
+    rejection_reasons: dict[str, RejectionReason] = {}
 
-    for _destination, competing in by_destination.items():
-        if len(competing) == 1:
-            approved.append(competing[0])
-        else:
-            # Sort by agent_id for a deterministic, reproducible winner
-            sorted_competing = sorted(competing, key=lambda r: r.agent_id)
-            approved.append(sorted_competing[0])
-            rejected.extend(sorted_competing[1:])
+    for destination, competing in by_destination.items():
+        cap = _cap_fn(destination)
+        occ = _occ.get(destination, 0)
+        # No vacating credit: conservative and correct.
+        free_slots = max(0, cap - occ)
 
-    return approved, rejected
+        # Sort deterministically by agent_id (lex ascending)
+        sorted_competing = sorted(competing, key=lambda r: r.agent_id)
+
+        # Approve up to free_slots requests; reject the rest
+        for i, req in enumerate(sorted_competing):
+            if i < free_slots:
+                approved.append(req)
+            else:
+                rejected.append(req)
+                # Distinguish capacity rejection from pure conflict rejection
+                if free_slots == 0:
+                    rejection_reasons[req.agent_id] = RejectionReason.DESTINATION_CAPACITY
+                else:
+                    # free_slots > 0 but already consumed by earlier agents
+                    rejection_reasons[req.agent_id] = RejectionReason.DESTINATION_CONFLICT
+
+    return approved, rejected, rejection_reasons
 
 
 # ---------------------------------------------------------------------------

@@ -73,6 +73,19 @@ class SimulationParameters(BaseModel):
         description="Seed for reproducible runs. None means non-deterministic.",
     )
 
+    default_cell_capacity: Annotated[
+        int,
+        Field(
+            ge=1,
+            description=(
+                "Maximum number of active agents that may occupy a single passable "
+                "cell simultaneously.  Applies uniformly to all cells in Stage 3. "
+                "A value of 1 (the default) reproduces Stage 2 one-agent-per-cell "
+                "behaviour while now making that constraint explicit and configurable."
+            ),
+        ),
+    ] = 1
+
 
 # ---------------------------------------------------------------------------
 # Top-level scenario configuration

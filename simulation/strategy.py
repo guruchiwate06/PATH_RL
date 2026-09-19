@@ -212,6 +212,37 @@ class ShortestPathStrategy:
         return best_path
 
     # ------------------------------------------------------------------
+    # Query methods (Stage 4 inspection support)
+    # ------------------------------------------------------------------
+
+    def get_planned_path(
+        self,
+        agent: "Agent",
+        environment: "Environment",
+        nav_graph: "NavigationGraph",
+    ) -> Optional[list[GridCell]]:
+        """
+        Return the planned shortest path for *agent* to the nearest exit.
+
+        Returns the full path as a list of cells starting at the agent's
+        current position and ending at the target exit.  Returns ``None``
+        if the agent is inactive or no exit is reachable.
+
+        This query does not mutate simulation state.
+        """
+        if not agent.is_active:
+            return None
+        if environment.is_exit(agent.row, agent.col):
+            return [agent.position]
+
+        cached = self._path_cache.get(agent.agent_id)
+        if cached and cached[0] == agent.position and len(cached) > 1:
+            return list(cached)
+
+        path = self._find_nearest_exit_path(agent.position, environment, nav_graph)
+        return list(path) if path else None
+
+    # ------------------------------------------------------------------
     # Cache management
     # ------------------------------------------------------------------
 

@@ -9,6 +9,7 @@ config       - Pydantic models for scenario configuration
 environment  - Grid-based environment (cells, walls, exits)
 agent        - Agent entity (position, state, identity)
 pathfinding  - Navigation graph construction over traversable cells
+occupancy    - Dynamic cell-occupancy map (Stage 3)
 movement     - MovementRequest, validation, conflict resolution, application
 strategy     - Concrete movement strategies (ShortestPathStrategy, ...)
 simulation   - Discrete-timestep loop coordinating all components
@@ -21,15 +22,19 @@ from evacuation_simulation.simulation.environment import Environment
 from evacuation_simulation.simulation.metrics import MetricsCollector, SimulationResult
 from evacuation_simulation.simulation.movement import (
     MovementRequest,
+    RejectionReason,
     apply_movements,
     resolve_conflicts,
     validate_request,
 )
+from evacuation_simulation.simulation.occupancy import OccupancyMap
 from evacuation_simulation.simulation.pathfinding import NavigationGraph
 from evacuation_simulation.simulation.simulation import (
+    AgentStepResult,
     MovementStrategy,
     NullMovementStrategy,
     Simulation,
+    TimestepTrace,
 )
 from evacuation_simulation.simulation.strategy import ShortestPathStrategy
 
@@ -43,17 +48,22 @@ __all__ = [
     "AgentState",
     # pathfinding
     "NavigationGraph",
+    # occupancy (Stage 3)
+    "OccupancyMap",
     # movement
     "MovementRequest",
+    "RejectionReason",
     "validate_request",
     "resolve_conflicts",
     "apply_movements",
     # strategy
     "ShortestPathStrategy",
     # simulation
+    "AgentStepResult",
     "MovementStrategy",
     "NullMovementStrategy",
     "Simulation",
+    "TimestepTrace",
     # metrics
     "MetricsCollector",
     "SimulationResult",

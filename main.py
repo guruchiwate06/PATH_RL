@@ -32,7 +32,7 @@ if str(_PACKAGE_PARENT) not in sys.path:
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="2D multi-agent evacuation simulation — Stage 2",
+        description="2D multi-agent evacuation simulation — Stage 4",
     )
     parser.add_argument(
         "--scenario",
@@ -43,13 +43,30 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--visualize",
         action="store_true",
-        help="Show a matplotlib grid snapshot of the initial and final states",
+        help="Open interactive Simulation Visualizer & Inspector",
+    )
+    parser.add_argument(
+        "--inspect",
+        action="store_true",
+        help="Alias for --visualize (opens interactive inspector)",
+    )
+    parser.add_argument(
+        "--play", "--autoplay",
+        action="store_true",
+        dest="play",
+        help="Automatically start playing animation upon launch",
     )
     parser.add_argument(
         "--strategy",
         choices=["shortest", "null"],
         default="shortest",
         help="Movement strategy to use (default: shortest)",
+    )
+    parser.add_argument(
+        "--save-snapshot",
+        type=Path,
+        default=None,
+        help="Save a PNG snapshot of the initial simulation state to this path",
     )
     return parser.parse_args()
 
@@ -85,25 +102,45 @@ def main() -> int:
     print()
 
     # --- Build simulation ------------------------------------------------
-    strategy = (
-        ShortestPathStrategy()
+    strategy_factory = (
+        (lambda: ShortestPathStrategy())
         if args.strategy == "shortest"
-        else NullMovementStrategy()
+        else (lambda: NullMovementStrategy())
     )
-    sim = Simulation(config, movement_strategy=strategy)
+    sim = Simulation(config, movement_strategy=strategy_factory())
 
     print(f"Navigation graph : {sim.nav_graph}")
     print()
 
-    # --- Optional: show initial state ------------------------------------
-    if args.visualize:
+    # --- Optional: Save initial snapshot ---------------------------------
+    if args.save_snapshot:
         try:
-            from visualize import render_grid
-            render_grid(sim, title="Initial State", show=True)
+            from visualize import SimulationVisualizer
+            viz = SimulationVisualizer(
+                config=config,
+                movement_strategy_factory=strategy_factory,
+            )
+            saved_path = viz.save_snapshot(args.save_snapshot)
+            print(f"[visualize] Snapshot saved: {saved_path}")
         except Exception as exc:  # noqa: BLE001
-            print(f"[visualize] Could not render: {exc}")
+            print(f"[visualize] Could not save snapshot: {exc}")
 
-    # --- Run simulation --------------------------------------------------
+    # --- Interactive Visualization Mode ----------------------------------
+    if args.visualize or args.inspect or args.play:
+        print("Launching interactive Simulation Visualizer & Inspector…")
+        try:
+            from visualize import SimulationVisualizer
+            viz = SimulationVisualizer(
+                config=config,
+                movement_strategy_factory=strategy_factory,
+            )
+            viz.show(auto_play=args.play)
+            return 0
+        except Exception as exc:  # noqa: BLE001
+            print(f"[visualize] Error launching interactive GUI: {exc}")
+            print("Falling back to batch simulation execution…\n")
+
+    # --- Batch Simulation Mode -------------------------------------------
     print("Running simulation…")
     result = sim.run()
     print()
@@ -125,14 +162,6 @@ def main() -> int:
                 print(f"  {agent.agent_id:12s}  evacuated at step {agent.evacuation_timestep}")
             else:
                 print(f"  {agent.agent_id:12s}  NOT evacuated")
-
-    # --- Optional: show final state --------------------------------------
-    if args.visualize:
-        try:
-            from visualize import render_grid
-            render_grid(sim, title="Final State", show=True)
-        except Exception as exc:  # noqa: BLE001
-            print(f"[visualize] Could not render: {exc}")
 
     return 0
 
