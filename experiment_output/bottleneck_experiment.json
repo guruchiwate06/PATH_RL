@@ -1,0 +1,139 @@
+{
+  "experiment_id": "exp_bottleneck",
+  "run_count": 5,
+  "runs": [
+    {
+      "run_id": "bottleneck_seed1_0000",
+      "scenario_name": "bottleneck",
+      "seed": 1,
+      "params": {},
+      "result": {
+        "total_agents": 12,
+        "evacuated_count": 12,
+        "non_evacuated_count": 0,
+        "total_timesteps": 29,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 18.0,
+        "min_evacuation_time": 7,
+        "max_evacuation_time": 29,
+        "total_waiting_steps": 90,
+        "mean_waiting_steps": 7.5,
+        "max_waiting_steps": 18,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 204
+      }
+    },
+    {
+      "run_id": "bottleneck_seed2_0001",
+      "scenario_name": "bottleneck",
+      "seed": 2,
+      "params": {},
+      "result": {
+        "total_agents": 12,
+        "evacuated_count": 12,
+        "non_evacuated_count": 0,
+        "total_timesteps": 29,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 18.0,
+        "min_evacuation_time": 7,
+        "max_evacuation_time": 29,
+        "total_waiting_steps": 90,
+        "mean_waiting_steps": 7.5,
+        "max_waiting_steps": 18,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 204
+      }
+    },
+    {
+      "run_id": "bottleneck_seed3_0002",
+      "scenario_name": "bottleneck",
+      "seed": 3,
+      "params": {},
+      "result": {
+        "total_agents": 12,
+        "evacuated_count": 12,
+        "non_evacuated_count": 0,
+        "total_timesteps": 29,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 18.0,
+        "min_evacuation_time": 7,
+        "max_evacuation_time": 29,
+        "total_waiting_steps": 90,
+        "mean_waiting_steps": 7.5,
+        "max_waiting_steps": 18,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 204
+      }
+    },
+    {
+      "run_id": "bottleneck_seed4_0003",
+      "scenario_name": "bottleneck",
+      "seed": 4,
+      "params": {},
+      "result": {
+        "total_agents": 12,
+        "evacuated_count": 12,
+        "non_evacuated_count": 0,
+        "total_timesteps": 29,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 18.0,
+        "min_evacuation_time": 7,
+        "max_evacuation_time": 29,
+        "total_waiting_steps": 90,
+        "mean_waiting_steps": 7.5,
+        "max_waiting_steps": 18,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 204
+      }
+    },
+    {
+      "run_id": "bottleneck_seed5_0004",
+      "scenario_name": "bottleneck",
+      "seed": 5,
+      "params": {},
+      "result": {
+        "total_agents": 12,
+        "evacuated_count": 12,
+        "non_evacuated_count": 0,
+        "total_timesteps": 29,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 18.0,
+        "min_evacuation_time": 7,
+        "max_evacuation_time": 29,
+        "total_waiting_steps": 90,
+        "mean_waiting_steps": 7.5,
+        "max_waiting_steps": 18,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 204
+      }
+    }
+  ],
+  "aggregate": {
+    "run_count": 5,
+    "mean_evacuation_time_mean": 18.0,
+    "mean_evacuation_time_min": 18.0,
+    "mean_evacuation_time_max": 18.0,
+    "mean_evacuation_time_std": 0.0,
+    "mean_evacuation_time_median": 18.0,
+    "evacuation_rate_mean": 1.0,
+    "evacuation_rate_min": 1.0,
+    "evacuation_rate_max": 1.0,
+    "total_timesteps_mean": 29,
+    "total_timesteps_min": 29,
+    "total_timesteps_max": 29,
+    "total_waiting_steps_mean": 90,
+    "total_waiting_steps_min": 90,
+    "total_waiting_steps_max": 90,
+    "congested_cell_steps_mean": 204,
+    "congested_cell_steps_min": 204,
+    "congested_cell_steps_max": 204,
+    "max_occupancy_ratio_mean": 1.0,
+    "max_occupancy_ratio_min": 1.0,
+    "max_occupancy_ratio_max": 1.0
+  }
+}

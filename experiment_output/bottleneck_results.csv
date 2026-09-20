@@ -1,0 +1,6 @@
+run_id,scenario_name,seed,total_agents,evacuated_count,non_evacuated_count,total_timesteps,evacuation_rate,mean_evacuation_time,min_evacuation_time,max_evacuation_time,total_waiting_steps,mean_waiting_steps,max_waiting_steps,max_cell_occupancy,max_occupancy_ratio,congested_cell_steps
+bottleneck_seed1_0000,bottleneck,1,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204
+bottleneck_seed2_0001,bottleneck,2,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204
+bottleneck_seed3_0002,bottleneck,3,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204
+bottleneck_seed4_0003,bottleneck,4,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204
+bottleneck_seed5_0004,bottleneck,5,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204

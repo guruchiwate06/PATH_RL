@@ -1,0 +1,6 @@
+run_id,scenario_name,seed,total_agents,evacuated_count,non_evacuated_count,total_timesteps,evacuation_rate,mean_evacuation_time,min_evacuation_time,max_evacuation_time,total_waiting_steps,mean_waiting_steps,max_waiting_steps,max_cell_occupancy,max_occupancy_ratio,congested_cell_steps
+basic_building_seed1_0000,basic_building,1,6,6,0,12,1.0,7.666666666666667,2,12,1,0.16666666666666666,1,1,1.0,40
+basic_building_seed2_0001,basic_building,2,6,6,0,12,1.0,7.666666666666667,2,12,1,0.16666666666666666,1,1,1.0,40
+basic_building_seed3_0002,basic_building,3,6,6,0,12,1.0,7.666666666666667,2,12,1,0.16666666666666666,1,1,1.0,40
+basic_building_seed4_0003,basic_building,4,6,6,0,12,1.0,7.666666666666667,2,12,1,0.16666666666666666,1,1,1.0,40
+basic_building_seed5_0004,basic_building,5,6,6,0,12,1.0,7.666666666666667,2,12,1,0.16666666666666666,1,1,1.0,40

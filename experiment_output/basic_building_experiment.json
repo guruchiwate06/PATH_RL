@@ -1,0 +1,139 @@
+{
+  "experiment_id": "exp_basic_building",
+  "run_count": 5,
+  "runs": [
+    {
+      "run_id": "basic_building_seed1_0000",
+      "scenario_name": "basic_building",
+      "seed": 1,
+      "params": {},
+      "result": {
+        "total_agents": 6,
+        "evacuated_count": 6,
+        "non_evacuated_count": 0,
+        "total_timesteps": 12,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 7.666666666666667,
+        "min_evacuation_time": 2,
+        "max_evacuation_time": 12,
+        "total_waiting_steps": 1,
+        "mean_waiting_steps": 0.16666666666666666,
+        "max_waiting_steps": 1,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 40
+      }
+    },
+    {
+      "run_id": "basic_building_seed2_0001",
+      "scenario_name": "basic_building",
+      "seed": 2,
+      "params": {},
+      "result": {
+        "total_agents": 6,
+        "evacuated_count": 6,
+        "non_evacuated_count": 0,
+        "total_timesteps": 12,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 7.666666666666667,
+        "min_evacuation_time": 2,
+        "max_evacuation_time": 12,
+        "total_waiting_steps": 1,
+        "mean_waiting_steps": 0.16666666666666666,
+        "max_waiting_steps": 1,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 40
+      }
+    },
+    {
+      "run_id": "basic_building_seed3_0002",
+      "scenario_name": "basic_building",
+      "seed": 3,
+      "params": {},
+      "result": {
+        "total_agents": 6,
+        "evacuated_count": 6,
+        "non_evacuated_count": 0,
+        "total_timesteps": 12,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 7.666666666666667,
+        "min_evacuation_time": 2,
+        "max_evacuation_time": 12,
+        "total_waiting_steps": 1,
+        "mean_waiting_steps": 0.16666666666666666,
+        "max_waiting_steps": 1,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 40
+      }
+    },
+    {
+      "run_id": "basic_building_seed4_0003",
+      "scenario_name": "basic_building",
+      "seed": 4,
+      "params": {},
+      "result": {
+        "total_agents": 6,
+        "evacuated_count": 6,
+        "non_evacuated_count": 0,
+        "total_timesteps": 12,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 7.666666666666667,
+        "min_evacuation_time": 2,
+        "max_evacuation_time": 12,
+        "total_waiting_steps": 1,
+        "mean_waiting_steps": 0.16666666666666666,
+        "max_waiting_steps": 1,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 40
+      }
+    },
+    {
+      "run_id": "basic_building_seed5_0004",
+      "scenario_name": "basic_building",
+      "seed": 5,
+      "params": {},
+      "result": {
+        "total_agents": 6,
+        "evacuated_count": 6,
+        "non_evacuated_count": 0,
+        "total_timesteps": 12,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 7.666666666666667,
+        "min_evacuation_time": 2,
+        "max_evacuation_time": 12,
+        "total_waiting_steps": 1,
+        "mean_waiting_steps": 0.16666666666666666,
+        "max_waiting_steps": 1,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 40
+      }
+    }
+  ],
+  "aggregate": {
+    "run_count": 5,
+    "mean_evacuation_time_mean": 7.666666666666667,
+    "mean_evacuation_time_min": 7.666666666666667,
+    "mean_evacuation_time_max": 7.666666666666667,
+    "mean_evacuation_time_std": 0.0,
+    "mean_evacuation_time_median": 7.666666666666667,
+    "evacuation_rate_mean": 1.0,
+    "evacuation_rate_min": 1.0,
+    "evacuation_rate_max": 1.0,
+    "total_timesteps_mean": 12,
+    "total_timesteps_min": 12,
+    "total_timesteps_max": 12,
+    "total_waiting_steps_mean": 1,
+    "total_waiting_steps_min": 1,
+    "total_waiting_steps_max": 1,
+    "congested_cell_steps_mean": 40,
+    "congested_cell_steps_min": 40,
+    "congested_cell_steps_max": 40,
+    "max_occupancy_ratio_mean": 1.0,
+    "max_occupancy_ratio_min": 1.0,
+    "max_occupancy_ratio_max": 1.0
+  }
+}

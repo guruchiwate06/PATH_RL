@@ -14,11 +14,24 @@ movement     - MovementRequest, validation, conflict resolution, application
 strategy     - Concrete movement strategies (ShortestPathStrategy, ...)
 simulation   - Discrete-timestep loop coordinating all components
 metrics      - Outcome statistics collection and computation
+experiment   - Scenario runner, parameter sweeps, and export (Stage 5)
 """
 
 from evacuation_simulation.simulation.agent import Agent, AgentState
 from evacuation_simulation.simulation.config import SimulationConfig
 from evacuation_simulation.simulation.environment import Environment
+from evacuation_simulation.simulation.experiment import (
+    AggregateStats,
+    ExperimentResult,
+    RunRecord,
+    SweepPoint,
+    aggregate_results,
+    export_csv,
+    export_json,
+    run_repeated,
+    run_scenario,
+    run_sweep,
+)
 from evacuation_simulation.simulation.metrics import MetricsCollector, SimulationResult
 from evacuation_simulation.simulation.movement import (
     MovementRequest,
@@ -45,6 +58,7 @@ __all__ = [
     "Environment",
     # agent
     "Agent",
+    # agent state
     "AgentState",
     # pathfinding
     "NavigationGraph",
@@ -67,4 +81,15 @@ __all__ = [
     # metrics
     "MetricsCollector",
     "SimulationResult",
+    # experiment (Stage 5)
+    "AggregateStats",
+    "ExperimentResult",
+    "RunRecord",
+    "SweepPoint",
+    "aggregate_results",
+    "export_csv",
+    "export_json",
+    "run_repeated",
+    "run_scenario",
+    "run_sweep",
 ]

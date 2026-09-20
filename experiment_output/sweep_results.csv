@@ -1,0 +1,11 @@
+run_id,scenario_name,seed,agent_count,scenario,total_agents,evacuated_count,non_evacuated_count,total_timesteps,evacuation_rate,mean_evacuation_time,min_evacuation_time,max_evacuation_time,total_waiting_steps,mean_waiting_steps,max_waiting_steps,max_cell_occupancy,max_occupancy_ratio,congested_cell_steps
+stage5_sweep_demo_pt000_basic_6_seed10,basic_building,10,6,basic_building,6,6,0,12,1.0,7.666666666666667,2,12,1,0.16666666666666666,1,1,1.0,40
+stage5_sweep_demo_pt000_basic_6_seed20,basic_building,20,6,basic_building,6,6,0,12,1.0,7.666666666666667,2,12,1,0.16666666666666666,1,1,1.0,40
+stage5_sweep_demo_pt000_basic_6_seed30,basic_building,30,6,basic_building,6,6,0,12,1.0,7.666666666666667,2,12,1,0.16666666666666666,1,1,1.0,40
+stage5_sweep_demo_pt000_basic_6_seed40,basic_building,40,6,basic_building,6,6,0,12,1.0,7.666666666666667,2,12,1,0.16666666666666666,1,1,1.0,40
+stage5_sweep_demo_pt000_basic_6_seed50,basic_building,50,6,basic_building,6,6,0,12,1.0,7.666666666666667,2,12,1,0.16666666666666666,1,1,1.0,40
+stage5_sweep_demo_pt001_bottleneck_12_seed10,bottleneck,10,12,bottleneck,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204
+stage5_sweep_demo_pt001_bottleneck_12_seed20,bottleneck,20,12,bottleneck,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204
+stage5_sweep_demo_pt001_bottleneck_12_seed30,bottleneck,30,12,bottleneck,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204
+stage5_sweep_demo_pt001_bottleneck_12_seed40,bottleneck,40,12,bottleneck,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204
+stage5_sweep_demo_pt001_bottleneck_12_seed50,bottleneck,50,12,bottleneck,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204
