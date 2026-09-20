@@ -33,6 +33,7 @@ from enum import IntEnum
 from typing import Optional
 
 from evacuation_simulation.simulation.config import GridCell
+from evacuation_simulation.simulation.profile import AgentProfile
 
 
 # ---------------------------------------------------------------------------
@@ -83,9 +84,11 @@ class Agent:
     evacuation_timestep:
         Timestep at which the agent reached an exit, or ``None`` if the
         agent has not yet evacuated.
+    profile:
+        Individual agent characteristics (speed, reaction delay, metadata).
     """
 
-    __slots__ = ("agent_id", "row", "col", "state", "evacuation_timestep")
+    __slots__ = ("agent_id", "row", "col", "state", "evacuation_timestep", "profile")
 
     def __init__(
         self,
@@ -93,6 +96,7 @@ class Agent:
         row: int,
         col: int,
         initial_state: AgentState = AgentState.MOVING,
+        profile: Optional[AgentProfile] = None,
     ) -> None:
         if not agent_id:
             raise ValueError("agent_id must be a non-empty string.")
@@ -107,6 +111,25 @@ class Agent:
         self.col: int = col
         self.state: AgentState = initial_state
         self.evacuation_timestep: Optional[int] = None
+        self.profile: AgentProfile = profile if profile is not None else AgentProfile()
+
+    # ------------------------------------------------------------------
+    # Profile delegates & helpers
+    # ------------------------------------------------------------------
+
+    @property
+    def speed(self) -> float:
+        """Movement frequency from profile."""
+        return self.profile.speed
+
+    @property
+    def reaction_delay(self) -> int:
+        """Initial reaction delay from profile."""
+        return self.profile.reaction_delay
+
+    def is_movement_eligible(self, timestep: int) -> bool:
+        """Check if agent is currently eligible to submit a movement request."""
+        return self.profile.is_movement_eligible(timestep)
 
     # ------------------------------------------------------------------
     # Factory
@@ -128,10 +151,21 @@ class Agent:
         -------
         Agent
         """
+        prof_cfg = getattr(agent_cfg, "profile", None)
+        profile: Optional[AgentProfile] = None
+        if prof_cfg is not None:
+            if hasattr(prof_cfg, "model_dump"):
+                profile = AgentProfile.from_dict(prof_cfg.model_dump())
+            elif isinstance(prof_cfg, dict):
+                profile = AgentProfile.from_dict(prof_cfg)
+            elif isinstance(prof_cfg, AgentProfile):
+                profile = prof_cfg
+
         return cls(
             agent_id=agent_cfg.agent_id,  # type: ignore[attr-defined]
             row=agent_cfg.row,            # type: ignore[attr-defined]
             col=agent_cfg.col,            # type: ignore[attr-defined]
+            profile=profile,
         )
 
     # ------------------------------------------------------------------

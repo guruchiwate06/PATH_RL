@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any, Optional
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -52,12 +52,64 @@ class GridConfig(BaseModel):
         return self
 
 
+class AgentProfileConfig(BaseModel):
+    """
+    Configuration for an individual agent's profile.
+
+    Attributes
+    ----------
+    speed:
+        Movement frequency at cell/timestep resolution (0.0 < speed <= 1.0).
+        Default is 1.0.
+    reaction_delay:
+        Initial timesteps to delay before beginning movement (>= 0).
+        Default is 0.
+    age:
+        Optional descriptive age attribute for future derivation models.
+    input_attributes:
+        Optional dictionary of descriptive metadata for future models.
+    """
+
+    speed: Annotated[
+        float,
+        Field(
+            gt=0.0,
+            le=1.0,
+            description="Movement frequency at cell/timestep resolution (0.0 < speed <= 1.0)",
+        ),
+    ] = 1.0
+
+    reaction_delay: Annotated[
+        int,
+        Field(
+            ge=0,
+            description="Initial timesteps to remain stationary before starting movement",
+        ),
+    ] = 0
+
+    age: Optional[
+        Annotated[
+            int,
+            Field(ge=0, le=150, description="Optional descriptive age attribute"),
+        ]
+    ] = None
+
+    input_attributes: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Optional descriptive metadata for future parameterization models",
+    )
+
+
 class AgentConfig(BaseModel):
-    """Initial placement of a single agent."""
+    """Initial placement and profile of a single agent."""
 
     agent_id: str = Field(..., description="Unique identifier for this agent")
     row: Annotated[int, Field(ge=0, description="Starting row (zero-indexed)")] = 0
     col: Annotated[int, Field(ge=0, description="Starting column (zero-indexed)")] = 0
+    profile: Optional[AgentProfileConfig] = Field(
+        default=None,
+        description="Optional individual profile for heterogeneous agent capabilities",
+    )
 
 
 class SimulationParameters(BaseModel):

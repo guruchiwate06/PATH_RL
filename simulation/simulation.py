@@ -408,10 +408,22 @@ class Simulation:
         # --- 3 & 4. Build and validate MovementRequest objects --------------
         valid_requests: list[MovementRequest] = []
         invalid_agent_ids: set[str] = set()
+        reaction_delayed_ids: set[str] = set()
+        speed_delayed_ids: set[str] = set()
+
         for agent_id, to_cell in raw_requests.items():
             if agent_id not in agents_by_id:
                 continue
             agent = agents_by_id[agent_id]
+
+            # Stage 6: Profile eligibility check (reaction delay & speed)
+            if agent.profile.is_reaction_delayed(current_step):
+                reaction_delayed_ids.add(agent_id)
+                continue
+            if not agent.profile.is_speed_eligible(current_step):
+                speed_delayed_ids.add(agent_id)
+                continue
+
             req = MovementRequest(
                 agent_id=agent_id,
                 from_cell=agent.position,
@@ -494,6 +506,12 @@ class Simulation:
                 rej_reason = rr
             elif aid in invalid_agent_ids:
                 result_str = "INVALID_REQUEST"
+                rej_reason = None
+            elif aid in reaction_delayed_ids:
+                result_str = "REACTION_DELAY"
+                rej_reason = None
+            elif aid in speed_delayed_ids:
+                result_str = "SPEED_DELAY"
                 rej_reason = None
             else:
                 result_str = "NO_REQUEST"
@@ -657,6 +675,9 @@ class Simulation:
             "state": state_str,
             "evacuation_timestep": agent.evacuation_timestep,
             "waiting_steps": waiting_steps,
+            "speed": agent.speed,
+            "reaction_delay": agent.reaction_delay,
+            "profile": agent.profile.to_dict(),
             "target_exit": target_exit,
             "path_length": path_length,
             "planned_path": path,

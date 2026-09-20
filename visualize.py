@@ -549,6 +549,8 @@ class SimulationVisualizer:
             f"Agent ID     : {info['agent_id']}",
             f"Position     : {info['position']}",
             f"State        : {info['state']}",
+            f"Speed        : {info.get('speed', 1.0)}",
+            f"Delay        : {info.get('reaction_delay', 0)}",
             f"Target Exit  : {info['target_exit']}",
             f"Path Hops    : {info['path_length'] if info['path_length'] is not None else 'N/A'}",
             f"Wait Steps   : {info['waiting_steps']}",
@@ -558,12 +560,12 @@ class SimulationVisualizer:
             lines.append(f"Rejection    : {info['last_rejection_reason']}")
 
         for idx, line in enumerate(lines):
-            y_pos = 0.72 - idx * 0.12
+            y_pos = 0.76 - idx * 0.075
             if "State" in line:
-                ax.text(0.05, y_pos, "State        : ", fontsize=7.5, fontfamily="monospace", color="#334155")
-                ax.text(0.50, y_pos, info["state"], fontsize=7.5, fontfamily="monospace", fontweight="bold", color=state_color)
+                ax.text(0.05, y_pos, "State        : ", fontsize=7.0, fontfamily="monospace", color="#334155")
+                ax.text(0.50, y_pos, info["state"], fontsize=7.0, fontfamily="monospace", fontweight="bold", color=state_color)
             else:
-                ax.text(0.05, y_pos, line, fontsize=7.5, fontfamily="monospace", color="#334155")
+                ax.text(0.05, y_pos, line, fontsize=7.0, fontfamily="monospace", color="#334155")
 
     def _draw_trace(self) -> None:
         if self.ax_trace is None:

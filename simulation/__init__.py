@@ -15,11 +15,17 @@ strategy     - Concrete movement strategies (ShortestPathStrategy, ...)
 simulation   - Discrete-timestep loop coordinating all components
 metrics      - Outcome statistics collection and computation
 experiment   - Scenario runner, parameter sweeps, and export (Stage 5)
+profile      - Extensible heterogeneous agent profile system (Stage 6)
 """
 
 from evacuation_simulation.simulation.agent import Agent, AgentState
-from evacuation_simulation.simulation.config import SimulationConfig
+from evacuation_simulation.simulation.config import (
+    AgentConfig,
+    AgentProfileConfig,
+    SimulationConfig,
+)
 from evacuation_simulation.simulation.environment import Environment
+from evacuation_simulation.simulation.profile import AgentProfile
 from evacuation_simulation.simulation.experiment import (
     AggregateStats,
     ExperimentResult,
@@ -54,10 +60,13 @@ from evacuation_simulation.simulation.strategy import ShortestPathStrategy
 __all__ = [
     # config
     "SimulationConfig",
+    "AgentConfig",
+    "AgentProfileConfig",
     # environment
     "Environment",
-    # agent
+    # agent & profile
     "Agent",
+    "AgentProfile",
     # agent state
     "AgentState",
     # pathfinding

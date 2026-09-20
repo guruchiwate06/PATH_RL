@@ -652,15 +652,15 @@
 
         if (selectedAgentId && step.agents) {
           const a = step.agents.find(ag => ag.agent_id === selectedAgentId);
-          if (a) {
             inspectorContent.innerHTML = `
               <div class="info-row"><span class="info-key">Agent ID</span><span class="info-val">${a.agent_id}</span></div>
               <div class="info-row"><span class="info-key">State</span><span class="info-val" style="color: ${a.state === 'EVACUATED' ? 'var(--accent-emerald)' : a.waiting_steps > 0 ? 'var(--accent-amber)' : 'var(--accent-blue)'}">${a.state}</span></div>
               <div class="info-row"><span class="info-key">Position</span><span class="info-val">(${a.row}, ${a.col})</span></div>
+              <div class="info-row"><span class="info-key">Speed</span><span class="info-val">${a.speed !== undefined ? a.speed : 1.0}</span></div>
+              <div class="info-row"><span class="info-key">Reaction Delay</span><span class="info-val">${a.reaction_delay !== undefined ? a.reaction_delay : 0}</span></div>
               <div class="info-row"><span class="info-key">Wait Steps</span><span class="info-val">${a.waiting_steps || 0}</span></div>
               <div class="info-row"><span class="info-key">Path Steps Left</span><span class="info-val">${a.path ? a.path.length : 0}</span></div>
             `;
-          }
         } else {
           inspectorContent.innerHTML = '<div style="color: var(--text-dim); font-style: italic; text-align: center; padding: 1rem;">Click on any agent on the grid to inspect details.</div>';
         }

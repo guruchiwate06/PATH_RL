@@ -33,33 +33,36 @@ experiments around questions such as:
 
 ---
 
-## 3. Current Scope (Stage 5 — Experimental Framework)
+## 3. Current Scope (Stage 6 — Heterogeneous Agent Profile System)
 
-The system currently supports discrete-time agent movement, shortest-path navigation,
+The system supports discrete-time agent movement, shortest-path navigation,
 capacity-constrained cell occupancy and congestion dynamics, an interactive visualizer,
-and a non-invasive experimental framework for batch execution and parameter sweeps.
+an experimental runner for batch execution and parameter sweeps, and an extensible
+heterogeneous agent profile architecture (`AgentProfile`) supporting individualized
+speed and reaction delay.
 
 | Component | Status | Notes |
 |---|---|---|
 | `SimulationConfig` | ✅ Complete | Pydantic-validated JSON scenario loader |
 | `Environment` | ✅ Complete | Grid with walls, exits, neighbour queries |
-| `Agent` | ✅ Complete | Stateful entity with lifecycle states |
+| `AgentProfile` | ✅ Complete | Per-agent extensible profile (`speed`, `reaction_delay`, metadata) (Stage 6) |
+| `Agent` | ✅ Complete | Stateful entity with lifecycle states and profile delegates |
 | `NavigationGraph` | ✅ Complete | NetworkX graph over traversable cells |
 | `OccupancyMap` | ✅ Complete | Dynamic cell occupancy and capacity tracking (Stage 3) |
 | `ShortestPathStrategy` | ✅ Complete | BFS-based evacuation movement (Stage 2/3) |
-| `Simulation` | ✅ Complete | Discrete timestep loop, conflict resolution, trace generation |
+| `Simulation` | ✅ Complete | Discrete timestep loop, eligibility filtering, conflict resolution |
 | `MetricsCollector` | ✅ Complete | Per-agent event recording + comprehensive result computation |
-| Visualizer | ✅ Complete | HTML/Canvas interactive visualizer + Matplotlib snapshot/GIF export (Stage 4) |
-| `experiment.py` | ✅ Complete | Scenario runner, multi-seed repetition, parameter sweeps, export (Stage 5) |
-| Test suite | ✅ Complete | 319 passing tests across all modules |
+| Visualizer | ✅ Complete | Web visualizer (`visualize.html`) + Matplotlib snapshot/GIF export (`visualize.py`) |
+| `experiment.py` | ✅ Complete | Scenario runner, sweeps, aggregation, CSV/JSON exports (Stage 5) |
+| Test suite | ✅ Complete | 335 passing tests across all modules |
 
 ---
 
 ## 4. Current Limitations
 
 - **No dynamic hazards.** Fire, smoke, and hazardous propagation are not yet modelled.
-- **Homogeneous agents.** Heterogeneous agent capabilities (speed variations, reaction delay, panic) are not yet implemented.
-- **Single-threaded.** Experiments run sequentially in memory (sufficient for current scenario sizes).
+- **No age-based derivation formulas.** The profile architecture supports descriptive metadata (`age`), but physiological/demographic parameter derivation is reserved for a future modeling stage.
+- **Single-threaded.** Experiments run sequentially in memory (execution speed is ~0.005s/run).
 - **Rule-based.** Reinforcement learning and learned policies are not yet incorporated.
 
 ---
@@ -240,31 +243,63 @@ export_json(experiment, output_dir / "sweep_experiment.json")
 
 ---
 
-## 9. Running the Test Suite
+## 9. Heterogeneous Agent Profiles (`simulation/profile.py`)
+
+Stage 6 introduces an extensible per-agent profile architecture (`AgentProfile`) allowing each agent to possess individual operational parameters and descriptive metadata.
+
+### Core Attributes & Semantics
+
+- **`speed` ($0.0 < \text{speed} \le 1.0$)**: Movement frequency at cell/timestep resolution. Evaluated deterministically via rate accumulation:
+  - `speed = 1.0` (default): Movement opportunity every timestep.
+  - `speed = 0.5`: Movement opportunity every 2 timesteps ($t=2, 4, 6, \dots$).
+  - `speed = 0.25`: Movement opportunity every 4 timesteps ($t=4, 8, 12, \dots$).
+  - An agent never jumps more than 1 cell in a single timestep.
+- **`reaction_delay` ($\ge 0$)**: Number of initial timesteps the agent remains stationary before beginning movement ($t \le \text{reaction\_delay}$ delayed).
+- **Semantic Separation**: Reaction delay is strictly decoupled from congestion waiting (`waiting_steps`). Congestion waiting only records capacity-blocked attempts.
+- **Extensible Architecture**: The profile supports descriptive metadata (e.g. `age`, `input_attributes`, `derived_parameters`) for future demographic models without requiring simulation core changes.
+
+---
+
+## 10. Running the Test Suite
 
 ```bash
-# Run all tests (all 319 passing)
+# Run all tests (all 335 passing)
 python -m pytest
 
-# Run only experimental framework tests
-python -m pytest tests/test_experiment.py -v
+# Run profile test suite
+python -m pytest tests/test_profile.py -v
 ```
 
 ---
 
-## 10. Scenario Configuration Format
+## 11. Scenario Configuration Format
 
-
-Scenario files are JSON documents following this schema:
+Scenario files support optional per-agent `profile` blocks:
 
 ```json
 {
-  "scenario_name": "my_building",
+  "scenario_name": "heterogeneous_building",
   "grid": { "rows": 10, "cols": 10 },
   "walls": [[2, 0], [2, 1]],
   "exits": [[9, 4], [9, 5]],
   "agents": [
-    { "agent_id": "agent_0", "row": 0, "col": 0 }
+    {
+      "agent_id": "fast_agent",
+      "row": 0,
+      "col": 0,
+      "profile": { "speed": 1.0, "reaction_delay": 0 }
+    },
+    {
+      "agent_id": "slow_delayed_agent",
+      "row": 1,
+      "col": 1,
+      "profile": { "speed": 0.5, "reaction_delay": 3, "age": 70 }
+    },
+    {
+      "agent_id": "default_agent",
+      "row": 2,
+      "col": 2
+    }
   ],
   "parameters": {
     "max_timesteps": 500,
@@ -273,15 +308,14 @@ Scenario files are JSON documents following this schema:
 }
 ```
 
-Validation rules (enforced by Pydantic):
-- At least one exit must be defined.
-- Exits and walls must not overlap.
-- All agent IDs must be unique.
-- All agent starting positions must be inside the grid and not on walls.
+Validation rules:
+- Omitted `profile` defaults to baseline `speed=1.0, reaction_delay=0`.
+- `speed` must satisfy $0.0 < \text{speed} \le 1.0$.
+- `reaction_delay` must be $\ge 0$.
 
 ---
 
-## 11. Extending the System (Future Stages)
+## 12. Extending the System (Future Stages)
 
 The architecture is designed to be extended without modifying core components.
 
@@ -292,7 +326,7 @@ The architecture is designed to be extended without modifying core components.
 | Stage 3 | Cell capacity, occupancy map, and congestion dynamics | ✅ Complete |
 | Stage 4 | Interactive web visualizer & Matplotlib snapshots | ✅ Complete |
 | Stage 5 | Scenario runner, parameter sweeps, and export framework | ✅ Complete |
-| Stage 6 | Heterogeneous agents (speed, mobility, response time) | Planned |
+| Stage 6 | Heterogeneous agents (speed, reaction delay, AgentProfile) | ✅ Complete |
 | Stage 7 | Dynamic hazards (fire, smoke propagation) | Planned |
 | Stage 8 | Reinforcement learning integration | Planned |
 
@@ -302,7 +336,8 @@ to existing code.
 
 ---
 
-## 12. Dependencies
+## 13. Dependencies
+
 
 
 | Package | Version | Purpose |
