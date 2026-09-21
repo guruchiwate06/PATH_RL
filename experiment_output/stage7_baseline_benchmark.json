@@ -1,0 +1,326 @@
+{
+  "experiment_id": "stage7_validation_benchmark",
+  "run_count": 11,
+  "runs": [
+    {
+      "run_id": "bench_a_corridor_seed42",
+      "scenario_name": "open_corridor",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_A_CORRIDOR",
+        "capacity": 1,
+        "agent_count": 2,
+        "profile_type": "homogeneous_speed1.0"
+      },
+      "result": {
+        "total_agents": 2,
+        "evacuated_count": 2,
+        "non_evacuated_count": 0,
+        "total_timesteps": 10,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 9.0,
+        "min_evacuation_time": 8,
+        "max_evacuation_time": 10,
+        "total_waiting_steps": 1,
+        "mean_waiting_steps": 0.5,
+        "max_waiting_steps": 1,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 16
+      }
+    },
+    {
+      "run_id": "bench_b_two_exits_seed42",
+      "scenario_name": "two_exits",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_B_TWO_EXITS",
+        "capacity": 1,
+        "agent_count": 4,
+        "profile_type": "homogeneous_speed1.0"
+      },
+      "result": {
+        "total_agents": 4,
+        "evacuated_count": 4,
+        "non_evacuated_count": 0,
+        "total_timesteps": 4,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 3.0,
+        "min_evacuation_time": 2,
+        "max_evacuation_time": 4,
+        "total_waiting_steps": 0,
+        "mean_waiting_steps": 0.0,
+        "max_waiting_steps": 0,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 8
+      }
+    },
+    {
+      "run_id": "bench_c_bottleneck_cap1_seed42",
+      "scenario_name": "bottleneck",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_C_BOTTLENECK_CAP_1",
+        "capacity": 1,
+        "agent_count": 12,
+        "profile_type": "homogeneous_speed1.0"
+      },
+      "result": {
+        "total_agents": 12,
+        "evacuated_count": 12,
+        "non_evacuated_count": 0,
+        "total_timesteps": 29,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 18.0,
+        "min_evacuation_time": 7,
+        "max_evacuation_time": 29,
+        "total_waiting_steps": 90,
+        "mean_waiting_steps": 7.5,
+        "max_waiting_steps": 18,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 204
+      }
+    },
+    {
+      "run_id": "bench_c_bottleneck_cap2_seed42",
+      "scenario_name": "bottleneck",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_C_BOTTLENECK_CAP_2",
+        "capacity": 2,
+        "agent_count": 12,
+        "profile_type": "homogeneous_speed1.0"
+      },
+      "result": {
+        "total_agents": 12,
+        "evacuated_count": 12,
+        "non_evacuated_count": 0,
+        "total_timesteps": 18,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 12.5,
+        "min_evacuation_time": 7,
+        "max_evacuation_time": 18,
+        "total_waiting_steps": 14,
+        "mean_waiting_steps": 1.1666666666666667,
+        "max_waiting_steps": 6,
+        "max_cell_occupancy": 2,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 14
+      }
+    },
+    {
+      "run_id": "bench_c_bottleneck_cap3_seed42",
+      "scenario_name": "bottleneck",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_C_BOTTLENECK_CAP_3",
+        "capacity": 3,
+        "agent_count": 12,
+        "profile_type": "homogeneous_speed1.0"
+      },
+      "result": {
+        "total_agents": 12,
+        "evacuated_count": 12,
+        "non_evacuated_count": 0,
+        "total_timesteps": 15,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 11.0,
+        "min_evacuation_time": 7,
+        "max_evacuation_time": 15,
+        "total_waiting_steps": 1,
+        "mean_waiting_steps": 0.08333333333333333,
+        "max_waiting_steps": 1,
+        "max_cell_occupancy": 3,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 1
+      }
+    },
+    {
+      "run_id": "bench_d_speed_1.0_seed42",
+      "scenario_name": "mixed_speed_1.0",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_D_SPEED_1.0",
+        "capacity": 1,
+        "agent_count": 2,
+        "profile_type": "heterogeneous_sp0_1.0"
+      },
+      "result": {
+        "total_agents": 2,
+        "evacuated_count": 2,
+        "non_evacuated_count": 0,
+        "total_timesteps": 10,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 9.0,
+        "min_evacuation_time": 8,
+        "max_evacuation_time": 10,
+        "total_waiting_steps": 1,
+        "mean_waiting_steps": 0.5,
+        "max_waiting_steps": 1,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 16
+      }
+    },
+    {
+      "run_id": "bench_d_speed_0.5_seed42",
+      "scenario_name": "mixed_speed_0.5",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_D_SPEED_0.5",
+        "capacity": 1,
+        "agent_count": 2,
+        "profile_type": "heterogeneous_sp0_0.5"
+      },
+      "result": {
+        "total_agents": 2,
+        "evacuated_count": 2,
+        "non_evacuated_count": 0,
+        "total_timesteps": 18,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 13.0,
+        "min_evacuation_time": 8,
+        "max_evacuation_time": 18,
+        "total_waiting_steps": 0,
+        "mean_waiting_steps": 0.0,
+        "max_waiting_steps": 0,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 24
+      }
+    },
+    {
+      "run_id": "bench_d_speed_0.25_seed42",
+      "scenario_name": "mixed_speed_0.25",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_D_SPEED_0.25",
+        "capacity": 1,
+        "agent_count": 2,
+        "profile_type": "heterogeneous_sp0_0.25"
+      },
+      "result": {
+        "total_agents": 2,
+        "evacuated_count": 2,
+        "non_evacuated_count": 0,
+        "total_timesteps": 36,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 22.0,
+        "min_evacuation_time": 8,
+        "max_evacuation_time": 36,
+        "total_waiting_steps": 0,
+        "mean_waiting_steps": 0.0,
+        "max_waiting_steps": 0,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 42
+      }
+    },
+    {
+      "run_id": "bench_e_delay_0_seed42",
+      "scenario_name": "reaction_delay_0",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_E_DELAY_0",
+        "capacity": 1,
+        "agent_count": 2,
+        "profile_type": "heterogeneous_lead_delay_0"
+      },
+      "result": {
+        "total_agents": 2,
+        "evacuated_count": 2,
+        "non_evacuated_count": 0,
+        "total_timesteps": 10,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 9.0,
+        "min_evacuation_time": 8,
+        "max_evacuation_time": 10,
+        "total_waiting_steps": 1,
+        "mean_waiting_steps": 0.5,
+        "max_waiting_steps": 1,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 16
+      }
+    },
+    {
+      "run_id": "bench_e_delay_3_seed42",
+      "scenario_name": "reaction_delay_3",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_E_DELAY_3",
+        "capacity": 1,
+        "agent_count": 2,
+        "profile_type": "heterogeneous_lead_delay_3"
+      },
+      "result": {
+        "total_agents": 2,
+        "evacuated_count": 2,
+        "non_evacuated_count": 0,
+        "total_timesteps": 13,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 12.0,
+        "min_evacuation_time": 11,
+        "max_evacuation_time": 13,
+        "total_waiting_steps": 4,
+        "mean_waiting_steps": 2.0,
+        "max_waiting_steps": 4,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 22
+      }
+    },
+    {
+      "run_id": "bench_e_delay_5_seed42",
+      "scenario_name": "reaction_delay_5",
+      "seed": 42,
+      "params": {
+        "benchmark_id": "BENCH_E_DELAY_5",
+        "capacity": 1,
+        "agent_count": 2,
+        "profile_type": "heterogeneous_lead_delay_5"
+      },
+      "result": {
+        "total_agents": 2,
+        "evacuated_count": 2,
+        "non_evacuated_count": 0,
+        "total_timesteps": 15,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 14.0,
+        "min_evacuation_time": 13,
+        "max_evacuation_time": 15,
+        "total_waiting_steps": 6,
+        "mean_waiting_steps": 3.0,
+        "max_waiting_steps": 6,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 26
+      }
+    }
+  ],
+  "aggregate": {
+    "run_count": 11,
+    "mean_evacuation_time_mean": 12.045454545454545,
+    "mean_evacuation_time_min": 3.0,
+    "mean_evacuation_time_max": 22.0,
+    "mean_evacuation_time_std": 5.002272210978454,
+    "mean_evacuation_time_median": 12.0,
+    "evacuation_rate_mean": 1.0,
+    "evacuation_rate_min": 1.0,
+    "evacuation_rate_max": 1.0,
+    "total_timesteps_mean": 16.181818181818183,
+    "total_timesteps_min": 4,
+    "total_timesteps_max": 36,
+    "total_waiting_steps_mean": 10.727272727272727,
+    "total_waiting_steps_min": 0,
+    "total_waiting_steps_max": 90,
+    "congested_cell_steps_mean": 35.36363636363637,
+    "congested_cell_steps_min": 1,
+    "congested_cell_steps_max": 204,
+    "max_occupancy_ratio_mean": 1.0,
+    "max_occupancy_ratio_min": 1.0,
+    "max_occupancy_ratio_max": 1.0
+  }
+}

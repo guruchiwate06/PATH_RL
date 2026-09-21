@@ -1,0 +1,12 @@
+run_id,scenario_name,seed,agent_count,benchmark_id,capacity,profile_type,total_agents,evacuated_count,non_evacuated_count,total_timesteps,evacuation_rate,mean_evacuation_time,min_evacuation_time,max_evacuation_time,total_waiting_steps,mean_waiting_steps,max_waiting_steps,max_cell_occupancy,max_occupancy_ratio,congested_cell_steps
+bench_a_corridor_seed42,open_corridor,42,2,BENCH_A_CORRIDOR,1,homogeneous_speed1.0,2,2,0,10,1.0,9.0,8,10,1,0.5,1,1,1.0,16
+bench_b_two_exits_seed42,two_exits,42,4,BENCH_B_TWO_EXITS,1,homogeneous_speed1.0,4,4,0,4,1.0,3.0,2,4,0,0.0,0,1,1.0,8
+bench_c_bottleneck_cap1_seed42,bottleneck,42,12,BENCH_C_BOTTLENECK_CAP_1,1,homogeneous_speed1.0,12,12,0,29,1.0,18.0,7,29,90,7.5,18,1,1.0,204
+bench_c_bottleneck_cap2_seed42,bottleneck,42,12,BENCH_C_BOTTLENECK_CAP_2,2,homogeneous_speed1.0,12,12,0,18,1.0,12.5,7,18,14,1.1666666666666667,6,2,1.0,14
+bench_c_bottleneck_cap3_seed42,bottleneck,42,12,BENCH_C_BOTTLENECK_CAP_3,3,homogeneous_speed1.0,12,12,0,15,1.0,11.0,7,15,1,0.08333333333333333,1,3,1.0,1
+bench_d_speed_1.0_seed42,mixed_speed_1.0,42,2,BENCH_D_SPEED_1.0,1,heterogeneous_sp0_1.0,2,2,0,10,1.0,9.0,8,10,1,0.5,1,1,1.0,16
+bench_d_speed_0.5_seed42,mixed_speed_0.5,42,2,BENCH_D_SPEED_0.5,1,heterogeneous_sp0_0.5,2,2,0,18,1.0,13.0,8,18,0,0.0,0,1,1.0,24
+bench_d_speed_0.25_seed42,mixed_speed_0.25,42,2,BENCH_D_SPEED_0.25,1,heterogeneous_sp0_0.25,2,2,0,36,1.0,22.0,8,36,0,0.0,0,1,1.0,42
+bench_e_delay_0_seed42,reaction_delay_0,42,2,BENCH_E_DELAY_0,1,heterogeneous_lead_delay_0,2,2,0,10,1.0,9.0,8,10,1,0.5,1,1,1.0,16
+bench_e_delay_3_seed42,reaction_delay_3,42,2,BENCH_E_DELAY_3,1,heterogeneous_lead_delay_3,2,2,0,13,1.0,12.0,11,13,4,2.0,4,1,1.0,22
+bench_e_delay_5_seed42,reaction_delay_5,42,2,BENCH_E_DELAY_5,1,heterogeneous_lead_delay_5,2,2,0,15,1.0,14.0,13,15,6,3.0,6,1,1.0,26

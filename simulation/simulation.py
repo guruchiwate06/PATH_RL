@@ -392,6 +392,9 @@ class Simulation:
         agents_by_id: dict[str, Agent] = {
             a.agent_id: a for a in active_agents
         }
+        positions_before: dict[str, GridCell] = {
+            a.agent_id: a.position for a in active_agents
+        }
 
         # --- 2. Collect raw movement requests from strategy -----------------
         raw_requests: dict[str, GridCell] = (
@@ -520,7 +523,7 @@ class Simulation:
             agent_results.append(
                 AgentStepResult(
                     agent_id=aid,
-                    position_before=ag_before.position,
+                    position_before=positions_before[aid],
                     requested=requested,
                     position_after=pos_after,
                     result=result_str,

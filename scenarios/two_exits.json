@@ -1,0 +1,55 @@
+{
+  "scenario_name": "two_exits",
+  "grid": {
+    "rows": 5,
+    "cols": 9
+  },
+  "walls": [],
+  "exits": [
+    [2, 0],
+    [2, 8]
+  ],
+  "agents": [
+    {
+      "agent_id": "agent_west",
+      "row": 2,
+      "col": 2,
+      "profile": {
+        "speed": 1.0,
+        "reaction_delay": 0
+      }
+    },
+    {
+      "agent_id": "agent_east",
+      "row": 2,
+      "col": 6,
+      "profile": {
+        "speed": 1.0,
+        "reaction_delay": 0
+      }
+    },
+    {
+      "agent_id": "agent_north_west",
+      "row": 1,
+      "col": 3,
+      "profile": {
+        "speed": 1.0,
+        "reaction_delay": 0
+      }
+    },
+    {
+      "agent_id": "agent_south_east",
+      "row": 3,
+      "col": 5,
+      "profile": {
+        "speed": 1.0,
+        "reaction_delay": 0
+      }
+    }
+  ],
+  "parameters": {
+    "max_timesteps": 50,
+    "random_seed": 42,
+    "default_cell_capacity": 1
+  }
+}

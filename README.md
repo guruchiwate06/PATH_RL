@@ -33,13 +33,14 @@ experiments around questions such as:
 
 ---
 
-## 3. Current Scope (Stage 6 — Heterogeneous Agent Profile System)
+## 3. Current Scope (Stage 7 — Internal Validation & Controlled Experiment Framework)
 
 The system supports discrete-time agent movement, shortest-path navigation,
 capacity-constrained cell occupancy and congestion dynamics, an interactive visualizer,
-an experimental runner for batch execution and parameter sweeps, and an extensible
+an experimental runner for batch execution and parameter sweeps, an extensible
 heterogeneous agent profile architecture (`AgentProfile`) supporting individualized
-speed and reaction delay.
+speed and reaction delay, and a comprehensive internal validation framework establishing
+simulation invariants, parameter sensitivity, and reproducible benchmarks.
 
 | Component | Status | Notes |
 |---|---|---|
@@ -54,7 +55,8 @@ speed and reaction delay.
 | `MetricsCollector` | ✅ Complete | Per-agent event recording + comprehensive result computation |
 | Visualizer | ✅ Complete | Web visualizer (`visualize.html`) + Matplotlib snapshot/GIF export (`visualize.py`) |
 | `experiment.py` | ✅ Complete | Scenario runner, sweeps, aggregation, CSV/JSON exports (Stage 5) |
-| Test suite | ✅ Complete | 335 passing tests across all modules |
+| Validation Suite | ✅ Complete | Invariants A-J, OFAT sweeps, benchmarks (`stage7_validation_demo.py`) (Stage 7) |
+| Test suite | ✅ Complete | 361 passing tests across 13 modules |
 
 ---
 
@@ -315,7 +317,53 @@ Validation rules:
 
 ---
 
-## 12. Extending the System (Future Stages)
+## 12. Stage 7 — Internal Validation & Controlled Experiment Framework
+
+Stage 7 establishes the **internal correctness, reproducibility, and parameter sensitivity** of the simulation under controlled computational experiments.
+
+### Software Verification vs. Real-World Validation
+> [!IMPORTANT]
+> **Boundary of Claims:**
+> This framework performs **software verification and internal model validation**. It confirms that:
+> 1. Implementation invariants and physical capacity bounds hold strictly.
+> 2. The simulation responds deterministically and predictably to parameter changes.
+> 3. Results are bitwise reproducible given identical initial conditions.
+>
+> **This does NOT validate real-world human evacuation behavior.** The simulation makes no claim of empirical fidelity to actual pedestrian or panic dynamics and is not calibrated against real-world evacuation datasets.
+
+### Invariants Verified (Invariants A through J)
+The validation suite ([test_validation.py](file:///f:/Projects/RL_ENV/evacuation_simulation/tests/test_validation.py)) verifies 10 structural invariants at every timestep:
+- **Invariant A (Position Validity):** Agents never occupy walls, non-existent cells, or invalid coordinates.
+- **Invariant B (Capacity Invariant):** $\forall t, c: \text{occupancy}(c) \le \text{capacity}(c)$.
+- **Invariant C (Occupancy Consistency):** The dynamic `OccupancyMap` exactly agrees with active agent coordinates.
+- **Invariant D (Evacuated-Agent Consistency):** Evacuated agents have valid timestamps ($t \ge 1$), zero occupancy footprint, and submit no further movement requests.
+- **Invariant E (Movement Validity):** Approved movements originate from current cell, move to an adjacent 4-connected passable cell, and respect target cell capacity.
+- **Invariant F (Determinism):** Identical configurations and seeds yield bitwise-identical simulation results.
+- **Invariant G (Reproducibility):** Repeated experiment runner executions produce identical aggregate metrics.
+- **Invariant H (Monotonic Evacuation Count):** $\text{evacuated\_count}(t+1) \ge \text{evacuated\_count}(t)$.
+- **Invariant I (Evacuation Time Validity):** Evacuation timestamps are strictly positive integers.
+- **Invariant J (Waiting Validity):** Cumulative and per-agent waiting steps are strictly non-negative.
+
+### Controlled Benchmark Scenarios
+Five standardized benchmark scenarios are provided to isolate cause and effect:
+1. **Scenario A — Open Corridor ([corridor.json](file:///f:/Projects/RL_ENV/evacuation_simulation/scenarios/corridor.json)):** Predictable 1D travel time. Evaluates non-credited simultaneous vacating clearance.
+2. **Scenario B — Dual Exits ([two_exits.json](file:///f:/Projects/RL_ENV/evacuation_simulation/scenarios/two_exits.json)):** Verifies shortest-path exit partitioning and routing.
+3. **Scenario C — Bottleneck Capacity Scaling ([bottleneck.json](file:///f:/Projects/RL_ENV/evacuation_simulation/scenarios/bottleneck.json)):** Compares capacity constraints ($C \in \{1, 2, 3\}$).
+4. **Scenario D — Mixed-Speed Populations:** Compares uniform speed ($1.0$) vs. reduced speeds ($0.5, 0.25$).
+5. **Scenario E — Reaction Delay Isolation:** Confirms reaction delay shifts movement activation without incorrectly contributing to capacity waiting metrics.
+
+### Benchmark Runner & Dataset Generation
+To run the automated validation benchmarks and generate baseline datasets:
+```bash
+python stage7_validation_demo.py
+```
+Output artifacts are saved to:
+- `experiment_output/stage7_baseline_benchmark.csv`
+- `experiment_output/stage7_baseline_benchmark.json`
+
+---
+
+## 13. Extending the System (Future Stages)
 
 The architecture is designed to be extended without modifying core components.
 
@@ -327,8 +375,9 @@ The architecture is designed to be extended without modifying core components.
 | Stage 4 | Interactive web visualizer & Matplotlib snapshots | ✅ Complete |
 | Stage 5 | Scenario runner, parameter sweeps, and export framework | ✅ Complete |
 | Stage 6 | Heterogeneous agents (speed, reaction delay, AgentProfile) | ✅ Complete |
-| Stage 7 | Dynamic hazards (fire, smoke propagation) | Planned |
-| Stage 8 | Reinforcement learning integration | Planned |
+| Stage 7 | Internal validation, invariants, and controlled experiments | ✅ Complete |
+| Stage 8 | Dynamic hazards (fire, smoke propagation) | Planned |
+| Stage 9 | Reinforcement learning integration | Planned |
 
 New movement strategies implement the `MovementStrategy` protocol and are
 injected into `Simulation(config, movement_strategy=...)` with no changes
