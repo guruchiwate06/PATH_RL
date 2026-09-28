@@ -1,0 +1,107 @@
+{
+  "experiment_id": "stage7_exit_config_experiment",
+  "run_count": 3,
+  "runs": [
+    {
+      "run_id": "exit_exp_reference_seed42",
+      "scenario_name": "floor_reference",
+      "seed": 42,
+      "params": {
+        "role": "reference",
+        "exit_config": "right_exit",
+        "exits": "[(1,11)]"
+      },
+      "result": {
+        "total_agents": 6,
+        "evacuated_count": 6,
+        "non_evacuated_count": 0,
+        "total_timesteps": 11,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 6.0,
+        "min_evacuation_time": 1,
+        "max_evacuation_time": 11,
+        "total_waiting_steps": 15,
+        "mean_waiting_steps": 2.5,
+        "max_waiting_steps": 5,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 30
+      }
+    },
+    {
+      "run_id": "exit_exp_alt_A_seed42",
+      "scenario_name": "floor_alternative_A",
+      "seed": 42,
+      "params": {
+        "role": "alternative_A",
+        "exit_config": "left_exit",
+        "exits": "[(1,0)]"
+      },
+      "result": {
+        "total_agents": 6,
+        "evacuated_count": 6,
+        "non_evacuated_count": 0,
+        "total_timesteps": 15,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 10.0,
+        "min_evacuation_time": 5,
+        "max_evacuation_time": 15,
+        "total_waiting_steps": 15,
+        "mean_waiting_steps": 2.5,
+        "max_waiting_steps": 5,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 54
+      }
+    },
+    {
+      "run_id": "exit_exp_alt_B_seed42",
+      "scenario_name": "floor_alternative_B",
+      "seed": 42,
+      "params": {
+        "role": "alternative_B",
+        "exit_config": "center_exit",
+        "exits": "[(1,5)]"
+      },
+      "result": {
+        "total_agents": 6,
+        "evacuated_count": 6,
+        "non_evacuated_count": 0,
+        "total_timesteps": 10,
+        "evacuation_rate": 1.0,
+        "mean_evacuation_time": 5.166666666666667,
+        "min_evacuation_time": 1,
+        "max_evacuation_time": 10,
+        "total_waiting_steps": 15,
+        "mean_waiting_steps": 2.5,
+        "max_waiting_steps": 5,
+        "max_cell_occupancy": 1,
+        "max_occupancy_ratio": 1.0,
+        "congested_cell_steps": 25
+      }
+    }
+  ],
+  "aggregate": {
+    "run_count": 3,
+    "mean_evacuation_time_mean": 7.055555555555555,
+    "mean_evacuation_time_min": 5.166666666666667,
+    "mean_evacuation_time_max": 10.0,
+    "mean_evacuation_time_std": 2.5837813231629965,
+    "mean_evacuation_time_median": 6.0,
+    "evacuation_rate_mean": 1.0,
+    "evacuation_rate_min": 1.0,
+    "evacuation_rate_max": 1.0,
+    "total_timesteps_mean": 12,
+    "total_timesteps_min": 10,
+    "total_timesteps_max": 15,
+    "total_waiting_steps_mean": 15,
+    "total_waiting_steps_min": 15,
+    "total_waiting_steps_max": 15,
+    "congested_cell_steps_mean": 36.333333333333336,
+    "congested_cell_steps_min": 25,
+    "congested_cell_steps_max": 54,
+    "max_occupancy_ratio_mean": 1.0,
+    "max_occupancy_ratio_min": 1.0,
+    "max_occupancy_ratio_max": 1.0
+  }
+}

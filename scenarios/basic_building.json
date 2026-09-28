@@ -1,27 +1,132 @@
 {
-  "scenario_name": "basic_building",
-  "grid": {
-    "rows": 10,
-    "cols": 10
-  },
-  "walls": [
-    [4, 0], [4, 1], [4, 2], [4, 3],
-    [4, 6], [4, 7], [4, 8], [4, 9]
-  ],
-  "exits": [
-    [9, 4],
-    [9, 5]
-  ],
-  "agents": [
-    {"agent_id": "agent_0", "row": 0, "col": 1},
-    {"agent_id": "agent_1", "row": 0, "col": 8},
-    {"agent_id": "agent_2", "row": 2, "col": 4},
-    {"agent_id": "agent_3", "row": 6, "col": 1},
-    {"agent_id": "agent_4", "row": 6, "col": 8},
-    {"agent_id": "agent_5", "row": 7, "col": 5}
-  ],
-  "parameters": {
-    "max_timesteps": 200,
-    "random_seed": 42
-  }
+    "scenario_name": "basic_building",
+    "parameters": {
+        "max_timesteps": 200,
+        "random_seed": 42
+    },
+    "floor_plan": {
+        "grid": {
+            "rows": 10,
+            "cols": 10
+        },
+        "walls": [
+            [
+                4,
+                0
+            ],
+            [
+                4,
+                1
+            ],
+            [
+                4,
+                2
+            ],
+            [
+                4,
+                3
+            ],
+            [
+                4,
+                6
+            ],
+            [
+                4,
+                7
+            ],
+            [
+                4,
+                8
+            ],
+            [
+                4,
+                9
+            ]
+        ],
+        "doors": [
+            {
+                "door_id": "door_north_1",
+                "position": [0, 4],
+                "width": 1.0,
+                "exterior": true
+            },
+            {
+                "door_id": "door_north_2",
+                "position": [0, 5],
+                "width": 1.0,
+                "exterior": true
+            },
+            {
+                "door_id": "door_south_1",
+                "position": [9, 4],
+                "width": 1.2,
+                "exterior": true
+            },
+            {
+                "door_id": "door_south_2",
+                "position": [9, 5],
+                "width": 1.2,
+                "exterior": true
+            },
+            {
+                "door_id": "door_interior_1",
+                "position": [4, 4],
+                "width": 1.2,
+                "exterior": false
+            },
+            {
+                "door_id": "door_interior_2",
+                "position": [4, 5],
+                "width": 1.2,
+                "exterior": false
+            }
+        ]
+    },
+    "exit_configuration": {
+        "configuration_id": "reference",
+        "exits": [
+            [
+                9,
+                4
+            ],
+            [
+                9,
+                5
+            ]
+        ]
+    },
+    "occupants": {
+        "agents": [
+            {
+                "agent_id": "agent_0",
+                "row": 0,
+                "col": 1
+            },
+            {
+                "agent_id": "agent_1",
+                "row": 0,
+                "col": 8
+            },
+            {
+                "agent_id": "agent_2",
+                "row": 2,
+                "col": 4
+            },
+            {
+                "agent_id": "agent_3",
+                "row": 6,
+                "col": 1
+            },
+            {
+                "agent_id": "agent_4",
+                "row": 6,
+                "col": 8
+            },
+            {
+                "agent_id": "agent_5",
+                "row": 7,
+                "col": 5
+            }
+        ]
+    }
 }

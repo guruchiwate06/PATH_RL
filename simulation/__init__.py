@@ -22,9 +22,18 @@ from evacuation_simulation.simulation.agent import Agent, AgentState
 from evacuation_simulation.simulation.config import (
     AgentConfig,
     AgentProfileConfig,
+    DoorOpening,
+    ExitConfiguration,
+    FloorPlan,
+    OccupantScenario,
     SimulationConfig,
 )
 from evacuation_simulation.simulation.environment import Environment
+from evacuation_simulation.simulation.generation import (
+    CandidateExit,
+    generate_candidate_exits,
+    generate_exit_configurations,
+)
 from evacuation_simulation.simulation.profile import AgentProfile
 from evacuation_simulation.simulation.experiment import (
     AggregateStats,
@@ -58,10 +67,18 @@ from evacuation_simulation.simulation.simulation import (
 from evacuation_simulation.simulation.strategy import ShortestPathStrategy
 
 __all__ = [
-    # config
+    # config & geometry (Stage 8 & 10)
     "SimulationConfig",
     "AgentConfig",
     "AgentProfileConfig",
+    "DoorOpening",
+    "FloorPlan",
+    "ExitConfiguration",
+    "OccupantScenario",
+    # candidate exit generation (Stage 9 & 10)
+    "CandidateExit",
+    "generate_candidate_exits",
+    "generate_exit_configurations",
     # environment
     "Environment",
     # agent & profile

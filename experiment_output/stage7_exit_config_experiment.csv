@@ -1,0 +1,4 @@
+run_id,scenario_name,seed,exit_config,exits,role,total_agents,evacuated_count,non_evacuated_count,total_timesteps,evacuation_rate,mean_evacuation_time,min_evacuation_time,max_evacuation_time,total_waiting_steps,mean_waiting_steps,max_waiting_steps,max_cell_occupancy,max_occupancy_ratio,congested_cell_steps
+exit_exp_reference_seed42,floor_reference,42,right_exit,"[(1,11)]",reference,6,6,0,11,1.0,6.0,1,11,15,2.5,5,1,1.0,30
+exit_exp_alt_A_seed42,floor_alternative_A,42,left_exit,"[(1,0)]",alternative_A,6,6,0,15,1.0,10.0,5,15,15,2.5,5,1,1.0,54
+exit_exp_alt_B_seed42,floor_alternative_B,42,center_exit,"[(1,5)]",alternative_B,6,6,0,10,1.0,5.166666666666667,1,10,15,2.5,5,1,1.0,25

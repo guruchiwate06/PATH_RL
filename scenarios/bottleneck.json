@@ -1,98 +1,131 @@
 {
-  "scenario_name": "bottleneck",
-  "grid": {
-    "rows": 10,
-    "cols": 5
-  },
-  "walls": [
-    [
-      4,
-      0
-    ],
-    [
-      4,
-      1
-    ],
-    [
-      4,
-      3
-    ],
-    [
-      4,
-      4
-    ]
-  ],
-  "exits": [
-    [
-      9,
-      2
-    ]
-  ],
-  "agents": [
-    {
-      "agent_id": "a00",
-      "row": 0,
-      "col": 0
+    "scenario_name": "bottleneck",
+    "parameters": {
+        "max_timesteps": 200,
+        "random_seed": 42,
+        "default_cell_capacity": 1
     },
-    {
-      "agent_id": "a01",
-      "row": 0,
-      "col": 1
+    "floor_plan": {
+        "grid": {
+            "rows": 10,
+            "cols": 5
+        },
+        "walls": [
+            [
+                4,
+                0
+            ],
+            [
+                4,
+                1
+            ],
+            [
+                4,
+                3
+            ],
+            [
+                4,
+                4
+            ]
+        ],
+        "doors": [
+            {
+                "door_id": "door_north",
+                "position": [0, 2],
+                "width": 1.0,
+                "exterior": true
+            },
+            {
+                "door_id": "door_south_main",
+                "position": [9, 2],
+                "width": 1.2,
+                "exterior": true
+            },
+            {
+                "door_id": "door_south_side",
+                "position": [9, 1],
+                "width": 1.0,
+                "exterior": true
+            },
+            {
+                "door_id": "door_bottleneck_corridor",
+                "position": [4, 2],
+                "width": 0.9,
+                "exterior": false
+            }
+        ]
     },
-    {
-      "agent_id": "a02",
-      "row": 0,
-      "col": 2
+    "exit_configuration": {
+        "configuration_id": "reference",
+        "exits": [
+            [
+                9,
+                2
+            ]
+        ]
     },
-    {
-      "agent_id": "a03",
-      "row": 0,
-      "col": 3
-    },
-    {
-      "agent_id": "a04",
-      "row": 0,
-      "col": 4
-    },
-    {
-      "agent_id": "a05",
-      "row": 1,
-      "col": 0
-    },
-    {
-      "agent_id": "a06",
-      "row": 1,
-      "col": 1
-    },
-    {
-      "agent_id": "a07",
-      "row": 1,
-      "col": 2
-    },
-    {
-      "agent_id": "a08",
-      "row": 1,
-      "col": 3
-    },
-    {
-      "agent_id": "a09",
-      "row": 1,
-      "col": 4
-    },
-    {
-      "agent_id": "a10",
-      "row": 2,
-      "col": 0
-    },
-    {
-      "agent_id": "a11",
-      "row": 2,
-      "col": 2
+    "occupants": {
+        "agents": [
+            {
+                "agent_id": "a00",
+                "row": 0,
+                "col": 0
+            },
+            {
+                "agent_id": "a01",
+                "row": 0,
+                "col": 1
+            },
+            {
+                "agent_id": "a02",
+                "row": 0,
+                "col": 2
+            },
+            {
+                "agent_id": "a03",
+                "row": 0,
+                "col": 3
+            },
+            {
+                "agent_id": "a04",
+                "row": 0,
+                "col": 4
+            },
+            {
+                "agent_id": "a05",
+                "row": 1,
+                "col": 0
+            },
+            {
+                "agent_id": "a06",
+                "row": 1,
+                "col": 1
+            },
+            {
+                "agent_id": "a07",
+                "row": 1,
+                "col": 2
+            },
+            {
+                "agent_id": "a08",
+                "row": 1,
+                "col": 3
+            },
+            {
+                "agent_id": "a09",
+                "row": 1,
+                "col": 4
+            },
+            {
+                "agent_id": "a10",
+                "row": 2,
+                "col": 0
+            },
+            {
+                "agent_id": "a11",
+                "row": 2,
+                "col": 2
+            }
+        ]
     }
-  ],
-  "parameters": {
-    "max_timesteps": 200,
-    "random_seed": 42,
-    "default_cell_capacity": 1
-  }
 }

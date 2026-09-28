@@ -33,18 +33,22 @@ experiments around questions such as:
 
 ---
 
-## 3. Current Scope (Stage 7 — Internal Validation & Controlled Experiment Framework)
+## 3. Current Scope (Stage 9 — Candidate Exit Generation & Feasibility)
 
 The system supports discrete-time agent movement, shortest-path navigation,
 capacity-constrained cell occupancy and congestion dynamics, an interactive visualizer,
 an experimental runner for batch execution and parameter sweeps, an extensible
 heterogeneous agent profile architecture (`AgentProfile`) supporting individualized
-speed and reaction delay, and a comprehensive internal validation framework establishing
-simulation invariants, parameter sensitivity, and reproducible benchmarks.
+speed and reaction delay, a comprehensive internal validation framework, an 
+explicit separation of building geometry (`FloorPlan`) from exit routing (`ExitConfiguration`),
+and an independent generator for geometrically possible `CandidateExit` locations.
 
 | Component | Status | Notes |
 |---|---|---|
-| `SimulationConfig` | ✅ Complete | Pydantic-validated JSON scenario loader |
+| `SimulationConfig` | ✅ Complete | Nested Pydantic-validated JSON scenario loader (Stage 8) |
+| `FloorPlan` | ✅ Complete | Decoupled static building geometry (Stage 8) |
+| `ExitConfiguration` | ✅ Complete | Decoupled exit placement configuration (Stage 8) |
+| `generation.py` | ✅ Complete | `CandidateExit` and config generators (`generate_candidate_exits`) (Stage 9) |
 | `Environment` | ✅ Complete | Grid with walls, exits, neighbour queries |
 | `AgentProfile` | ✅ Complete | Per-agent extensible profile (`speed`, `reaction_delay`, metadata) (Stage 6) |
 | `Agent` | ✅ Complete | Stateful entity with lifecycle states and profile delegates |
@@ -56,7 +60,7 @@ simulation invariants, parameter sensitivity, and reproducible benchmarks.
 | Visualizer | ✅ Complete | Web visualizer (`visualize.html`) + Matplotlib snapshot/GIF export (`visualize.py`) |
 | `experiment.py` | ✅ Complete | Scenario runner, sweeps, aggregation, CSV/JSON exports (Stage 5) |
 | Validation Suite | ✅ Complete | Invariants A-J, OFAT sweeps, benchmarks (`stage7_validation_demo.py`) (Stage 7) |
-| Test suite | ✅ Complete | 361 passing tests across 13 modules |
+| Test suite | ✅ Complete | 411 passing tests across 15 modules |
 
 ---
 
@@ -276,33 +280,41 @@ python -m pytest tests/test_profile.py -v
 
 ## 11. Scenario Configuration Format
 
-Scenario files support optional per-agent `profile` blocks:
+Scenario files (since Stage 8) cleanly separate the building geometry (`floor_plan`), 
+exit placement (`exit_configuration`), and occupants (`occupants`).
 
 ```json
 {
   "scenario_name": "heterogeneous_building",
-  "grid": { "rows": 10, "cols": 10 },
-  "walls": [[2, 0], [2, 1]],
-  "exits": [[9, 4], [9, 5]],
-  "agents": [
-    {
-      "agent_id": "fast_agent",
-      "row": 0,
-      "col": 0,
-      "profile": { "speed": 1.0, "reaction_delay": 0 }
-    },
-    {
-      "agent_id": "slow_delayed_agent",
-      "row": 1,
-      "col": 1,
-      "profile": { "speed": 0.5, "reaction_delay": 3, "age": 70 }
-    },
-    {
-      "agent_id": "default_agent",
-      "row": 2,
-      "col": 2
-    }
-  ],
+  "floor_plan": {
+    "grid": { "rows": 10, "cols": 10 },
+    "walls": [[2, 0], [2, 1]]
+  },
+  "exit_configuration": {
+    "configuration_id": "reference",
+    "exits": [[9, 4], [9, 5]]
+  },
+  "occupants": {
+    "agents": [
+      {
+        "agent_id": "fast_agent",
+        "row": 0,
+        "col": 0,
+        "profile": { "speed": 1.0, "reaction_delay": 0 }
+      },
+      {
+        "agent_id": "slow_delayed_agent",
+        "row": 1,
+        "col": 1,
+        "profile": { "speed": 0.5, "reaction_delay": 3, "age": 70 }
+      },
+      {
+        "agent_id": "default_agent",
+        "row": 2,
+        "col": 2
+      }
+    ]
+  },
   "parameters": {
     "max_timesteps": 500,
     "random_seed": 42
@@ -317,9 +329,9 @@ Validation rules:
 
 ---
 
-## 12. Stage 7 — Internal Validation & Controlled Experiment Framework
+## 12. Stage 7 — Baseline Validation & Exit-Configuration Readiness
 
-Stage 7 establishes the **internal correctness, reproducibility, and parameter sensitivity** of the simulation under controlled computational experiments.
+Stage 7 establishes the **internal correctness, reproducibility, and exit-configuration readiness** of the simulation. The key goal is to prove the simulator can evaluate different exit configurations under otherwise identical conditions — the foundational capability for Stage 8+ exit optimization.
 
 ### Software Verification vs. Real-World Validation
 > [!IMPORTANT]
@@ -328,6 +340,7 @@ Stage 7 establishes the **internal correctness, reproducibility, and parameter s
 > 1. Implementation invariants and physical capacity bounds hold strictly.
 > 2. The simulation responds deterministically and predictably to parameter changes.
 > 3. Results are bitwise reproducible given identical initial conditions.
+> 4. The same floor plan with different exit positions produces measurably different outcomes.
 >
 > **This does NOT validate real-world human evacuation behavior.** The simulation makes no claim of empirical fidelity to actual pedestrian or panic dynamics and is not calibrated against real-world evacuation datasets.
 
@@ -345,43 +358,221 @@ The validation suite ([test_validation.py](file:///f:/Projects/RL_ENV/evacuation
 - **Invariant J (Waiting Validity):** Cumulative and per-agent waiting steps are strictly non-negative.
 
 ### Controlled Benchmark Scenarios
-Five standardized benchmark scenarios are provided to isolate cause and effect:
+Five standardized benchmark scenarios isolate cause and effect:
 1. **Scenario A — Open Corridor ([corridor.json](file:///f:/Projects/RL_ENV/evacuation_simulation/scenarios/corridor.json)):** Predictable 1D travel time. Evaluates non-credited simultaneous vacating clearance.
 2. **Scenario B — Dual Exits ([two_exits.json](file:///f:/Projects/RL_ENV/evacuation_simulation/scenarios/two_exits.json)):** Verifies shortest-path exit partitioning and routing.
 3. **Scenario C — Bottleneck Capacity Scaling ([bottleneck.json](file:///f:/Projects/RL_ENV/evacuation_simulation/scenarios/bottleneck.json)):** Compares capacity constraints ($C \in \{1, 2, 3\}$).
-4. **Scenario D — Mixed-Speed Populations:** Compares uniform speed ($1.0$) vs. reduced speeds ($0.5, 0.25$).
+4. **Scenario D — Mixed-Speed Populations:** Confirms speed=0.5 doubles travel time; speed=0.25 quadruples it.
 5. **Scenario E — Reaction Delay Isolation:** Confirms reaction delay shifts movement activation without incorrectly contributing to capacity waiting metrics.
 
-### Benchmark Runner & Dataset Generation
-To run the automated validation benchmarks and generate baseline datasets:
-```bash
-python stage7_validation_demo.py
+### Critical Stage 7 Experiment: Same Floor Plan, Different Exit Configuration
+
+The most important Stage 7 deliverable: the simulator can evaluate different exit configurations while holding **everything else constant**.
+
+Experiment setup:
+- **Floor plan:** 3×12 corridor, walls at rows 0 and 2 (fixed)
+- **Agents:** 6 agents at columns 5–10 (fixed)
+- **Seed:** 42 (fixed)
+- **Only varies:** exit positions
+
+| Configuration | Exits | Total Timesteps | Mean Evac Time | Total Wait |
+|---|---|---|---|---|
+| reference (right exit) | `(1, 11)` | 11 | 6.0 | 15 |
+| alternative_A (left exit) | `(1, 0)` | 15 | 10.0 | 15 |
+| alternative_B (center exit) | `(1, 5)` | 10 | 5.2 | 15 |
+
+**Key observation:** Same floor plan + same agents + same seed + **different exits** → measurably different total simulation time and mean evacuation time.
+
+> [!NOTE]
+> Reference exits are **NOT** claimed to be optimal. They are a reproducible comparison baseline. The future optimization stages will search for configurations that improve on this baseline.
+
+### Per-Exit Utilization Tracking
+
+As of Stage 7, `SimulationResult` includes `per_exit_utilization: dict[tuple[int, int], int]` — a count of how many agents evacuated via each exit cell. This enables exit-load analysis for future evaluation.
+
+```python
+result.per_exit_utilization  # e.g. {(1, 11): 6}  or  {(2, 0): 2, (2, 8): 4}
 ```
-Output artifacts are saved to:
-- `experiment_output/stage7_baseline_benchmark.csv`
-- `experiment_output/stage7_baseline_benchmark.json`
+
+### Reference Exit Configuration — BenchmarkConfig
+
+A lightweight `BenchmarkConfig` dataclass (`simulation/benchmark.py`) identifies named reference benchmarks:
+
+```python
+from evacuation_simulation.simulation.benchmark import BenchmarkConfig
+
+bc = BenchmarkConfig(
+    benchmark_id="BENCH_TWO_EXITS_V1",
+    scenario_name="two_exits",
+    reference_exits=[(2, 0), (2, 8)],
+    seed=42,
+    description="Two-exit open room — 4 agents, split routing baseline.",
+)
+```
+
+`BenchmarkConfig` stores **known/reference exits only**. It makes no optimality claim.
+
+### Heterogeneous Agent Validation
+
+Stage 6 profiles are formally verified:
+- `speed=0.5` agent takes exactly 2× the timesteps of a `speed=1.0` agent on the same path
+- `reaction_delay=N` shifts evacuation time by exactly N timesteps without inflating capacity wait counters
+- System-level cascade: delaying a leading agent propagates the delay to all trailing agents in a single-file queue
+
+### Measured Performance Baseline
+
+Actual throughput on development hardware (single-threaded, Python 3.13):
+
+| Scenario | Agents | ms/run | runs/second |
+|---|---|---|---|
+| Basic building (10×10) | 6 | ~4 ms | ~250/s |
+| Bottleneck (10×5) | 12 | ~5 ms | ~210/s |
+| Two exits (5×9) | 4 | ~1 ms | ~1000/s |
+| Open corridor (3×10) | 2 | ~0.4 ms | ~2500/s |
+| Heterogeneous (3×20) | 10 | ~5–7 ms | ~150–200/s |
+
+Projected capacity for exit-config evaluation loops (single-threaded):
+- 100 exit configs × 1 seed → ~0.4 s
+- 1,000 exit configs × 1 seed → ~4 s
+- 10,000 exit configs × 1 seed → ~40 s
+
+Run the actual measurement: `python stage7_perf_baseline.py`
+
+## 13. Stage 9 — Candidate Exit Generation & Feasibility
+
+Stage 9 introduces an independent mechanism for identifying potential exit locations (`CandidateExit`) on a `FloorPlan`, and safely combinatorially constructing `ExitConfiguration`s from them.
+
+### Vocabulary
+*   **Geometric Candidate**: An exit location that is physically possible (e.g., a non-wall cell on the boundary of the grid). Handled by Stage 9.
+*   **Feasible Configuration**: A set of candidate exits that are generated together. Handled by Stage 9.
+*   **Legally Compliant Configuration**: A configuration that satisfies building regulations (e.g., minimum distances between exits, occupant-load capacity). **NOT** handled by Stage 9.
+
+> [!IMPORTANT]
+> **Stage 9 does NOT determine legal compliance or exit optimality.** 
+> It purely serves as the foundation for the search space by bounding the set of geometrically valid exit combinations.
+
+### Scaling Behavior
+The `generate_exit_configurations` function uses `itertools.combinations` to yield configurations deterministically. Because the output is an `Iterator`, generation is heavily memory-efficient (O(1) memory), but evaluating the *entire* generated list can grow exponentially. 
+For example, generating 5 exits out of 100 candidates will result in over 75 million combinations. Downstream pipelines (Stages 11+) will require heuristic sampling or RL logic instead of exhaustive iteration for large `exit_count` numbers.
+
+### Current Limitation
+
+> [!IMPORTANT]
+> **No Safety or Regulatory Constraints.**
+>
+> While Stage 9 cleanly decouples exit generation from the simulation, it does not apply legal bounding boxes to those configurations.
+>
+> **Stages 10+** will introduce:
+> - Regulatory safety constraint checking (e.g. minimum travel distances).
+> - Automated placement optimization workflows.
+
+### Benchmark Runner & Dataset Generation
+
+```bash
+# Run all Stage 7 benchmarks + exit-config experiment
+python stage7_validation_demo.py
+
+# Run performance baseline measurement
+python stage7_perf_baseline.py
+```
+
+Output artifacts:
+- `experiment_output/stage7_baseline_benchmark.csv / .json` — Benchmarks A–E
+- `experiment_output/stage7_exit_config_experiment.csv / .json` — Exit-config comparison
+
+## 14. Stage 10 — Realistic Floor-Plan & Exit Representation
+
+Stage 10 upgrades the floor-plan and exit representation so that candidate emergency exits are derived from explicit, physical door openings rather than treating every boundary non-wall cell as an exit.
+
+### Why Boundary-Cell Candidates Were a Simplification (Stage 9)
+In Stage 9, any non-wall cell on the outer boundary was treated as a candidate exit. This served to test combination scaling but does not reflect real-world architectural design: in real buildings, people cannot escape through solid exterior walls unless there is an actual door opening. Furthermore, treating all boundary cells as exits causes combinatorial explosion (e.g., 34 candidates yielded 561 combinations for 2 exits).
+
+### Explicit Door Openings (Stage 10)
+In Stage 10, the `FloorPlan` explicitly represents structural openings via the `DoorOpening` model. Candidate emergency exits are derived strictly from explicit openings that connect the building to the outside.
+
+### Core Architectural Distinctions
+*   **`DoorOpening`**: Represents a physical aperture or doorway in the floor plan geometry. Contains `position` $(r, c)$, physical `width` (in meters), and an `exterior` boolean flag (`True` for doors leading outside, `False` for interior doors connecting rooms to hallways). **A DoorOpening is not automatically an exit.**
+*   **`CandidateExit`**: A candidate emergency exit location derived from an explicit exterior `DoorOpening` (`exterior=True`). Preserves opening properties including physical width and door identifier. Interior openings are strictly excluded.
+*   **`ExitConfiguration`**: A concrete combination of candidate exits evaluated together in simulation. Carries both exit grid coordinates and corresponding physical opening widths (`cfg.widths` and `cfg.get_width(cell)`).
+
+### Stored Physical Width
+Each `DoorOpening` and `CandidateExit` stores its physical width (e.g. 1.0m, 1.2m, 1.8m).
+*   **Physical Property Only**: Width is purely a stored geometric property at this stage.
+*   **NOT a Legal Check**: Stage 10 does NOT check building codes (e.g., NBC 2016 minimum exit width of 1.0m/1.5m), does NOT calculate occupant load, and does NOT alter simulation flow rates.
+*   **No Exit Optimization**: Stage 10 does NOT select, rank, or recommend "best" exits.
+
+### Preparation for Future Regulatory & Optimization Layers
+This explicit representation establishes the bridge between raw architecture and legal compliance:
+```
+FloorPlan
+   ├── walls: GridCell[]
+   └── doors: DoorOpening[] (interior & exterior)
+         ↓
+CandidateExit[] (strictly exterior DoorOpenings, preserves width)
+         ↓
+ExitConfiguration[] (combinatorial exit sets with widths)
+         ↓
+[Future] RegulationProfile & ConstraintValidator (NBC 2016 minimum width, travel distance, separation)
+         ↓
+[Future] Feasible Compliant Configurations
+         ↓
+Evacuation Simulation Engine
+         ↓
+[Future] RL / Search Exit Placement Optimization
+```
+
+### Backward Compatibility (Legacy Fallback)
+For scenarios created prior to Stage 10 without explicit `doors`, the generator provides a documented legacy fallback: when `floor_plan.doors` is empty and `fallback_legacy_boundary=True` (default), it scans boundary non-wall cells with default width 1.0m, ensuring zero regressions across all historical tests.
 
 ---
 
-## 13. Extending the System (Future Stages)
+## 15. Future Architecture (Stages 11–15)
 
-The architecture is designed to be extended without modifying core components.
+The architecture is designed for progressive extension without modifying the core simulation engine.
 
-| Stage | Planned Addition | Status |
+| Stage | Description | Status |
 |---|---|---|
-| Stage 1 | Foundation, Pydantic configuration, environment, metrics | ✅ Complete |
-| Stage 2 | Shortest-path movement strategy & agent baseline | ✅ Complete |
-| Stage 3 | Cell capacity, occupancy map, and congestion dynamics | ✅ Complete |
-| Stage 4 | Interactive web visualizer & Matplotlib snapshots | ✅ Complete |
-| Stage 5 | Scenario runner, parameter sweeps, and export framework | ✅ Complete |
-| Stage 6 | Heterogeneous agents (speed, reaction delay, AgentProfile) | ✅ Complete |
-| Stage 7 | Internal validation, invariants, and controlled experiments | ✅ Complete |
-| Stage 8 | Dynamic hazards (fire, smoke propagation) | Planned |
-| Stage 9 | Reinforcement learning integration | Planned |
+| 1 | Foundation, Pydantic config, environment, metrics | ✅ Complete |
+| 2 | Shortest-path movement strategy & agent baseline | ✅ Complete |
+| 3 | Cell capacity, occupancy map, congestion dynamics | ✅ Complete |
+| 4 | Interactive web visualizer & Matplotlib snapshots | ✅ Complete |
+| 5 | Scenario runner, parameter sweeps, and export framework | ✅ Complete |
+| 6 | Heterogeneous agents (speed, reaction delay, AgentProfile) | ✅ Complete |
+| 7 | Baseline validation & exit-configuration readiness | ✅ Complete |
+| 8 | Explicit FloorPlan + ExitConfiguration architecture | ✅ Complete |
+| 9 | Candidate exit location generation | ✅ Complete |
+| 10 | Realistic floor-plan & exit representation (DoorOpening) | ✅ Complete |
+| 11 | Regulatory / placement constraint layer | Planned |
+| 12 | Exit configuration evaluation framework | Planned |
+| 13 | Reference / ground-truth benchmark system | Planned |
+| 14 | Non-RL optimization / search baseline | Planned |
+| 15 | RL-based exit-placement optimization & UI | Planned |
 
-New movement strategies implement the `MovementStrategy` protocol and are
-injected into `Simulation(config, movement_strategy=...)` with no changes
-to existing code.
+### Intended Future Pipeline
+
+```
+Floor Plan
+    ↓
+Candidate Exits (Stage 9)
+    ↓
+Candidate Configurations (Stage 9)
+    ↓
+Regulatory Constraint Filtering (Stage 10)
+    ↓
+Feasible Configurations
+    ↓
+Evacuation Simulation  ← existing engine (Stages 1–7)
+    ↓
+Metrics (evacuation time, waiting, per-exit utilization)
+    ↓
+Non-RL Search Baseline (Stage 13)
+    ↓
+RL Optimization (Stage 14)
+    ↓
+Recommended Exit Configuration
+```
+
+New movement strategies implement the `MovementStrategy` protocol and are injected into `Simulation(config, movement_strategy=...)` with no changes to existing code.
 
 ---
 

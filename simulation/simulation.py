@@ -323,12 +323,14 @@ class Simulation:
         movement_strategy: MovementStrategy | None = None,
     ) -> None:
         self.config: SimulationConfig = config
-        self.environment: Environment = Environment.from_config(config)
+        self.environment: Environment = Environment.from_floor_plan_and_exits(
+            config.floor_plan, config.exit_configuration
+        )
         self.nav_graph: NavigationGraph = NavigationGraph.from_environment(
             self.environment
         )
         self.agents: list[Agent] = [
-            Agent.from_config(agent_cfg) for agent_cfg in config.agents
+            Agent.from_config(agent_cfg) for agent_cfg in config.occupants.agents
         ]
         # Stage 3: dynamic occupancy map (derived from agent positions)
         self.occupancy: OccupancyMap = OccupancyMap(
@@ -457,7 +459,9 @@ class Simulation:
             if self.environment.is_exit(agent.row, agent.col):
                 agent.mark_evacuated(timestep=current_step)
                 self.metrics.record_evacuation(
-                    agent_id=agent.agent_id, timestep=current_step
+                    agent_id=agent.agent_id,
+                    timestep=current_step,
+                    exit_cell=(agent.row, agent.col),  # Stage 7: track which exit was used
                 )
 
         # --- 9. Rebuild occupancy (post-move, post-evacuation) ---------------

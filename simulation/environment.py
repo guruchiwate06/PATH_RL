@@ -85,12 +85,14 @@ class Environment:
     _cell_type: npt.NDArray[np.int8] = field(init=False, repr=False)
     _walls: frozenset[GridCell] = field(init=False, repr=False)
     _exits: frozenset[GridCell] = field(init=False, repr=False)
+    _exit_widths: dict[GridCell, float] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self) -> None:
         # Default: all cells are open
         self._cell_type = np.zeros((self.rows, self.cols), dtype=np.int8)
         self._walls = frozenset()
         self._exits = frozenset()
+        self._exit_widths = {}
 
     # ------------------------------------------------------------------
     # Factory
@@ -100,6 +102,7 @@ class Environment:
     def from_config(cls, config: SimulationConfig) -> "Environment":
         """
         Construct an ``Environment`` from a validated ``SimulationConfig``.
+        (Backward compatibility wrapper).
 
         Parameters
         ----------
@@ -111,11 +114,32 @@ class Environment:
         Environment
             A ready-to-use environment instance.
         """
-        env = cls(rows=config.grid.rows, cols=config.grid.cols)
+        return cls.from_floor_plan_and_exits(config.floor_plan, config.exit_configuration)
+
+    @classmethod
+    def from_floor_plan_and_exits(
+        cls, floor_plan: "FloorPlan", exit_config: "ExitConfiguration"
+    ) -> "Environment":
+        """
+        Construct an ``Environment`` from an explicit floor plan and exit configuration.
+
+        Parameters
+        ----------
+        floor_plan:
+            Static building geometry.
+        exit_config:
+            Authoritative configuration for exit cells.
+
+        Returns
+        -------
+        Environment
+            A ready-to-use environment instance.
+        """
+        env = cls(rows=floor_plan.grid.rows, cols=floor_plan.grid.cols)
 
         # Apply walls
         walls: list[GridCell] = []
-        for row, col in config.walls:
+        for row, col in floor_plan.walls:
             env._cell_type[row, col] = CellType.WALL
             walls.append((row, col))
         env._walls = frozenset(walls)
@@ -123,10 +147,11 @@ class Environment:
         # Apply exits (exits override open cells, never walls — config
         # validation already ensures no overlap)
         exits: list[GridCell] = []
-        for row, col in config.exits:
+        for row, col in exit_config.exits:
             env._cell_type[row, col] = CellType.EXIT
             exits.append((row, col))
         env._exits = frozenset(exits)
+        env._exit_widths = {tuple(pos): exit_config.get_width(pos) for pos in exit_config.exits}
 
         return env
 
@@ -145,6 +170,10 @@ class Environment:
     def is_exit(self, row: int, col: int) -> bool:
         """Return True if (row, col) is an exit cell."""
         return (row, col) in self._exits
+
+    def get_exit_width(self, row: int, col: int) -> float:
+        """Return the physical width in meters of an exit cell (default 1.0m)."""
+        return self._exit_widths.get((row, col), 1.0)
 
     def is_passable(self, row: int, col: int) -> bool:
         """

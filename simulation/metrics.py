@@ -106,6 +106,14 @@ class SimulationResult:
     max_evacuation_time: Optional[int]
     evacuation_times: dict[str, int] = field(default_factory=dict)
 
+    # -- Stage 7: Per-exit utilization --
+    per_exit_utilization: dict[tuple[int, int], int] = field(default_factory=dict)
+    """
+    Number of agents that evacuated via each exit cell.
+    Keys are (row, col) tuples corresponding to exit cells.
+    Only populated when exit_cell is passed to record_evacuation().
+    """
+
     # -- Stage 3: Waiting --
     total_waiting_steps: int = 0
     mean_waiting_steps: float = 0.0
@@ -141,6 +149,10 @@ class SimulationResult:
             f"  Max occupancy ratio: {self.max_occupancy_ratio:.2f}",
             f"  Congested cell-steps: {self.congested_cell_steps}",
         ]
+        if self.per_exit_utilization:
+            lines.append("  Exit utilization :")
+            for cell, count in sorted(self.per_exit_utilization.items()):
+                lines.append(f"    exit {cell}: {count} agent(s)")
         return "\n".join(lines)
 
 
@@ -192,6 +204,8 @@ class MetricsCollector:
         self.scenario_name: str = scenario_name
         self.total_agents: int = total_agents
         self._evacuation_times: dict[str, int] = {}
+        # Stage 7: per-exit utilization
+        self._exit_utilization: dict[tuple[int, int], int] = {}
         # Stage 3: waiting
         self._waiting_steps: dict[str, int] = {}
         # Stage 3: congestion
@@ -203,9 +217,15 @@ class MetricsCollector:
     # Event recording
     # ------------------------------------------------------------------
 
-    def record_evacuation(self, agent_id: str, timestep: int) -> None:
+    def record_evacuation(
+        self,
+        agent_id: str,
+        timestep: int,
+        *,
+        exit_cell: Optional[tuple[int, int]] = None,
+    ) -> None:
         """
-        Record that *agent_id* evacuated at *timestep*.
+        Record that *agent_id* evacuated at *timestep* via *exit_cell*.
 
         Parameters
         ----------
@@ -213,6 +233,10 @@ class MetricsCollector:
             The ID of the evacuated agent.
         timestep:
             The simulation timestep at which evacuation occurred.
+        exit_cell:
+            Optional (row, col) of the exit cell the agent reached.
+            When provided, increments per-exit utilization counters.
+            Backward-compatible: existing callers may omit this argument.
 
         Raises
         ------
@@ -224,6 +248,11 @@ class MetricsCollector:
                 f"Evacuation for agent '{agent_id}' has already been recorded."
             )
         self._evacuation_times[agent_id] = timestep
+        # Stage 7: track which exit was used
+        if exit_cell is not None:
+            self._exit_utilization[exit_cell] = (
+                self._exit_utilization.get(exit_cell, 0) + 1
+            )
 
     def record_step_waiting(
         self,
@@ -325,6 +354,8 @@ class MetricsCollector:
             min_evacuation_time=min_time,
             max_evacuation_time=max_time,
             evacuation_times=dict(self._evacuation_times),
+            # Stage 7: per-exit utilization
+            per_exit_utilization=dict(self._exit_utilization),
             # Stage 3
             total_waiting_steps=total_waiting,
             mean_waiting_steps=mean_waiting,

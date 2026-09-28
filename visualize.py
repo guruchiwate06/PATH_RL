@@ -320,37 +320,114 @@ class SimulationVisualizer:
         ax.set_ylim(0, rows)
         ax.invert_yaxis()  # row 0 at top
 
+        # Map explicit doors for Stage 10 realistic opening visualization
+        doors_map = {tuple(d.position): d for d in getattr(self.config, "doors", [])}
+
         # 1. Base cell rectangles
         for r in range(rows):
             for c in range(cols):
                 cell_type = env.get_cell_type(r, c)
+                door = doors_map.get((r, c))
+
                 if cell_type == CellType.WALL:
                     color = COLOR_WALL
                     edge_color = COLOR_WALL
+                    rect = mpatches.Rectangle(
+                        (c, r), 1, 1,
+                        facecolor=color,
+                        edgecolor=edge_color,
+                        linewidth=0.8,
+                        zorder=1,
+                    )
+                    ax.add_patch(rect)
                 elif cell_type == CellType.EXIT:
                     color = COLOR_EXIT
                     edge_color = "#059669"
-                else:
-                    color = COLOR_OPEN
-                    edge_color = COLOR_GRID_LINE
-
-                rect = mpatches.Rectangle(
-                    (c, r), 1, 1,
-                    facecolor=color,
-                    edgecolor=edge_color,
-                    linewidth=0.8,
-                    zorder=1,
-                )
-                ax.add_patch(rect)
-
-                # Exit marker
-                if cell_type == CellType.EXIT:
+                    rect = mpatches.Rectangle(
+                        (c, r), 1, 1,
+                        facecolor=color,
+                        edgecolor=edge_color,
+                        linewidth=1.2,
+                        zorder=1,
+                    )
+                    ax.add_patch(rect)
+                    # Exit label and width badge
+                    exit_w = env.get_exit_width(r, c) if hasattr(env, "get_exit_width") else 1.0
                     ax.text(
-                        c + 0.5, r + 0.5, "EXIT",
+                        c + 0.5, r + 0.38, "EXIT",
                         ha="center", va="center",
                         fontsize=7, fontweight="bold",
                         color=COLOR_EXIT_TEXT, zorder=2,
                     )
+                    ax.text(
+                        c + 0.5, r + 0.72, f"{exit_w:.1f}m",
+                        ha="center", va="center",
+                        fontsize=6, fontweight="bold",
+                        color="#ECFDF5", zorder=2,
+                    )
+                elif door is not None:
+                    # DoorOpening that is not currently an active exit
+                    if door.exterior:
+                        # Exterior Door Opening (Candidate Exit)
+                        color = "#ECFDF5"
+                        edge_color = "#10B981"
+                        rect = mpatches.Rectangle(
+                            (c, r), 1, 1,
+                            facecolor=color,
+                            edgecolor=edge_color,
+                            linewidth=1.5,
+                            linestyle="--",
+                            zorder=1,
+                        )
+                        ax.add_patch(rect)
+                        ax.text(
+                            c + 0.5, r + 0.38, "DOOR",
+                            ha="center", va="center",
+                            fontsize=6, fontweight="bold",
+                            color="#047857", zorder=2,
+                        )
+                        ax.text(
+                            c + 0.5, r + 0.72, f"{door.width:.1f}m",
+                            ha="center", va="center",
+                            fontsize=5.5, fontweight="bold",
+                            color="#059669", zorder=2,
+                        )
+                    else:
+                        # Interior Door Opening (Corridor / Room Passage)
+                        color = "#F0F9FF"
+                        edge_color = "#0284C7"
+                        rect = mpatches.Rectangle(
+                            (c, r), 1, 1,
+                            facecolor=color,
+                            edgecolor=edge_color,
+                            linewidth=1.2,
+                            linestyle=":",
+                            zorder=1,
+                        )
+                        ax.add_patch(rect)
+                        ax.text(
+                            c + 0.5, r + 0.38, "PASS",
+                            ha="center", va="center",
+                            fontsize=6, fontweight="bold",
+                            color="#0369A1", zorder=2,
+                        )
+                        ax.text(
+                            c + 0.5, r + 0.72, f"{door.width:.1f}m",
+                            ha="center", va="center",
+                            fontsize=5.5, fontweight="bold",
+                            color="#0284C7", zorder=2,
+                        )
+                else:
+                    color = COLOR_OPEN
+                    edge_color = COLOR_GRID_LINE
+                    rect = mpatches.Rectangle(
+                        (c, r), 1, 1,
+                        facecolor=color,
+                        edgecolor=edge_color,
+                        linewidth=0.8,
+                        zorder=1,
+                    )
+                    ax.add_patch(rect)
 
         # 2. Occupancy Overlay (if enabled)
         if self.show_occupancy:
