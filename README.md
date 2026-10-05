@@ -33,15 +33,22 @@ experiments around questions such as:
 
 ---
 
-## 3. Current Scope (Stage 9 — Candidate Exit Generation & Feasibility)
+## 3. Current Scope (Stage 13 — Non-RL Exit Configuration Search Baseline)
 
 The system supports discrete-time agent movement, shortest-path navigation,
 capacity-constrained cell occupancy and congestion dynamics, an interactive visualizer,
 an experimental runner for batch execution and parameter sweeps, an extensible
 heterogeneous agent profile architecture (`AgentProfile`) supporting individualized
-speed and reaction delay, a comprehensive internal validation framework, an 
+speed and reaction delay, a comprehensive internal validation framework, an
 explicit separation of building geometry (`FloorPlan`) from exit routing (`ExitConfiguration`),
-and an independent generator for geometrically possible `CandidateExit` locations.
+an independent generator for geometrically possible `CandidateExit` locations,
+a **modular regulatory constraint layer** (`rules.py`, `validator.py`) that
+encodes NBC 2016 Part 4 rules for evaluating exit-configuration compliance,
+an **exit configuration evaluation layer** (`evaluation.py`) that simulates
+feasible configurations and scores them by primary objective (minimize total evacuation time),
+and a **non-RL exhaustive search baseline** (`search.py`) that systematically searches
+feasible combinatorial exit configurations to identify the optimal configuration and
+establish a reproducible reference benchmark for future RL algorithms.
 
 | Component | Status | Notes |
 |---|---|---|
@@ -60,7 +67,13 @@ and an independent generator for geometrically possible `CandidateExit` location
 | Visualizer | ✅ Complete | Web visualizer (`visualize.html`) + Matplotlib snapshot/GIF export (`visualize.py`) |
 | `experiment.py` | ✅ Complete | Scenario runner, sweeps, aggregation, CSV/JSON exports (Stage 5) |
 | Validation Suite | ✅ Complete | Invariants A-J, OFAT sweeps, benchmarks (`stage7_validation_demo.py`) (Stage 7) |
-| Test suite | ✅ Complete | 411 passing tests across 15 modules |
+| `DoorOpening` model | ✅ Complete | Physical door geometry (width, exterior flag, door_id) (Stage 10) |
+| `rules.py` | ✅ Complete | Modular rule engine: R1–R5, RuleSet, Violation, ValidationResult (Stage 11) |
+| `validator.py` | ✅ Complete | ExitValidator with `check()` and `mask()` APIs (Stage 11) |
+| `config/rules_nbc_2016.yaml` | ✅ Complete | Regulatory config with verified/unverified flags (Stage 11) |
+| `evaluation.py` | ✅ Complete | `ConfigurationEvaluator`, `EvaluationResult`, `rank_evaluations` (Stage 12) |
+| `search.py` | ✅ Complete | `ExitConfigurationSearcher`, `SearchResult`, `search_exit_configurations` (Stage 13) |
+| Test suite | ✅ Complete | 561 passing tests across 21 modules |
 
 ---
 
@@ -76,8 +89,20 @@ and an independent generator for geometrically possible `CandidateExit` location
 ## 5. Project Architecture
 
 ```
-Scenario Configuration  (config.py)
+FloorPlan               (config.py)        — grid, walls, DoorOpenings
          │
+         ▼
+generate_candidate_exits()                 — exterior DoorOpenings only
+         │
+         ▼
+ ExitValidator.mask()   (validator.py)     — partial action mask [R1 only]
+         │
+         ▼
+ ExitConfiguration      (config.py)        — selected exits + widths
+         │
+         ▼
+ ExitValidator.check()  (validator.py)     — full compliance [R1-R5]
+         │           (if compliant)
          ▼
    Environment          (environment.py)   — grid, walls, exits
          │
@@ -587,3 +612,493 @@ New movement strategies implement the `MovementStrategy` protocol and are inject
 | `pydantic` | ≥2.5 | Scenario configuration validation |
 | `pytest` | ≥8.0 | Test runner |
 | `pytest-cov` | ≥4.1 | Test coverage reporting |
+
+---
+
+## Stage 11 — Regulatory & Exit-Placement Constraint Layer
+
+### What the Rules Layer Does
+
+The Stage 11 constraint layer answers:
+
+> *Is this exit configuration acceptable under the encoded regulatory and placement constraints?*
+
+It does NOT simulate evacuation performance — that is done by the Simulation engine.
+It encodes structural and regulatory constraints from **NBC 2016 Part 4 (Fire and Life Safety)**
+for research and design-assistance purposes.
+
+**IMPORTANT DISCLAIMER:**
+This is a research/design-assistance implementation only.
+It is **NOT legal certification**.
+Results mean *"compliant with the encoded constraints in the selected regulation profile"*,
+not *"legally compliant"*.
+
+---
+
+### Key Architectural Distinctions
+
+#### DoorOpening vs CandidateExit vs ExitConfiguration
+
+| Concept | What It Is |
+|---|---|
+| `DoorOpening` | A physical door or opening in the building (width, exterior flag, position). Not automatically an exit. |
+| `CandidateExit` | An exterior DoorOpening that is *eligible* to become an emergency exit. Derived via `generate_candidate_exits()`. Interior doors are excluded. |
+| `ExitConfiguration` | A set of selected exits. Each exit maps to a cell and a physical width. |
+
+#### Hard Constraints vs Evacuation Objectives
+
+| Type | Description | Mechanism |
+|---|---|---|
+| Hard constraint | Regulatory rules (R1-R5): must be satisfied. Illegal configs are rejected. | `validator.check()` returns `is_compliant=False` |
+| Evacuation objective | Minimising evacuation time, reducing congestion. Used in future search/RL. | Simulation metrics |
+
+This is critical for future RL: **illegal configurations must be filtered, not penalized**.
+The validator provides the feasibility boundary; RL/search operates inside it.
+
+---
+
+### Rules Implemented (R1-R5)
+
+| Rule | Description | NBC Clause | Verified |
+|---|---|---|---|
+| `R1_VALID_EXIT_POSITION` | Only exterior DoorOpenings may be exits | PATH_RL domain geometric constraint | YES |
+| `R2_MINIMUM_EXIT_COUNT` | At least 2 exits required | Part 4 4.4.2.4.3 | NO (conditional rule modelled as universal prototype) |
+| `R3_EXIT_SEPARATION` | Min separation = 1/2 floor diagonal (non-sprinklered) | Part 4 egress placement | NO (IBC formulation prototype) |
+| `R4_EXIT_WIDTH` | Min physical width 1.0m per exit | Part 4 Table 4 | NO (conditional rule modelled as universal prototype) |
+| `R5_TRAVEL_DISTANCE` | Max travel distance to nearest exit (22.5m residential) | Part 4 Table 5 | YES |
+
+**Unverified / configurable values:**
+- `R4` width-per-person: intentionally `null` (NBC uses unit-of-width table, not linear value)
+- `R5` `cell_size_m = 1.0m`: modelling assumption, not an NBC value
+- `R5` DEFAULT occupancy limit: conservative engineering default only
+
+---
+
+### check() API
+
+```python
+from evacuation_simulation.simulation.validator import make_validator
+
+validator = make_validator()  # loads NBC 2016 Part 4 rules
+
+result = validator.check(floor_plan, exit_configuration, occupant_scenario)
+
+result.is_compliant   # True / False
+result.violations     # list[Violation]
+
+for v in result.violations:
+    print(v.rule_id)        # e.g. "R3_EXIT_SEPARATION"
+    print(v.message)        # human-readable
+    print(v.measured_value) # e.g. 4.2 (m)
+    print(v.required_value) # e.g. 7.07 (m)
+    print(v.unit)           # e.g. "m"
+    print(v.clause)         # e.g. "NBC 2016 Part 4 ..."
+    print(v.severity)       # "error" or "warning"
+    print(v.relevant_ids)   # list of affected object IDs
+```
+
+---
+
+### mask() API
+
+```python
+mask = validator.mask(floor_plan, occupant_scenario, partial_config, candidates)
+# mask: dict[GridCell, bool]
+# True  = candidate may be selected as next exit
+# False = candidate is forbidden at this stage
+```
+
+**IMPORTANT LIMITATIONS of the partial mask:**
+- Only `R1` (valid exterior door) is evaluated per-candidate.
+- `R2/R3/R4/R5` require a **complete** configuration and are evaluated by `check()` only.
+- A `True` mask value does NOT guarantee the final configuration will be compliant.
+- Always call `check()` on the complete configuration.
+
+---
+
+### Regulatory Parameters Audit (NBC 2016 Part 4)
+
+*PATH_RL implements a configurable research prototype of regulatory/placement constraints. Only parameters explicitly verified against the referenced regulation are described as verified regulatory requirements.*
+
+| Value | Amount | Unit | Clause | Verified |
+|---|---|---|---|---|
+| Min exits | 2 | exits | 4.4.2.4.3 | NO (conditional rule modelled as universal prototype) |
+| Exit separation (non-sprinklered) | 1/2 diagonal | fraction | egress placement | NO (IBC formulation prototype) |
+| Exit separation (sprinklered) | 1/3 diagonal | fraction | egress placement | NO (IBC formulation prototype) |
+| Min exit width | 1.0 | m | Table 4 | NO (conditional rule modelled as universal prototype) |
+| Unit of exit width | 0.5 | m | 4.4.2.3 | YES |
+| Travel distance RESIDENTIAL | 22.5 | m | Table 5 | YES |
+| Travel distance EDUCATIONAL | 22.5 | m | Table 5 | YES |
+| Travel distance BUSINESS | 30.0 | m | Table 5 | YES |
+| Travel distance ASSEMBLY | 22.5 | m | Table 5 | NO (unverified placeholder for this occupancy) |
+| Width per person | null | — | — | NO (intentionally unverified) |
+| cell_size_m | 1.0 | m/cell | — | NO (configurable assumption) |
+| DEFAULT travel limit | 22.5 | m | — | NO (engineering default only) |
+
+---
+
+### Running the Stage 11 Demo
+
+```bash
+python stage11_demo.py
+```
+
+This demonstrates:
+1. Candidate exterior doors discovered from FloorPlan
+2. Interior passages NOT treated as exit candidates
+3. A valid exit configuration checked — PASS
+4. An invalid configuration checked — structured violations produced
+5. Action mask API
+6. Machine-readable Pydantic output
+
+---
+
+## Stage 12 — Exit Configuration Evaluation & Objective Layer
+
+### Why Evaluation is Separate from Regulation
+
+Stage 11 (regulation) and Stage 12 (evaluation) address fundamentally
+different questions:
+
+| Layer | Question answered |
+|---|---|
+| **Stage 11** — `validator.py` | *"Can this configuration be considered feasible under our encoded regulatory constraints?"* |
+| **Stage 12** — `evaluation.py` | *"How well does this feasible configuration perform when evacuation is actually simulated?"* |
+
+A configuration that passes Stage 11 is **allowed**. Stage 12 determines
+how **well** it performs. These two questions must not be conflated.
+
+### What Makes a Configuration Feasible
+
+A configuration is considered **fully feasible** in Stage 12 when two
+conditions are both satisfied:
+
+1. It passes all Stage 11 regulatory checks (`is_compliant = True`).
+2. All occupants evacuate before the simulation time limit
+   (`evacuation_complete = True`).
+
+A configuration that passes regulation but traps agents is flagged
+`is_feasible = False` and cannot outrank a configuration that achieves
+complete evacuation.
+
+### The Pipeline
+
+```
+FloorPlan
+    |
+generate_candidate_exits()
+    |
+CandidateExit pool
+    |
+generate_exit_configurations()
+    |
+ExitConfiguration[]
+    |
+ExitValidator.check()       <- Stage 11
+    |
+INVALID -> Reject (no simulation, no score)
+VALID   -> Simulation.run()
+               |
+          SimulationResult
+               |
+         EvaluationMetrics
+               |
+          primary objective score
+               |
+         EvaluationResult
+    |
+rank_evaluations()
+    |
+Ranked list (best first)
+```
+
+### Primary Objective
+
+**Minimize total evacuation time.**
+
+```python
+score = total_timesteps   # if all agents evacuated
+score = None              # if evacuation was incomplete
+```
+
+Lower score = better configuration.
+`None` score configurations always rank below scored configurations.
+
+### Secondary Metrics
+
+The following metrics are preserved in `EvaluationMetrics` for analysis,
+even though they are not part of the primary score:
+
+| Metric | Description |
+|---|---|
+| `mean_evacuation_time` | Mean timestep at which agents evacuated |
+| `max_evacuation_time` | Latest evacuation timestep |
+| `mean_waiting_steps` | Mean capacity-blocked waiting steps per agent |
+| `max_waiting_steps` | Maximum waiting steps for any single agent |
+| `total_waiting_steps` | Sum of all waiting steps |
+| `congested_cell_steps` | (cell, timestep) pairs where cell was congested |
+| `max_cell_occupancy` | Peak single-cell occupancy |
+| `max_occupancy_ratio` | Peak occupancy ratio (occupancy / capacity) |
+| `exit_utilization` | Agents evacuated per exit cell |
+| `evacuation_rate` | Fraction of agents that evacuated |
+
+These metrics are available for analysis. Future stages may investigate
+whether a weighted multi-objective score is warranted.
+
+### How Configurations are Compared
+
+All configurations in a comparison sweep are evaluated against the
+**same** FloorPlan, OccupantScenario, and SimulationParameters
+(including `random_seed`). Only the `ExitConfiguration` changes.
+
+```python
+evaluator = ConfigurationEvaluator()
+results = evaluator.evaluate_configurations(
+    floor_plan,
+    [config_A, config_B, config_C],
+    occupant_scenario,
+    parameters=SimulationParameters(random_seed=42),
+)
+ranked = rank_evaluations(results)
+```
+
+### Why the Same Occupant Scenario is Required
+
+If different configurations used different agent starting positions or
+different random seeds, a configuration might appear better simply
+because its agents happened to start closer to exits -- not because
+its exit placement is superior. Using identical conditions for every
+configuration makes the comparison scientifically meaningful.
+
+### Why Invalid Configurations are Rejected (Not Penalized)
+
+An invalid configuration **does not receive a terrible score** and
+remain in the optimization pool. It is **excluded entirely**.
+
+Rationale:
+
+- A numerical penalty is an arbitrary engineering choice that would
+  require tuning and could distort search/RL behavior.
+- An invalid configuration is not a candidate for real-world use;
+  there is no meaningful "how well does it perform" answer.
+- Keeping invalid configurations in a scored pool would make it
+  impossible to distinguish "very bad valid" from "invalid".
+
+The explicit `is_feasible = False` state is unambiguous and machine-readable.
+
+### Why RL Has Not Been Implemented Yet
+
+Stage 12 establishes the **foundation** for future search and RL work.
+The pipeline is:
+
+```
+EVALUATE -> COMPARE -> RANK
+```
+
+Before introducing a search algorithm or RL, we need to objectively
+evaluate and compare exit configurations. Stage 12 provides that capability.
+
+Reinforcement learning requires:
+
+- A defined action space (exit selection)
+- A well-defined objective / reward signal
+- Deterministic or controlled stochasticity
+
+Stage 12 provides the objective signal. Stage 13 will introduce the
+search baseline. Later stages will introduce RL.
+
+No RL libraries, policy networks, or reward functions are introduced here.
+
+### Running the Stage 12 Demo
+
+```bash
+python stage12_demo.py
+```
+
+Evaluates all combinations of 1-exit and 2-exit configurations on the
+bottleneck scenario and prints a ranked comparison table with actual
+simulation results.
+
+### API Summary
+
+```python
+from evacuation_simulation.simulation.evaluation import (
+    ConfigurationEvaluator, EvaluationResult, rank_evaluations,
+)
+
+evaluator = ConfigurationEvaluator()
+
+result = evaluator.evaluate(floor_plan, exit_config, occupant_scenario)
+result.is_feasible                    # bool
+result.score                          # int or None (primary objective)
+result.metrics.mean_evacuation_time   # float or None
+result.metrics.exit_utilization       # dict[(row, col), int]
+result.validation_result.is_compliant # bool (Stage 11 result)
+
+results = evaluator.evaluate_configurations(
+    floor_plan, [cfg_A, cfg_B, cfg_C], occupant_scenario,
+    parameters=SimulationParameters(random_seed=42),
+)
+ranked = rank_evaluations(results)
+# ranked[0] is the best configuration
+```
+
+---
+
+## Stage 13 — Non-RL Exit Configuration Search Baseline
+
+### Purpose of Stage 13
+
+While Stage 11 verifies **"Is this configuration allowed?"** and Stage 12 answers **"How well does this configuration perform?"**, Stage 13 answers:
+
+> **"Among all available feasible exit configurations, which one performs best?"**
+
+Stage 13 implements a deterministic, exhaustive, combinatorial search baseline. It systematically:
+1. Generates all possible combinatorial exit configurations of a specified exit count (`choose(N, k)`).
+2. Runs Stage 11 regulatory validation (`ExitValidator.check`).
+3. Discards/flags invalid configurations without simulating them.
+4. Simulates all valid configurations using the Stage 12 evaluation engine (`ConfigurationEvaluator`).
+5. Ranks configurations strictly by the Stage 12 primary objective (**minimize total evacuation time**).
+6. Returns a structured `SearchResult` containing the optimal configuration, statistics, and top-K rankings.
+
+### Why a Non-RL Baseline is Essential
+
+Stage 13 serves as the **ground-truth reference benchmark** for all future Reinforcement Learning (RL) agents.
+
+```
+                Exit Configurations
+                       │
+                Stage 11 Rules
+                       │
+                Feasible Options
+                       │
+             ┌─────────┴─────────┐
+             │                   │
+       Stage 13 Search       Future RL
+       (Non-RL Baseline)         │
+             │                   │
+        Best Config          RL Config
+             │                   │
+             └─────────┬─────────┘
+                       │
+              Same Stage 12
+                 Evaluation
+                       │
+                 Compare Results
+```
+
+By establishing a deterministic baseline evaluated under the **exact same Stage 12 objective and conditions**, future RL performance can be quantitatively measured against the true combinatorial optimum.
+
+### Scientific Requirement: Fair Comparison
+
+Every configuration in a search run uses identical conditions:
+- Same `FloorPlan` geometry (never mutated)
+- Same `OccupantScenario` and agent profiles (never mutated)
+- Same `SimulationParameters` (including `random_seed`)
+
+Only the `ExitConfiguration` changes between evaluations.
+
+### Search Space & Early Filtering Breakdown
+
+The search explicitly tracks and reports:
+- **Total Configurations**: Combinations generated (`choose(N, k)`)
+- **Valid Configurations**: Configurations passing all regulatory rules (R1–R5)
+- **Invalid Configurations**: Configurations rejected by the validator
+- **Evaluated Configurations**: Feasible configurations actually simulated
+- **Search Time & Throughput**: Wall-clock time and evaluations per second
+
+Invalid configurations are rejected **before simulation** to avoid unnecessary computation.
+
+### Search API
+
+```python
+from evacuation_simulation.simulation.search import (
+    ExitConfigurationSearcher,
+    SearchResult,
+    search_exit_configurations,
+)
+
+# Object-oriented API
+searcher = ExitConfigurationSearcher()
+result: SearchResult = searcher.search(
+    floor_plan=floor_plan,
+    candidates=candidates,
+    occupant_scenario=occupant_scenario,
+    exit_count=2,
+    parameters=SimulationParameters(random_seed=42),
+    top_k=3,
+)
+
+# Structured result attributes
+result.best_configuration       # ExitConfiguration (optimal winner)
+result.best_evaluation          # EvaluationResult (winner metrics & score)
+result.total_configurations     # Total generated combinations
+result.valid_configurations     # Number of compliant configurations
+result.invalid_configurations   # Number of rejected configurations
+result.evaluated_configurations # Number of simulated configurations
+result.search_time_seconds      # Total search execution time
+result.evaluations_per_second   # Evaluation throughput
+result.top_k_evaluations        # Top K ranked EvaluationResults
+result.to_dict()                # JSON-serializable dictionary summary
+```
+
+### Running the Stage 13 Demo
+
+```bash
+python stage13_demo.py
+```
+
+Runs the non-RL exhaustive search baseline on `scenarios/bottleneck.json`, displays the search space breakdown, top 3 rankings, and full winning metrics.
+
+---
+
+## Stage 14: RL Exit-Placement Formulation
+
+Stage 14 formulates the exit-placement problem as a sequential decision process suitable for Reinforcement Learning. 
+
+### What the RL Agent Controls
+The agent sequentially selects a subset of emergency exits from a pool of valid candidate exits on a given floor plan.
+
+### What the RL Agent Does NOT Control
+The agent is not responsible for routing or moving individual people. The existing shortest-path simulation (Stage 12) still governs occupant movement.
+
+### State Representation
+The state (observation) is a structured representation designed for generalization:
+- `grid_shape`: (rows, cols)
+- `candidate_exits`: Properties of available candidates (positions, widths).
+- `selected_candidate_indices`: Which exits the agent has already chosen.
+- `action_mask`: Which candidates are still legal to select.
+- `exits_remaining`: How many more exits the agent must choose.
+- `total_agents`: Occupant count.
+
+### Action Representation
+A discrete action representing the integer index of the candidate exit being selected.
+
+### Action Masking
+The environment masks out invalid actions (returns `False` in the action mask) if:
+- The candidate exit has already been selected.
+- Selecting it violates the partial regulatory constraints enforced by Stage 11 (e.g., minimum physical width requirements per door).
+
+### Episode Termination
+An episode terminates when:
+1. **Success**: The required number of exits is reached.
+2. **Dead-End**: No valid actions remain in the mask before reaching the required exit count.
+3. **Invalid Action**: The agent selects an action that is masked or out of bounds.
+
+### Reward Objective
+The primary objective is to **minimize total evacuation time**.
+- Valid configuration: Reward = `-total_evacuation_time`
+- Invalid/Non-compliant configuration: Strong penalty (e.g., `-2000`)
+- Dead-end or invalid action: Strongest penalty (e.g., `-3000`)
+
+### Relationship with Stage 11
+Stage 11 remains the authoritative source for regulatory compliance. It provides the partial `action_mask` during the episode and the final `is_compliant` feasibility check at the end. The RL environment never invents new rules and never falsely reports an invalid layout as valid.
+
+### Relationship with Stage 12
+Stage 12 is the simulator and evaluator. Once a valid configuration is fully selected, the environment calls Stage 12 to run the simulation and extract the evacuation metrics (which inform the reward).
+
+### Relationship with Stage 13
+The RL formulation is perfectly compatible with the Stage 13 deterministic exhaustive search baseline. Both evaluate configurations using the exact same metrics and random seed, meaning their outputs are directly comparable.
+
+### Why Training is Not Included Yet
+This stage focuses exclusively on the environment formulation, safety, and correctness of the problem definition. Setting up the state/action/reward structure rigorously ensures that when RL algorithms are applied later, they learn the correct objective without bypassing constraints or relying on leaky abstractions.
