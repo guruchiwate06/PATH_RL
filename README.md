@@ -1052,53 +1052,148 @@ Runs the non-RL exhaustive search baseline on `scenarios/bottleneck.json`, displ
 
 ---
 
-## Stage 14: RL Exit-Placement Formulation
+## Stage 14: RL Exit-Placement Formulation (Stage 14A)
 
-Stage 14 formulates the exit-placement problem as a sequential decision process suitable for Reinforcement Learning. 
+Stage 14A converts the exit-placement problem into a well-defined Reinforcement
+Learning environment without performing any RL training.
+
+### Key Conceptual Distinctions
+
+| Stage | Question answered |
+|-------|-------------------|
+| Stage 11 | "Is this exit arrangement acceptable?" |
+| Stage 12 | "How well does this arrangement work?" |
+| Stage 13 | "Can traditional exhaustive search find the best arrangement?" |
+| Stage 14 | "How do we formulate exit selection as a sequential decision problem that an RL agent can learn?" |
 
 ### What the RL Agent Controls
-The agent sequentially selects a subset of emergency exits from a pool of valid candidate exits on a given floor plan.
+
+The agent sequentially selects which candidate exit doors to activate, one at a
+time, until the required number of exits has been chosen. It operates at the
+**floor-plan / exit-configuration level only**.
 
 ### What the RL Agent Does NOT Control
-The agent is not responsible for routing or moving individual people. The existing shortest-path simulation (Stage 12) still governs occupant movement.
+
+- How individual people walk or navigate (unchanged shortest-path movement engine).
+- Whether a configuration is legally valid — Stage 11 remains authoritative.
+- How evacuation performance is measured — Stage 12 remains authoritative.
+- No RL model is trained at this stage.
 
 ### State Representation
-The state (observation) is a structured representation designed for generalization:
-- `grid_shape`: (rows, cols)
-- `candidate_exits`: Properties of available candidates (positions, widths).
-- `selected_candidate_indices`: Which exits the agent has already chosen.
-- `action_mask`: Which candidates are still legal to select.
-- `exits_remaining`: How many more exits the agent must choose.
-- `total_agents`: Occupant count.
+
+The observation (`RLObservation`) is a structured dataclass, not a fixed-size
+flat array. This supports different floor plans and candidate exit counts without
+padding or truncation.
+
+| Field | Description |
+|-------|-------------|
+| `grid_shape` | `(rows, cols)` of the building grid |
+| `candidate_exits` | List of dicts: `position [row,col]`, `width (m)`, `door_id (str\|None)`, `is_selected (bool)` |
+| `selected_candidate_indices` | Ordered list of selected candidate indices so far |
+| `action_mask` | `list[bool]` — `True` = legal next action |
+| `exits_remaining` | How many more exits must be selected |
+| `total_agents` | Number of building occupants |
 
 ### Action Representation
-A discrete action representing the integer index of the candidate exit being selected.
+
+A discrete integer index into the `candidate_exits` list. Selecting index `i`
+means "add candidate exit `i` to the configuration."
 
 ### Action Masking
-The environment masks out invalid actions (returns `False` in the action mask) if:
-- The candidate exit has already been selected.
-- Selecting it violates the partial regulatory constraints enforced by Stage 11 (e.g., minimum physical width requirements per door).
+
+The environment exposes `action_mask()` returning `True`/`False` per candidate:
+
+- `False` if the candidate is **already selected** in this episode.
+- `False` if the candidate violates **Stage 11 R1** (per-candidate) constraints.
+- Interior corridor passages (`exterior=False`) never appear as candidates at all.
+- R2–R5 constraints (separation, width, travel distance) require the complete
+  configuration and are evaluated at episode end by `check()`, not here.
+
+### Episode Lifecycle
+
+```
+reset(config, exit_count) → initial observation
+    ↓
+step(action) × N         → observation, 0.0 reward, terminated=False
+    ↓
+step(final_action)       → terminated=True
+    ↓
+Stage 11 check()         → is_compliant?
+    ↓ (if compliant)
+Stage 12 evaluate()      → total_evacuation_time
+    ↓
+reward = -total_evacuation_time
+```
 
 ### Episode Termination
-An episode terminates when:
-1. **Success**: The required number of exits is reached.
-2. **Dead-End**: No valid actions remain in the mask before reaching the required exit count.
-3. **Invalid Action**: The agent selects an action that is masked or out of bounds.
+
+| Condition | Result |
+|-----------|--------|
+| Required exits selected | Normal end → Stage 11 + 12 evaluation → reward |
+| Illegal action (already selected or out of range) | `PENALTY_INVALID_ACTION = -3000` |
+| No legal action remains before required count | `PENALTY_DEAD_END = -2500` |
 
 ### Reward Objective
-The primary objective is to **minimize total evacuation time**.
-- Valid configuration: Reward = `-total_evacuation_time`
-- Invalid/Non-compliant configuration: Strong penalty (e.g., `-2000`)
-- Dead-end or invalid action: Strongest penalty (e.g., `-3000`)
+
+Primary objective: **minimize total evacuation time** (consistent with Stage 12/13).
+
+| Outcome | Reward |
+|---------|--------|
+| Illegal action | `-3000` (`PENALTY_INVALID_ACTION`) |
+| Dead-end (no legal actions left) | `-2500` (`PENALTY_DEAD_END`) |
+| Final config fails Stage 11 or Stage 12 | `-2000` (`PENALTY_INVALID_FINAL_CONFIG`) |
+| Valid, complete evacuation | `-total_evacuation_time` (e.g., `-12`) |
+
+Penalties are ordered so that "reaching the required count" is always better than
+"getting stuck" which is always better than "selecting an illegal action."
 
 ### Relationship with Stage 11
-Stage 11 remains the authoritative source for regulatory compliance. It provides the partial `action_mask` during the episode and the final `is_compliant` feasibility check at the end. The RL environment never invents new rules and never falsely reports an invalid layout as valid.
+
+Stage 11 is called **twice** per episode:
+1. `mask()` at each step to compute the partial `action_mask`.
+2. `check()` at episode end to validate the complete configuration.
+
+The RL environment never invents new rules and never reports an invalid
+configuration as valid.
 
 ### Relationship with Stage 12
-Stage 12 is the simulator and evaluator. Once a valid configuration is fully selected, the environment calls Stage 12 to run the simulation and extract the evacuation metrics (which inform the reward).
+
+When the final configuration passes Stage 11, the `ConfigurationEvaluator`
+(Stage 12) runs the existing evacuation simulation. The resulting
+`total_evacuation_time` directly determines the reward.
 
 ### Relationship with Stage 13
-The RL formulation is perfectly compatible with the Stage 13 deterministic exhaustive search baseline. Both evaluate configurations using the exact same metrics and random seed, meaning their outputs are directly comparable.
 
-### Why Training is Not Included Yet
-This stage focuses exclusively on the environment formulation, safety, and correctness of the problem definition. Setting up the state/action/reward structure rigorously ensures that when RL algorithms are applied later, they learn the correct objective without bypassing constraints or relying on leaky abstractions.
+For the same `FloorPlan`, `OccupantScenario`, `candidates`, `exit_count`,
+`parameters`, and `random_seed`:
+
+```
+RL reward for configuration C = -1 × Stage 13 score for configuration C
+```
+
+This allows direct numerical comparison between Stage 13's exhaustive search
+result and any RL policy's selected configuration.
+
+### Generalization
+
+The environment is not hardcoded to any single scenario. It has been tested on:
+- `bottleneck` (10×5, explicit doors, 3 exterior candidates)
+- `basic_building` (10×10, explicit doors, 4 exterior candidates)
+- `two_exits` (5×9, no explicit doors, legacy boundary candidates)
+- `corridor` (3×10, no explicit doors, legacy boundary candidates)
+
+Different floor plans produce different candidate counts, grid shapes, and agent
+counts — the environment handles all of these without modification.
+
+### Why Training Is Not Included Yet
+
+Stage 14A establishes the environment contract and verifies correctness of the
+formulation. Training is deferred to Stage 14B/15 so that the problem definition
+can be reviewed and confirmed before any learning begins.
+
+### Module
+
+`simulation/rl_environment.py` — `ExitPlacementEnv`, `RLObservation`
+
+No new external dependency was introduced.
+

@@ -1,0 +1,83 @@
+{
+  "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\1611\\model.svg",
+  "cell_size_m": 0.5,
+  "grid_shape": [
+    15,
+    14
+  ],
+  "scale_px_per_m": 99.87251075268819,
+  "wall_cells_count": 74,
+  "door_count": 3,
+  "discrepancies": [],
+  "room_connectivity": {
+    "UNDEFINED (Space Undefined)": {
+      "interior_cell": [
+        10,
+        6
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 3
+    },
+    "KK (Space Kitchen Kitchenette)": {
+      "interior_cell": [
+        4,
+        3
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 14
+    },
+    "H (Space Room)": {
+      "interior_cell": [
+        5,
+        10
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 12
+    }
+  },
+  "door_alignment": {
+    "door_1": {
+      "grid_position": [
+        12,
+        6
+      ],
+      "quantization_error_m": 0.125,
+      "open_directions": [
+        "N",
+        "S",
+        "W",
+        "E"
+      ],
+      "is_carved_passable": true
+    },
+    "door_2": {
+      "grid_position": [
+        9,
+        5
+      ],
+      "quantization_error_m": 0.153,
+      "open_directions": [
+        "N",
+        "S",
+        "E"
+      ],
+      "is_carved_passable": true
+    },
+    "door_3": {
+      "grid_position": [
+        3,
+        6
+      ],
+      "quantization_error_m": 0.238,
+      "open_directions": [
+        "S",
+        "W",
+        "E"
+      ],
+      "is_carved_passable": true
+    }
+  }
+}

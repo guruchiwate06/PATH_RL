@@ -1,0 +1,83 @@
+{
+  "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\1611\\model.svg",
+  "grid_resolution_m": 0.5,
+  "grid_shape": [
+    15,
+    14
+  ],
+  "scale_px_per_meter": 99.87,
+  "scale_is_derived": true,
+  "scale_sample_count": 10,
+  "scale_std_dev": 0.1679,
+  "wall_cell_count": 74,
+  "total_doors_detected": 3,
+  "candidate_exterior_exits_derived": 0,
+  "doors": [
+    {
+      "door_id": "door_1",
+      "svg_center": [
+        317.83,
+        613.73
+      ],
+      "estimated_width_m": 0.82,
+      "parent_wall_class": "Wall External",
+      "adjacent_spaces": [
+        "UNDEFINED (Undefined)",
+        "Exterior/Void"
+      ],
+      "classification": "uncertain",
+      "confidence": 0.3,
+      "review_required": true,
+      "review_reason": "Exterior wall door with ambiguous spatial context; unknown external elevation or egress destination.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        12,
+        6
+      ]
+    },
+    {
+      "door_id": "door_2",
+      "svg_center": [
+        286.55,
+        464.78
+      ],
+      "estimated_width_m": 0.65,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "UNDEFINED (Undefined)",
+        "UNDEFINED (Undefined)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        9,
+        5
+      ]
+    },
+    {
+      "door_id": "door_3",
+      "svg_center": [
+        327.94,
+        198.34
+      ],
+      "estimated_width_m": 0.74,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "KK (Kitchen Kitchenette)",
+        "H (Room)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        3,
+        6
+      ]
+    }
+  ]
+}

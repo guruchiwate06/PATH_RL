@@ -1,0 +1,181 @@
+{
+  "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\333\\model.svg",
+  "cell_size_m": 0.5,
+  "grid_shape": [
+    12,
+    27
+  ],
+  "scale_px_per_m": 99.97558178534572,
+  "wall_cells_count": 71,
+  "door_count": 6,
+  "discrepancies": [
+    "Disappearing wall: Wall #9 (Wall External) produced 0 rasterized wall cells."
+  ],
+  "room_connectivity": {
+    "ULKOTILA (Space Outdoor)": {
+      "interior_cell": [
+        3,
+        3
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 20
+    },
+    "ET (Space Entry Lobby)": {
+      "interior_cell": [
+        6,
+        15
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 5
+    },
+    "K (Space Kitchen)": {
+      "interior_cell": [
+        6,
+        21
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 9
+    },
+    "OH (Space LivingRoom)": {
+      "interior_cell": [
+        5,
+        9
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 12
+    },
+    "ALKOVI (Space Alcove)": {
+      "interior_cell": [
+        3,
+        14
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 15
+    },
+    "PH (Space Bath Shower)": {
+      "interior_cell": [
+        2,
+        18
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 10
+    },
+    "VAR (Space Storage)": {
+      "interior_cell": [
+        10,
+        11
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 7
+    },
+    "UNDEFINED (Space Undefined)": {
+      "interior_cell": [
+        2,
+        22
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 14
+    },
+    "TK (Space DraughtLobby)": {
+      "interior_cell": [
+        8,
+        16
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 2
+    }
+  },
+  "door_alignment": {
+    "door_1": {
+      "grid_position": [
+        9,
+        16
+      ],
+      "quantization_error_m": 0.131,
+      "open_directions": [
+        "N",
+        "S",
+        "W",
+        "E"
+      ],
+      "is_carved_passable": true
+    },
+    "door_2": {
+      "grid_position": [
+        6,
+        5
+      ],
+      "quantization_error_m": 0.088,
+      "open_directions": [
+        "N",
+        "S",
+        "W",
+        "E"
+      ],
+      "is_carved_passable": true
+    },
+    "door_3": {
+      "grid_position": [
+        10,
+        14
+      ],
+      "quantization_error_m": 0.255,
+      "open_directions": [
+        "N",
+        "S",
+        "W",
+        "E"
+      ],
+      "is_carved_passable": true
+    },
+    "door_4": {
+      "grid_position": [
+        4,
+        16
+      ],
+      "quantization_error_m": 0.109,
+      "open_directions": [
+        "N",
+        "S",
+        "E"
+      ],
+      "is_carved_passable": true
+    },
+    "door_5": {
+      "grid_position": [
+        3,
+        21
+      ],
+      "quantization_error_m": 0.037,
+      "open_directions": [
+        "S",
+        "W",
+        "E"
+      ],
+      "is_carved_passable": true
+    },
+    "door_6": {
+      "grid_position": [
+        7,
+        16
+      ],
+      "quantization_error_m": 0.223,
+      "open_directions": [
+        "N",
+        "S",
+        "W",
+        "E"
+      ],
+      "is_carved_passable": true
+    }
+  }
+}

@@ -1,0 +1,112 @@
+regulation:
+  name: NBC
+  full_name: National Building Code of India
+  edition: 2016
+  part: 4
+  part_title: Fire and Life Safety
+  source: Bureau of Indian Standards (BIS)
+  disclaimer: Research/design-assistance tool only. Not legal certification.
+
+rules:
+
+  R1_VALID_EXIT_POSITION:
+    description: Only exterior DoorOpening entities may be designated as emergency exits.
+    severity: error
+    numeric_threshold: null
+    verified: true
+    notes: Interior passages, interior doors, walls ineligible. Geometric rule (PATH_RL domain constraint).
+
+  R2_MINIMUM_EXIT_COUNT:
+    description: Configuration must contain the minimum required number of exits.
+    severity: error
+    min_exits_absolute:
+      value: 2
+      unit: exits
+      clause: NBC 2016 Part 4 Section 4.4.2.4.3 (Conditionally verified)
+      verified: false
+      notes: Prototype parameter; regulatory value not verified as universal. Small buildings may allow 1 exit.
+    occupancy_overrides:
+      ASSEMBLY:
+        value: 2
+        verified: false
+        notes: Placeholder - verify NBC 2016 Part 4 assembly section.
+      EDUCATIONAL:
+        value: 2
+        verified: false
+        notes: Placeholder - verify NBC 2016 Part 4 Section 6.2.
+
+  R3_EXIT_SEPARATION:
+    description: Required exits shall be separated by a minimum distance.
+    severity: error
+    non_sprinklered:
+      fraction_of_diagonal: 0.5
+      unit: fraction
+      clause: NBC 2016 Part 4 egress placement (Diagonal formulation)
+      verified: false
+      notes: "Prototype parameter; NBC 2016 Part 4 4.4.2.4.1 requires 'as remote as possible'. 1/2 diagonal is borrowed from IBC."
+    sprinklered:
+      fraction_of_diagonal: 0.333
+      unit: fraction
+      clause: NBC 2016 Part 4 egress placement (Diagonal formulation)
+      verified: false
+      notes: "Prototype parameter; NBC 2016 Part 4 does not explicitly formulate 1/3 diagonal."
+    default_sprinklered: false
+
+  R4_EXIT_WIDTH:
+    description: Each exit must meet minimum physical width.
+    severity: error
+    unit_of_exit_width:
+      value: 0.5
+      unit: m
+      clause: NBC 2016 Part 4 Section 4.4.2.3 Unit of exit width 500 mm
+      verified: true
+    absolute_minimum_width_per_exit:
+      value: 1.0
+      unit: m
+      clause: NBC 2016 Part 4 Table 4
+      verified: false
+      notes: Prototype parameter; regulatory value not universal (Table 4 specifies 1.0m for Residential/Educational, 2.0m for Assembly).
+    width_per_person_m:
+      value: null
+      unit: m/person
+      verified: false
+      notes: NBC uses unit-of-width table not linear width-per-person. Intentionally null.
+
+  R5_TRAVEL_DISTANCE:
+    description: Every occupant must be within maximum travel distance to a designated exit.
+    severity: error
+    cell_size_m:
+      value: 1.0
+      unit: m/cell
+      verified: false
+      notes: Modelling assumption each grid cell 1.0 m x 1.0 m. Adjust for different scales.
+    occupancy_limits:
+      RESIDENTIAL:
+        non_sprinklered_m: 22.5
+        sprinklered_m: 30.0
+        clause: NBC 2016 Part 4 Table 5 Group A Residential
+        verified: true
+      EDUCATIONAL:
+        non_sprinklered_m: 22.5
+        sprinklered_m: 30.0
+        clause: NBC 2016 Part 4 Table 5 Group B Educational
+        verified: true
+      BUSINESS:
+        non_sprinklered_m: 30.0
+        sprinklered_m: 45.0
+        clause: NBC 2016 Part 4 Table 5 Group E Business
+        verified: true
+      ASSEMBLY:
+        non_sprinklered_m: 22.5
+        sprinklered_m: 30.0
+        clause: NBC 2016 Part 4 Table 5 Group D Assembly
+        verified: false
+        notes: Verify sprinklered value for Assembly in Table 5.
+      DEFAULT:
+        non_sprinklered_m: 22.5
+        sprinklered_m: 30.0
+        clause: Conservative engineering default (not NBC value)
+        verified: false
+        notes: Used when occupancy not specified. Conservative engineering default only.
+    default_sprinklered: false
+    default_occupancy: DEFAULT

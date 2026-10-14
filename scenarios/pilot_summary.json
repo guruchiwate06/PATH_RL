@@ -1,0 +1,925 @@
+{
+  "333": {
+    "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\333\\model.svg",
+    "cell_size_m": 0.5,
+    "grid_shape": [
+      12,
+      27
+    ],
+    "scale_px_per_m": 99.97558178534572,
+    "wall_cells_count": 71,
+    "door_count": 6,
+    "discrepancies": [
+      "Disappearing wall: Wall #9 (Wall External) produced 0 rasterized wall cells."
+    ],
+    "room_connectivity": {
+      "ULKOTILA (Space Outdoor)": {
+        "interior_cell": [
+          3,
+          3
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 20
+      },
+      "ET (Space Entry Lobby)": {
+        "interior_cell": [
+          6,
+          15
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 5
+      },
+      "K (Space Kitchen)": {
+        "interior_cell": [
+          6,
+          21
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 9
+      },
+      "OH (Space LivingRoom)": {
+        "interior_cell": [
+          5,
+          9
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 12
+      },
+      "ALKOVI (Space Alcove)": {
+        "interior_cell": [
+          3,
+          14
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 15
+      },
+      "PH (Space Bath Shower)": {
+        "interior_cell": [
+          2,
+          18
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 10
+      },
+      "VAR (Space Storage)": {
+        "interior_cell": [
+          10,
+          11
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 7
+      },
+      "UNDEFINED (Space Undefined)": {
+        "interior_cell": [
+          2,
+          22
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 14
+      },
+      "TK (Space DraughtLobby)": {
+        "interior_cell": [
+          8,
+          16
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 2
+      }
+    },
+    "door_alignment": {
+      "door_1": {
+        "grid_position": [
+          9,
+          16
+        ],
+        "quantization_error_m": 0.131,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_2": {
+        "grid_position": [
+          6,
+          5
+        ],
+        "quantization_error_m": 0.088,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_3": {
+        "grid_position": [
+          10,
+          14
+        ],
+        "quantization_error_m": 0.255,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_4": {
+        "grid_position": [
+          4,
+          16
+        ],
+        "quantization_error_m": 0.109,
+        "open_directions": [
+          "N",
+          "S",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_5": {
+        "grid_position": [
+          3,
+          21
+        ],
+        "quantization_error_m": 0.037,
+        "open_directions": [
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_6": {
+        "grid_position": [
+          7,
+          16
+        ],
+        "quantization_error_m": 0.223,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      }
+    }
+  },
+  "1611": {
+    "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\1611\\model.svg",
+    "cell_size_m": 0.5,
+    "grid_shape": [
+      15,
+      14
+    ],
+    "scale_px_per_m": 99.87251075268819,
+    "wall_cells_count": 74,
+    "door_count": 3,
+    "discrepancies": [],
+    "room_connectivity": {
+      "UNDEFINED (Space Undefined)": {
+        "interior_cell": [
+          10,
+          6
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 3
+      },
+      "KK (Space Kitchen Kitchenette)": {
+        "interior_cell": [
+          4,
+          3
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 14
+      },
+      "H (Space Room)": {
+        "interior_cell": [
+          5,
+          10
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 12
+      }
+    },
+    "door_alignment": {
+      "door_1": {
+        "grid_position": [
+          12,
+          6
+        ],
+        "quantization_error_m": 0.125,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_2": {
+        "grid_position": [
+          9,
+          5
+        ],
+        "quantization_error_m": 0.153,
+        "open_directions": [
+          "N",
+          "S",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_3": {
+        "grid_position": [
+          3,
+          6
+        ],
+        "quantization_error_m": 0.238,
+        "open_directions": [
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      }
+    }
+  },
+  "1654": {
+    "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\1654\\model.svg",
+    "cell_size_m": 0.5,
+    "grid_shape": [
+      25,
+      12
+    ],
+    "scale_px_per_m": 99.95240617848971,
+    "wall_cells_count": 75,
+    "door_count": 3,
+    "discrepancies": [],
+    "room_connectivity": {
+      "ALKOVI (Space Alcove)": {
+        "interior_cell": [
+          15,
+          9
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 18
+      },
+      "AH (Space Room)": {
+        "interior_cell": [
+          10,
+          8
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 18
+      },
+      "K (Space Kitchen)": {
+        "interior_cell": [
+          10,
+          3
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 15
+      },
+      "ET (Space Entry Lobby)": {
+        "interior_cell": [
+          17,
+          4
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 7
+      },
+      "ULKOTILA (Space Outdoor)": {
+        "interior_cell": [
+          4,
+          5
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 21
+      },
+      "KPH (Space Bath)": {
+        "interior_cell": [
+          19,
+          8
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 7
+      }
+    },
+    "door_alignment": {
+      "door_1": {
+        "grid_position": [
+          6,
+          4
+        ],
+        "quantization_error_m": 0.156,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_2": {
+        "grid_position": [
+          19,
+          6
+        ],
+        "quantization_error_m": 0.062,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_3": {
+        "grid_position": [
+          22,
+          5
+        ],
+        "quantization_error_m": 0.284,
+        "open_directions": [
+          "N",
+          "S",
+          "W"
+        ],
+        "is_carved_passable": true
+      }
+    }
+  },
+  "7842": {
+    "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\7842\\model.svg",
+    "cell_size_m": 0.5,
+    "grid_shape": [
+      27,
+      14
+    ],
+    "scale_px_per_m": 100.02922465913136,
+    "wall_cells_count": 105,
+    "door_count": 5,
+    "discrepancies": [
+      "Disconnected room: Interior space 'UNDEFINED' at cell (19, 9) cannot reach candidate exit (7, 8)."
+    ],
+    "room_connectivity": {
+      "PIHA (Space Outdoor Garden)": {
+        "interior_cell": [
+          3,
+          5
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 8
+      },
+      "PARVEKE (Space Outdoor Balcony)": {
+        "interior_cell": [
+          5,
+          5
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 6
+      },
+      "TUPA (Space Room)": {
+        "interior_cell": [
+          13,
+          7
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 8
+      },
+      "UNDEFINED (Space Undefined)": {
+        "interior_cell": [
+          19,
+          9
+        ],
+        "is_passable": false,
+        "can_reach_exit": false,
+        "path_length_steps": null
+      },
+      "MH (Space Bedroom)": {
+        "interior_cell": [
+          17,
+          3
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 16
+      },
+      "KPH (Space Bath)": {
+        "interior_cell": [
+          19,
+          11
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 18
+      },
+      "VH (Space Closet WalkIn)": {
+        "interior_cell": [
+          14,
+          4
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 16
+      }
+    },
+    "door_alignment": {
+      "door_1": {
+        "grid_position": [
+          7,
+          8
+        ],
+        "quantization_error_m": 0.1,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_2": {
+        "grid_position": [
+          23,
+          8
+        ],
+        "quantization_error_m": 0.204,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_3": {
+        "grid_position": [
+          17,
+          6
+        ],
+        "quantization_error_m": 0.195,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_4": {
+        "grid_position": [
+          15,
+          4
+        ],
+        "quantization_error_m": 0.191,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_5": {
+        "grid_position": [
+          20,
+          9
+        ],
+        "quantization_error_m": 0.159,
+        "open_directions": [
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      }
+    }
+  },
+  "6257": {
+    "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\6257\\model.svg",
+    "cell_size_m": 0.5,
+    "grid_shape": [
+      19,
+      24
+    ],
+    "scale_px_per_m": 99.93443321933219,
+    "wall_cells_count": 115,
+    "door_count": 6,
+    "discrepancies": [],
+    "room_connectivity": {
+      "PARVI (Space Elevated)": {
+        "interior_cell": [
+          10,
+          4
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 13
+      },
+      "PH/WC (Space UserDefined)": {
+        "interior_cell": [
+          14,
+          19
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 8
+      },
+      "UNDEFINED (Space Undefined)": {
+        "interior_cell": [
+          10,
+          19
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 10
+      },
+      "MH (Space Bedroom)": {
+        "interior_cell": [
+          4,
+          4
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 19
+      },
+      "K (Space Kitchen)": {
+        "interior_cell": [
+          4,
+          19
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 14
+      },
+      "TUPA (Space Room)": {
+        "interior_cell": [
+          7,
+          12
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 8
+      },
+      "LASITETTU KUISTI (Space UserDefined)": {
+        "interior_cell": [
+          14,
+          7
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 10
+      }
+    },
+    "door_alignment": {
+      "door_1": {
+        "grid_position": [
+          12,
+          14
+        ],
+        "quantization_error_m": 0.205,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_2": {
+        "grid_position": [
+          14,
+          17
+        ],
+        "quantization_error_m": 0.164,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_3": {
+        "grid_position": [
+          12,
+          18
+        ],
+        "quantization_error_m": 0.131,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_4": {
+        "grid_position": [
+          9,
+          7
+        ],
+        "quantization_error_m": 0.203,
+        "open_directions": [
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_5": {
+        "grid_position": [
+          5,
+          7
+        ],
+        "quantization_error_m": 0.214,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_6": {
+        "grid_position": [
+          4,
+          17
+        ],
+        "quantization_error_m": 0.177,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      }
+    }
+  },
+  "6244": {
+    "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\6244\\model.svg",
+    "cell_size_m": 0.5,
+    "grid_shape": [
+      27,
+      20
+    ],
+    "scale_px_per_m": 100.05684359462603,
+    "wall_cells_count": 120,
+    "door_count": 9,
+    "discrepancies": [],
+    "room_connectivity": {
+      "ULKOTILA (Space Outdoor)": {
+        "interior_cell": [
+          24,
+          8
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 1
+      },
+      "RUOK (Space Dining)": {
+        "interior_cell": [
+          7,
+          8
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 20
+      },
+      "K (Space Kitchen)": {
+        "interior_cell": [
+          11,
+          7
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 15
+      },
+      "ET (Space Entry Lobby)": {
+        "interior_cell": [
+          15,
+          8
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 10
+      },
+      "OH (Space LivingRoom)": {
+        "interior_cell": [
+          9,
+          13
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 21
+      },
+      "MH (Space Bedroom)": {
+        "interior_cell": [
+          20,
+          12
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 9
+      },
+      "SH (Space Bath Shower)": {
+        "interior_cell": [
+          17,
+          11
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 11
+      },
+      "VH (Space Closet WalkIn)": {
+        "interior_cell": [
+          18,
+          6
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 9
+      },
+      "VAR (Space Storage)": {
+        "interior_cell": [
+          22,
+          6
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 5
+      },
+      "UNDEFINED (Space Undefined)": {
+        "interior_cell": [
+          16,
+          15
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 16
+      },
+      "TK (Space DraughtLobby)": {
+        "interior_cell": [
+          22,
+          8
+        ],
+        "is_passable": true,
+        "can_reach_exit": true,
+        "path_length_steps": 3
+      }
+    },
+    "door_alignment": {
+      "door_1": {
+        "grid_position": [
+          4,
+          10
+        ],
+        "quantization_error_m": 0.108,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_2": {
+        "grid_position": [
+          20,
+          9
+        ],
+        "quantization_error_m": 0.124,
+        "open_directions": [
+          "N",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_3": {
+        "grid_position": [
+          17,
+          9
+        ],
+        "quantization_error_m": 0.091,
+        "open_directions": [
+          "N",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_4": {
+        "grid_position": [
+          17,
+          13
+        ],
+        "quantization_error_m": 0.157,
+        "open_directions": [
+          "N",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_5": {
+        "grid_position": [
+          21,
+          7
+        ],
+        "quantization_error_m": 0.19,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_6": {
+        "grid_position": [
+          18,
+          7
+        ],
+        "quantization_error_m": 0.158,
+        "open_directions": [
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_7": {
+        "grid_position": [
+          22,
+          8
+        ],
+        "quantization_error_m": 0.245,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      },
+      "door_8": {
+        "grid_position": [
+          13,
+          7
+        ],
+        "quantization_error_m": 0.235,
+        "open_directions": [
+          "N",
+          "S",
+          "W"
+        ],
+        "is_carved_passable": true
+      },
+      "door_9": {
+        "grid_position": [
+          24,
+          8
+        ],
+        "quantization_error_m": 0.238,
+        "open_directions": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
+        "is_carved_passable": true
+      }
+    }
+  }
+}

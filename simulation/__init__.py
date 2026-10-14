@@ -16,6 +16,8 @@ simulation   - Discrete-timestep loop coordinating all components
 metrics      - Outcome statistics collection and computation
 experiment   - Scenario runner, parameter sweeps, and export (Stage 5)
 profile      - Extensible heterogeneous agent profile system (Stage 6)
+rules        - Modular rule engine: Rule, RuleSet, Violation, ValidationResult (Stage 11)
+validator    - ExitValidator with check() and mask() APIs (Stage 11)
 """
 
 from evacuation_simulation.simulation.agent import Agent, AgentState
@@ -65,6 +67,35 @@ from evacuation_simulation.simulation.simulation import (
     TimestepTrace,
 )
 from evacuation_simulation.simulation.strategy import ShortestPathStrategy
+from evacuation_simulation.simulation.rules import (
+    Rule,
+    RuleSet,
+    ValidationResult,
+    Violation,
+    build_nbc_2016_ruleset,
+    load_regulatory_config,
+    R1ValidExitPosition,
+    R2MinimumExitCount,
+    R3ExitSeparation,
+    R4ExitWidth,
+    R5TravelDistance,
+)
+from evacuation_simulation.simulation.validator import ExitValidator, make_validator
+from evacuation_simulation.simulation.evaluation import (
+    ConfigurationEvaluator,
+    EvaluationMetrics,
+    EvaluationResult,
+    rank_evaluations,
+)
+from evacuation_simulation.simulation.search import (
+    ExitConfigurationSearcher,
+    SearchResult,
+    search_exit_configurations,
+)
+from evacuation_simulation.simulation.rl_environment import (
+    ExitPlacementEnv,
+    RLObservation,
+)
 
 __all__ = [
     # config & geometry (Stage 8 & 10)
@@ -118,4 +149,31 @@ __all__ = [
     "run_repeated",
     "run_scenario",
     "run_sweep",
+    # rules & validator (Stage 11)
+    "Rule",
+    "RuleSet",
+    "ValidationResult",
+    "Violation",
+    "build_nbc_2016_ruleset",
+    "load_regulatory_config",
+    "R1ValidExitPosition",
+    "R2MinimumExitCount",
+    "R3ExitSeparation",
+    "R4ExitWidth",
+    "R5TravelDistance",
+    "ExitValidator",
+    "make_validator",
+    # evaluation & ranking (Stage 12)
+    "ConfigurationEvaluator",
+    "EvaluationMetrics",
+    "EvaluationResult",
+    "rank_evaluations",
+    # non-rl search baseline (Stage 13)
+    "ExitConfigurationSearcher",
+    "SearchResult",
+    "search_exit_configurations",
+    # RL exit-placement formulation (Stage 14A)
+    "ExitPlacementEnv",
+    "RLObservation",
 ]
+

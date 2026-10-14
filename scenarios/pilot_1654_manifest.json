@@ -1,0 +1,83 @@
+{
+  "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\1654\\model.svg",
+  "grid_resolution_m": 0.5,
+  "grid_shape": [
+    25,
+    12
+  ],
+  "scale_px_per_meter": 99.95,
+  "scale_is_derived": true,
+  "scale_sample_count": 12,
+  "scale_std_dev": 0.1632,
+  "wall_cell_count": 75,
+  "total_doors_detected": 3,
+  "candidate_exterior_exits_derived": 1,
+  "doors": [
+    {
+      "door_id": "door_1",
+      "svg_center": [
+        238.69,
+        317.54
+      ],
+      "estimated_width_m": 0.92,
+      "parent_wall_class": "Wall External",
+      "adjacent_spaces": [
+        "ULKOTILA (Outdoor)",
+        "K (Kitchen)"
+      ],
+      "classification": "balcony_outdoor",
+      "confidence": 0.9,
+      "review_required": true,
+      "review_reason": "Opens from living space to private balcony/outdoor enclosure; unverified egress to ground level or safe dispersal area.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        6,
+        4
+      ]
+    },
+    {
+      "door_id": "door_2",
+      "svg_center": [
+        320.84,
+        969.81
+      ],
+      "estimated_width_m": 0.79,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "ET (Entry Lobby)",
+        "KPH (Bath)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        19,
+        6
+      ]
+    },
+    {
+      "door_id": "door_3",
+      "svg_center": [
+        255.0,
+        1104.18
+      ],
+      "estimated_width_m": 0.94,
+      "parent_wall_class": "Wall External",
+      "adjacent_spaces": [
+        "ET (Entry Lobby)",
+        "Exterior/Void"
+      ],
+      "classification": "potential_exterior",
+      "confidence": 0.75,
+      "review_required": true,
+      "review_reason": "Primary unit entrance opening connecting draught lobby (TK) to exterior porch/access route. Justified candidate exit pending ground-level egress verification.",
+      "is_candidate_exit": true,
+      "grid_position": [
+        22,
+        5
+      ]
+    }
+  ]
+}

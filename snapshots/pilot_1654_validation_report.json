@@ -1,0 +1,111 @@
+{
+  "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\1654\\model.svg",
+  "cell_size_m": 0.5,
+  "grid_shape": [
+    25,
+    12
+  ],
+  "scale_px_per_m": 99.95240617848971,
+  "wall_cells_count": 75,
+  "door_count": 3,
+  "discrepancies": [],
+  "room_connectivity": {
+    "ALKOVI (Space Alcove)": {
+      "interior_cell": [
+        15,
+        9
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 18
+    },
+    "AH (Space Room)": {
+      "interior_cell": [
+        10,
+        8
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 18
+    },
+    "K (Space Kitchen)": {
+      "interior_cell": [
+        10,
+        3
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 15
+    },
+    "ET (Space Entry Lobby)": {
+      "interior_cell": [
+        17,
+        4
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 7
+    },
+    "ULKOTILA (Space Outdoor)": {
+      "interior_cell": [
+        4,
+        5
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 21
+    },
+    "KPH (Space Bath)": {
+      "interior_cell": [
+        19,
+        8
+      ],
+      "is_passable": true,
+      "can_reach_exit": true,
+      "path_length_steps": 7
+    }
+  },
+  "door_alignment": {
+    "door_1": {
+      "grid_position": [
+        6,
+        4
+      ],
+      "quantization_error_m": 0.156,
+      "open_directions": [
+        "N",
+        "S",
+        "W",
+        "E"
+      ],
+      "is_carved_passable": true
+    },
+    "door_2": {
+      "grid_position": [
+        19,
+        6
+      ],
+      "quantization_error_m": 0.062,
+      "open_directions": [
+        "N",
+        "S",
+        "W",
+        "E"
+      ],
+      "is_carved_passable": true
+    },
+    "door_3": {
+      "grid_position": [
+        22,
+        5
+      ],
+      "quantization_error_m": 0.284,
+      "open_directions": [
+        "N",
+        "S",
+        "W"
+      ],
+      "is_carved_passable": true
+    }
+  }
+}

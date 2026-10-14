@@ -1,0 +1,215 @@
+{
+  "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\6244\\model.svg",
+  "grid_resolution_m": 0.5,
+  "grid_shape": [
+    27,
+    20
+  ],
+  "scale_px_per_meter": 100.06,
+  "scale_is_derived": true,
+  "scale_sample_count": 24,
+  "scale_std_dev": 0.2005,
+  "wall_cell_count": 120,
+  "total_doors_detected": 9,
+  "candidate_exterior_exits_derived": 1,
+  "doors": [
+    {
+      "door_id": "door_1",
+      "svg_center": [
+        533.17,
+        232.46
+      ],
+      "estimated_width_m": 0.76,
+      "parent_wall_class": "Wall External",
+      "adjacent_spaces": [
+        "ULKOTILA (Outdoor)",
+        "OH (LivingRoom)"
+      ],
+      "classification": "balcony_outdoor",
+      "confidence": 0.9,
+      "review_required": true,
+      "review_reason": "Opens from living space to private balcony/outdoor enclosure; unverified egress to ground level or safe dispersal area.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        4,
+        10
+      ]
+    },
+    {
+      "door_id": "door_2",
+      "svg_center": [
+        479.52,
+        1013.91
+      ],
+      "estimated_width_m": 0.76,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "ET (Entry Lobby)",
+        "MH (Bedroom)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        20,
+        9
+      ]
+    },
+    {
+      "door_id": "door_3",
+      "svg_center": [
+        479.52,
+        867.42
+      ],
+      "estimated_width_m": 0.66,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "ET (Entry Lobby)",
+        "SH (Bath Shower)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        17,
+        9
+      ]
+    },
+    {
+      "door_id": "door_4",
+      "svg_center": [
+        689.04,
+        867.69
+      ],
+      "estimated_width_m": 0.6,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "SH (Bath Shower)",
+        "UNDEFINED (Undefined)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        17,
+        13
+      ]
+    },
+    {
+      "door_id": "door_5",
+      "svg_center": [
+        361.09,
+        1062.91
+      ],
+      "estimated_width_m": 0.57,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "VAR (Storage)",
+        "ET (Entry Lobby)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        21,
+        7
+      ]
+    },
+    {
+      "door_id": "door_6",
+      "svg_center": [
+        361.09,
+        932.64
+      ],
+      "estimated_width_m": 0.63,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "VH (Closet WalkIn)",
+        "ET (Entry Lobby)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        18,
+        7
+      ]
+    },
+    {
+      "door_id": "door_7",
+      "svg_center": [
+        420.54,
+        1101.62
+      ],
+      "estimated_width_m": 0.83,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "ET (Entry Lobby)",
+        "TK (DraughtLobby)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        22,
+        8
+      ]
+    },
+    {
+      "door_id": "door_8",
+      "svg_center": [
+        359.44,
+        657.98
+      ],
+      "estimated_width_m": 0.73,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "K (Kitchen)",
+        "ET (Entry Lobby)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        13,
+        7
+      ]
+    },
+    {
+      "door_id": "door_9",
+      "svg_center": [
+        420.54,
+        1202.4
+      ],
+      "estimated_width_m": 0.88,
+      "parent_wall_class": "Wall External",
+      "adjacent_spaces": [
+        "TK (DraughtLobby)",
+        "ULKOTILA (Outdoor)"
+      ],
+      "classification": "potential_exterior",
+      "confidence": 0.75,
+      "review_required": true,
+      "review_reason": "Primary unit entrance opening connecting draught lobby (TK) to exterior porch/access route. Justified candidate exit pending ground-level egress verification.",
+      "is_candidate_exit": true,
+      "grid_position": [
+        24,
+        8
+      ]
+    }
+  ]
+}

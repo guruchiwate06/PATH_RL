@@ -1,0 +1,127 @@
+{
+  "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\7842\\model.svg",
+  "grid_resolution_m": 0.5,
+  "grid_shape": [
+    27,
+    14
+  ],
+  "scale_px_per_meter": 100.03,
+  "scale_is_derived": true,
+  "scale_sample_count": 14,
+  "scale_std_dev": 0.1224,
+  "wall_cell_count": 105,
+  "total_doors_detected": 5,
+  "candidate_exterior_exits_derived": 0,
+  "doors": [
+    {
+      "door_id": "door_1",
+      "svg_center": [
+        433.66,
+        369.96
+      ],
+      "estimated_width_m": 0.79,
+      "parent_wall_class": "Wall External",
+      "adjacent_spaces": [
+        "PARVEKE (Outdoor Balcony)",
+        "TUPA (Room)"
+      ],
+      "classification": "balcony_outdoor",
+      "confidence": 0.9,
+      "review_required": true,
+      "review_reason": "Opens from living space to private balcony/outdoor enclosure; unverified egress to ground level or safe dispersal area.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        7,
+        8
+      ]
+    },
+    {
+      "door_id": "door_2",
+      "svg_center": [
+        425.06,
+        1154.93
+      ],
+      "estimated_width_m": 0.89,
+      "parent_wall_class": "Wall External",
+      "adjacent_spaces": [
+        "UNDEFINED (Undefined)",
+        "Exterior/Void"
+      ],
+      "classification": "uncertain",
+      "confidence": 0.3,
+      "review_required": true,
+      "review_reason": "Exterior wall door with ambiguous spatial context; unknown external elevation or egress destination.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        23,
+        8
+      ]
+    },
+    {
+      "door_id": "door_3",
+      "svg_center": [
+        343.29,
+        882.42
+      ],
+      "estimated_width_m": 0.8,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "MH (Bedroom)",
+        "UNDEFINED (Undefined)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        17,
+        6
+      ]
+    },
+    {
+      "door_id": "door_4",
+      "svg_center": [
+        233.14,
+        792.59
+      ],
+      "estimated_width_m": 0.81,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "VH (Closet WalkIn)",
+        "MH (Bedroom)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        15,
+        4
+      ]
+    },
+    {
+      "door_id": "door_5",
+      "svg_center": [
+        485.66,
+        1037.26
+      ],
+      "estimated_width_m": 0.8,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "UNDEFINED (Undefined)",
+        "KPH (Bath)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        20,
+        9
+      ]
+    }
+  ]
+}

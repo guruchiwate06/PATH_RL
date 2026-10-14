@@ -1,0 +1,149 @@
+{
+  "source_file": "F:\\Projects\\RL_ENV\\dataset\\cubicasa5k\\high_quality_architectural\\6257\\model.svg",
+  "grid_resolution_m": 0.5,
+  "grid_shape": [
+    19,
+    24
+  ],
+  "scale_px_per_meter": 99.93,
+  "scale_is_derived": true,
+  "scale_sample_count": 16,
+  "scale_std_dev": 0.1058,
+  "wall_cell_count": 115,
+  "total_doors_detected": 6,
+  "candidate_exterior_exits_derived": 0,
+  "doors": [
+    {
+      "door_id": "door_1",
+      "svg_center": [
+        709.59,
+        638.66
+      ],
+      "estimated_width_m": 1.03,
+      "parent_wall_class": "Wall External",
+      "adjacent_spaces": [
+        "TUPA (Room)",
+        "LASITETTU KUISTI (UserDefined)"
+      ],
+      "classification": "uncertain",
+      "confidence": 0.3,
+      "review_required": true,
+      "review_reason": "Exterior wall door with ambiguous spatial context; unknown external elevation or egress destination.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        12,
+        14
+      ]
+    },
+    {
+      "door_id": "door_2",
+      "svg_center": [
+        859.67,
+        731.67
+      ],
+      "estimated_width_m": 0.97,
+      "parent_wall_class": "Wall External",
+      "adjacent_spaces": [
+        "LASITETTU KUISTI (UserDefined)",
+        "PH/WC (UserDefined)"
+      ],
+      "classification": "uncertain",
+      "confidence": 0.3,
+      "review_required": true,
+      "review_reason": "Exterior wall door with ambiguous spatial context; unknown external elevation or egress destination.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        14,
+        17
+      ]
+    },
+    {
+      "door_id": "door_3",
+      "svg_center": [
+        923.85,
+        637.66
+      ],
+      "estimated_width_m": 0.76,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "UNDEFINED (Undefined)",
+        "PH/WC (UserDefined)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        12,
+        18
+      ]
+    },
+    {
+      "door_id": "door_4",
+      "svg_center": [
+        370.76,
+        494.56
+      ],
+      "estimated_width_m": 1.0,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "PARVI (Elevated)",
+        "TUPA (Room)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        9,
+        7
+      ]
+    },
+    {
+      "door_id": "door_5",
+      "svg_center": [
+        370.76,
+        253.86
+      ],
+      "estimated_width_m": 1.08,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "MH (Bedroom)",
+        "TUPA (Room)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        5,
+        7
+      ]
+    },
+    {
+      "door_id": "door_6",
+      "svg_center": [
+        860.67,
+        236.0
+      ],
+      "estimated_width_m": 1.26,
+      "parent_wall_class": "Wall",
+      "adjacent_spaces": [
+        "TUPA (Room)",
+        "K (Kitchen)"
+      ],
+      "classification": "interior",
+      "confidence": 0.95,
+      "review_required": false,
+      "review_reason": "Standard interior room-to-room or room-to-hallway passage.",
+      "is_candidate_exit": false,
+      "grid_position": [
+        4,
+        17
+      ]
+    }
+  ]
+}
