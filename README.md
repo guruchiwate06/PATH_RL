@@ -59,7 +59,8 @@ The codebase separates static geometry, dynamic routing, regulatory rules, and a
   - Gymnasium-style sequential decision RL environment (`ExitPlacementEnv`).
   - CubiCasa5K architectural SVG floor-plan ingestion pipeline.
   - Interactive HTML5 canvas visualizer and command-line experiment runner.
-  - **End-to-end synthetic evacuation pipeline** (`run_e2e_experiment.py`): connects layout generator → NBC validator → occupant seeder → BFS simulation → structured results. 626 tests passing.
+  - **End-to-end synthetic evacuation pipeline** (`run_e2e_experiment.py`): connects layout generator → NBC validator → occupant seeder → BFS simulation → structured results.
+  - **Exhaustive exit-configuration baseline** (`run_baseline_experiment.py`, Stage 17): evaluates all candidate exit combinations against fixed building and occupant scenario, enforcing hard NBC constraints and ranking by evacuation time. 633 tests passing.
 - **In Progress / Planned**:
   - Policy training baseline using standard RL algorithms (PPO/DQN).
   - Multi-story 3D IFC/BIM extraction pipeline (`scratch/kit_ifc`).
@@ -100,19 +101,28 @@ Results are saved as JSON to `experiment_output/`.
 
 > **Note**: The NBC 2016 R5 travel-distance rule (22.5m limit) constrains which building sizes and occupant placements are compliant. The default 20×30 grid (15m × 10m) with 2 exits and 20 occupants is verified compliant. Larger buildings require proportionally more exits.
 
-### 4. Multi-Seed Batch Experiments
+### 4. Exhaustive Exit-Configuration Baseline (Stage 17)
+Run the combinatorial baseline search over all feasible exit configurations:
+```bash
+python run_baseline_experiment.py --seed 42 --occupants 20
+# Multi-seed baseline suite:
+python run_baseline_experiment.py --seeds 42,20,32,43
+```
+Results are saved as structured JSON benchmarks to `experiment_output/baseline/`.
+
+### 5. Multi-Seed Batch Experiments
 Run parameter sweeps across multiple seeds with aggregate statistics:
 ```bash
 python main.py --experiment --seeds 1,2,3,4,5 --output-dir experiment_output/
 ```
 
-### 5. Exhaustive Search Baseline
-Run the combinatorial exit configuration optimizer:
+### 6. Exhaustive Search Baseline Demo
+Run the Stage 13 scenario baseline optimizer:
 ```bash
 python stage13_demo.py
 ```
 
-### 6. Reinforcement Learning Environment Demo
+### 7. Reinforcement Learning Environment Demo
 Run the sequential exit-placement MDP demo:
 ```bash
 python stage14_demo.py

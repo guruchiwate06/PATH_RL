@@ -57,3 +57,12 @@ Record of major architectural, algorithmic, and data-handling decisions for the 
 - **Decision**: Implement an interactive browser-based visualizer using Vanilla HTML5 and Canvas (`visualize.html`) served via Python's standard `http.server`, accompanied by headless Matplotlib snapshot exports.
 - **Why**: Avoids heavy GUI framework dependencies (PyQt, Tkinter, Pygame) and runs smoothly across any OS and headless dev environments.
 - **Trade-off**: Requires exporting simulation trajectories to JSON format or streaming step frames over a local server.
+
+---
+
+## 8. Reproducible Exhaustive Baseline on Fixed Layout & Occupants (Stage 17)
+
+- **Decision**: Benchmark exit placement optimization by evaluating all feasible combinatorial exit configurations against an identical synthetic layout and fixed occupant scenario, ranking by total evacuation time.
+- **Why**: Provides an unambiguous, reproducible ground-truth reference benchmark to measure whether subsequent RL policies achieve or approximate optimal building evacuation safety.
+- **Trade-off**: Combinatorial scaling $\binom{N}{k}$ is feasible for building candidate doors ($N \le 12, k \le 4$), but requires heuristics/RL when scaling to massive architectural spaces.
+

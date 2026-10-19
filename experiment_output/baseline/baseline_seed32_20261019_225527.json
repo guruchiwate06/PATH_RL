@@ -1,0 +1,266 @@
+{
+  "experiment_type": "exhaustive_exit_configuration_baseline",
+  "stage": 17,
+  "timestamp": "20261019_225527",
+  "environment": {
+    "seed": 32,
+    "grid_rows": 20,
+    "grid_cols": 30,
+    "cell_size_m": 0.5,
+    "total_occupants": 20,
+    "num_candidate_exits": 4,
+    "exit_count": 2,
+    "max_timesteps": 500,
+    "candidate_exits": [
+      {
+        "door_id": "EXIT_NORTHWEST",
+        "position": [
+          0,
+          7
+        ],
+        "width": 1.5
+      },
+      {
+        "door_id": "EXIT_WEST",
+        "position": [
+          10,
+          0
+        ],
+        "width": 1.5
+      },
+      {
+        "door_id": "EXIT_EAST",
+        "position": [
+          10,
+          29
+        ],
+        "width": 1.5
+      },
+      {
+        "door_id": "EXIT_SOUTHEAST",
+        "position": [
+          19,
+          22
+        ],
+        "width": 1.5
+      }
+    ]
+  },
+  "search_statistics": {
+    "is_exhaustive": true,
+    "total_generated": 6,
+    "rejected_by_constraints": 4,
+    "evaluated": 2,
+    "feasible": 2,
+    "infeasible": 4,
+    "runtime_seconds": 0.2514,
+    "evaluations_per_second": 7.95
+  },
+  "baseline_summary": {
+    "has_feasible_solution": true,
+    "best_configuration_id": "config_4_exits_2",
+    "best_exit_positions": [
+      [
+        10,
+        0
+      ],
+      [
+        10,
+        29
+      ]
+    ],
+    "best_score": 29,
+    "worst_feasible_score": 29,
+    "tied_for_best_count": 2,
+    "tied_configuration_ids": [
+      "config_4_exits_2",
+      "config_5_exits_2"
+    ],
+    "best_configuration": {
+      "configuration_id": "config_4_exits_2",
+      "exits": [
+        [
+          10,
+          0
+        ],
+        [
+          10,
+          29
+        ]
+      ],
+      "widths": [
+        1.5,
+        1.5
+      ],
+      "total_evacuation_time": 29,
+      "mean_evacuation_time": 17.1,
+      "evacuation_rate": 1.0,
+      "evacuated_count": 20,
+      "mean_waiting_steps": 3.35,
+      "congested_cell_steps": 322,
+      "max_cell_occupancy": 1,
+      "exit_utilization": {
+        "(10, 29)": 9,
+        "(10, 0)": 11
+      }
+    }
+  },
+  "all_configurations_ranked": [
+    {
+      "rank": 1,
+      "configuration_id": "config_4_exits_2",
+      "is_feasible": true,
+      "is_compliant": true,
+      "score": 29,
+      "total_evacuation_time": 29,
+      "mean_evacuation_time": 17.1,
+      "evacuation_rate": 1.0,
+      "evacuated_count": 20,
+      "non_evacuated_count": 0,
+      "total_timesteps": 29,
+      "violations": []
+    },
+    {
+      "rank": 2,
+      "configuration_id": "config_5_exits_2",
+      "is_feasible": true,
+      "is_compliant": true,
+      "score": 29,
+      "total_evacuation_time": 29,
+      "mean_evacuation_time": 17.95,
+      "evacuation_rate": 1.0,
+      "evacuated_count": 20,
+      "non_evacuated_count": 0,
+      "total_timesteps": 29,
+      "violations": []
+    },
+    {
+      "rank": 3,
+      "configuration_id": "config_1_exits_2",
+      "is_feasible": false,
+      "is_compliant": false,
+      "score": null,
+      "total_evacuation_time": null,
+      "mean_evacuation_time": null,
+      "evacuation_rate": 0.0,
+      "evacuated_count": 0,
+      "non_evacuated_count": 20,
+      "total_timesteps": null,
+      "violations": [
+        {
+          "rule_id": "R3_EXIT_SEPARATION",
+          "message": "Exits at (0, 7) and (10, 0) are separated by 12.21m, below required 18.03m (1/2 of diagonal 36.06m)."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_001' at (9, 25) must travel 26.0m to exit (10, 0), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_004' at (15, 24) must travel 29.0m to exit (10, 0), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_005' at (4, 26) must travel 31.0m to exit (0, 7), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_010' at (2, 18) must travel 27.0m to exit (0, 7), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_015' at (16, 28) must travel 34.0m to exit (10, 0), exceeding limit 22.5m."
+        }
+      ]
+    },
+    {
+      "rank": 4,
+      "configuration_id": "config_2_exits_2",
+      "is_feasible": false,
+      "is_compliant": false,
+      "score": null,
+      "total_evacuation_time": null,
+      "mean_evacuation_time": null,
+      "evacuation_rate": 0.0,
+      "evacuated_count": 0,
+      "non_evacuated_count": 20,
+      "total_timesteps": null,
+      "violations": [
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_019' at (18, 2) must travel 23.0m to exit (0, 7), exceeding limit 22.5m."
+        }
+      ]
+    },
+    {
+      "rank": 5,
+      "configuration_id": "config_3_exits_2",
+      "is_feasible": false,
+      "is_compliant": false,
+      "score": null,
+      "total_evacuation_time": null,
+      "mean_evacuation_time": null,
+      "evacuation_rate": 0.0,
+      "evacuated_count": 0,
+      "non_evacuated_count": 20,
+      "total_timesteps": null,
+      "violations": [
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_019' at (18, 2) must travel 23.0m to exit (0, 7), exceeding limit 22.5m."
+        }
+      ]
+    },
+    {
+      "rank": 6,
+      "configuration_id": "config_6_exits_2",
+      "is_feasible": false,
+      "is_compliant": false,
+      "score": null,
+      "total_evacuation_time": null,
+      "mean_evacuation_time": null,
+      "evacuation_rate": 0.0,
+      "evacuated_count": 0,
+      "non_evacuated_count": 20,
+      "total_timesteps": null,
+      "violations": [
+        {
+          "rule_id": "R3_EXIT_SEPARATION",
+          "message": "Exits at (10, 29) and (19, 22) are separated by 11.4m, below required 18.03m (1/2 of diagonal 36.06m)."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_003' at (16, 9) must travel 26.0m to exit (10, 29), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_007' at (6, 7) must travel 26.0m to exit (10, 29), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_008' at (15, 8) must travel 26.0m to exit (10, 29), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_011' at (6, 14) must travel 25.0m to exit (10, 29), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_013' at (14, 1) must travel 32.0m to exit (10, 29), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_017' at (13, 14) must travel 24.0m to exit (10, 29), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_019' at (18, 2) must travel 35.0m to exit (10, 29), exceeding limit 22.5m."
+        },
+        {
+          "rule_id": "R5_TRAVEL_DISTANCE",
+          "message": "Agent 'agent_020' at (15, 12) must travel 24.0m to exit (10, 29), exceeding limit 22.5m."
+        }
+      ]
+    }
+  ]
+}

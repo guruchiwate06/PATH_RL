@@ -151,3 +151,40 @@ import_cubicasa_plan(svg_path, resolution)                       [importer.py]
         ├─ list[CandidateExit] (exterior openings)
         └─ ReviewManifest (audit log of classifications and scale)
 ```
+
+---
+
+## 6. Exhaustive Exit-Configuration Baseline Pipeline (`run_baseline_experiment.py`)
+
+Execution flow for evaluating all candidate exit combinations on a fixed building and occupant scenario:
+
+```
+run_baseline_experiment.py
+  └─► run_baseline_experiment(...)
+        │
+        ├─► CommercialLayoutGenerator.generate(...)              [commercial.py]
+        │     └─ Generates FloorPlan with exterior candidate doors
+        │
+        ├─► generate_candidate_exits(floor_plan)                 [generation.py]
+        │     └─ Extracts candidate exterior doors
+        │
+        ├─► OccupantSeeder.seed(...)                             [occupancy_seeder.py]
+        │     └─ Generates ONE fixed OccupantScenario for fair comparison
+        │
+        ├─► ExitConfigurationSearcher.search(...)                [search.py]
+        │     ├─ Enumerates all k-combinations (generate_exit_configurations)
+        │     │
+        │     ├─ For each configuration:
+        │     │     ├─ ExitValidator.check(floor_plan, cfg, occupants) [validator.py]
+        │     │     │     └─ If invalid: mark infeasible, record violations, skip simulation
+        │     │     │
+        │     │     └─ If compliant:
+        │     │           └─ ConfigurationEvaluator.evaluate(...)     [evaluation.py]
+        │     │                 └─ Executes simulation to completion
+        │     │
+        │     └─ rank_evaluations(results)                            [evaluation.py]
+        │           └─ Sorts feasible before infeasible, ordered by total evacuation time
+        │
+        └─► Exports structured JSON benchmark to experiment_output/baseline/
+```
+
