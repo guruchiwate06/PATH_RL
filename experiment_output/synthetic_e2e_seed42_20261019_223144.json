@@ -1,0 +1,146 @@
+{
+  "experiment": {
+    "timestamp": "2026-10-19T22:31:44.415966",
+    "seed": 42,
+    "generator": "CommercialLayoutGenerator",
+    "generator_config": {
+      "grid_rows": 24,
+      "grid_cols": 40,
+      "num_exterior_exits": 2,
+      "cell_size_m": 0.5
+    }
+  },
+  "layout": {
+    "grid_rows": 24,
+    "grid_cols": 40,
+    "wall_cells": 263,
+    "total_doors": 12,
+    "exterior_doors": 2,
+    "room_count": 10,
+    "rooms": [
+      {
+        "room_id": "Room_North_01",
+        "room_type": "Office",
+        "area_cells": 48,
+        "door_cell": [
+          9,
+          3
+        ]
+      },
+      {
+        "room_id": "Room_North_02",
+        "room_type": "Laboratory",
+        "area_cells": 64,
+        "door_cell": [
+          9,
+          11
+        ]
+      },
+      {
+        "room_id": "Room_North_03",
+        "room_type": "Laboratory",
+        "area_cells": 56,
+        "door_cell": [
+          9,
+          20
+        ]
+      },
+      {
+        "room_id": "Room_North_04",
+        "room_type": "Breakroom",
+        "area_cells": 48,
+        "door_cell": [
+          9,
+          27
+        ]
+      },
+      {
+        "room_id": "Room_North_05",
+        "room_type": "Breakroom",
+        "area_cells": 48,
+        "door_cell": [
+          9,
+          34
+        ]
+      },
+      {
+        "room_id": "Room_South_01",
+        "room_type": "Office",
+        "area_cells": 72,
+        "door_cell": [
+          14,
+          5
+        ]
+      },
+      {
+        "room_id": "Room_South_02",
+        "room_type": "Office",
+        "area_cells": 48,
+        "door_cell": [
+          14,
+          13
+        ]
+      },
+      {
+        "room_id": "Room_South_03",
+        "room_type": "Laboratory",
+        "area_cells": 56,
+        "door_cell": [
+          14,
+          21
+        ]
+      },
+      {
+        "room_id": "Room_South_04",
+        "room_type": "Breakroom",
+        "area_cells": 80,
+        "door_cell": [
+          14,
+          30
+        ]
+      },
+      {
+        "room_id": "Room_South_05",
+        "room_type": "Office",
+        "area_cells": 16,
+        "door_cell": [
+          14,
+          37
+        ]
+      }
+    ]
+  },
+  "exit_configuration": {
+    "configuration_id": "reference_compliant_exits",
+    "exits": [
+      [
+        12,
+        0
+      ],
+      [
+        12,
+        39
+      ]
+    ],
+    "widths_m": [
+      1.5,
+      1.5
+    ]
+  },
+  "constraint_validation": {
+    "is_compliant": true,
+    "violation_count": 0,
+    "violations": []
+  },
+  "occupants": {
+    "total_placed": 30,
+    "seeder_seed": 42
+  },
+  "simulation": {
+    "max_timesteps": 500,
+    "is_feasible": false,
+    "evacuation_complete": null,
+    "total_timesteps_run": null
+  },
+  "metrics": null
+}
