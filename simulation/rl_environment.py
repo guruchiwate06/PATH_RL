@@ -135,6 +135,9 @@ class RLObservation:
     action_mask: list[bool]
     exits_remaining: int
     total_agents: int
+    walkable_ratio: float = 0.0
+    occupant_centroid: tuple[float, float] = (0.5, 0.5)
+    occupant_dispersion: float = 0.0
 
     def to_dict(self) -> dict[str, Any]:
         """Convert the observation to a standard Python dictionary."""
@@ -145,6 +148,9 @@ class RLObservation:
             "action_mask": list(self.action_mask),
             "exits_remaining": self.exits_remaining,
             "total_agents": self.total_agents,
+            "walkable_ratio": self.walkable_ratio,
+            "occupant_centroid": list(self.occupant_centroid),
+            "occupant_dispersion": self.occupant_dispersion,
         }
 
 
@@ -231,7 +237,26 @@ class ExitPlacementEnv:
                 f"Ineligible candidates: {', '.join(invalid_details)}."
             )
 
+        # Precompute BFS and graph geometry features
+        self._precompute_geometry()
+
         return self._get_obs()
+
+    def _precompute_geometry(self) -> None:
+        """
+        Precompute BFS shortest-path distances and graph connectivity for candidate exits.
+        Reuses Environment and NavigationGraph (NetworkX) logic.
+        """
+        if self.config is None:
+            return
+        from evacuation_simulation.simulation.rl_policy import (
+            compute_geometry_features_for_candidates,
+        )
+        self._global_geom, self._candidate_geom = compute_geometry_features_for_candidates(
+            self.config.floor_plan,
+            self.config.occupants,
+            self.candidates,
+        )
 
     def _build_partial_config(self) -> ExitConfiguration:
         """Build the ExitConfiguration from currently selected indices."""
@@ -295,15 +320,30 @@ class ExitPlacementEnv:
             raise RuntimeError("Environment is not initialized. Call reset() first.")
 
         selected_set = set(self.selected_indices)
-        candidate_dicts = [
-            {
+        candidate_dicts = []
+        for i, c in enumerate(self.candidates):
+            geom = (
+                self._candidate_geom[i]
+                if hasattr(self, "_candidate_geom") and i < len(self._candidate_geom)
+                else {}
+            )
+            candidate_dicts.append({
                 "position": list(c.position),
                 "width": c.width,
                 "door_id": c.door_id,
                 "is_selected": (i in selected_set),
-            }
-            for i, c in enumerate(self.candidates)
-        ]
+                "mean_dist_to_occupants": geom.get("mean_dist_to_occupants", 0.5),
+                "min_dist_to_occupants": geom.get("min_dist_to_occupants", 0.5),
+                "max_dist_to_occupants": geom.get("max_dist_to_occupants", 0.5),
+                "reachability_ratio": geom.get("reachability_ratio", 1.0),
+                "corridor_connectivity": geom.get("corridor_connectivity", 0.5),
+            })
+
+        global_geom = getattr(self, "_global_geom", {})
+        centroid = (
+            float(global_geom.get("occupant_centroid_r", 0.5)),
+            float(global_geom.get("occupant_centroid_c", 0.5)),
+        )
 
         return RLObservation(
             grid_shape=(self.config.floor_plan.grid.rows, self.config.floor_plan.grid.cols),
@@ -312,6 +352,9 @@ class ExitPlacementEnv:
             action_mask=self.action_mask(),
             exits_remaining=self.exit_count - len(self.selected_indices),
             total_agents=len(self.config.occupants.agents),
+            walkable_ratio=float(global_geom.get("walkable_ratio", 0.0)),
+            occupant_centroid=centroid,
+            occupant_dispersion=float(global_geom.get("occupant_dispersion", 0.0)),
         )
 
     def step(self, action: int) -> tuple[RLObservation, float, bool, dict[str, Any]]:
