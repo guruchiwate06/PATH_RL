@@ -71,15 +71,20 @@ class TestStage18BExtended:
         assert res["episodes_completed"] == 4
         assert res["updates_completed"] == 2  # 4 ep / batch_size 2 = 2 updates
 
-        # Check model file
-        model_path = tmp_path / "model_stage18b.pt"
+        # Check model file (geometry-aware checkpoint)
+        model_path = Path(res["model_path"])
         assert model_path.exists()
+        assert model_path.name == "model_stage18b_geom.pt"
         loaded_model, meta = MaskedActorCritic.load(model_path)
-        assert meta["stage"] == "18B"
+        assert meta["stage"] == "18B_geom"
+        assert meta["geometry_features"] is True
+        assert meta["in_dim"] == 88
+        assert loaded_model.in_dim == 88
+        assert loaded_model.geometry_features is True
         assert meta["updates_completed"] == 2
 
         # Check CSV
-        csv_path = tmp_path / "training_history_stage18b.csv"
+        csv_path = Path(res["csv_path"])
         assert csv_path.exists()
         with open(csv_path, "r", encoding="utf-8") as f:
             reader = list(csv.reader(f))
@@ -89,12 +94,68 @@ class TestStage18BExtended:
             assert reader[4][0] == "4"
 
         # Check JSON
-        json_path = tmp_path / "training_history_stage18b.json"
+        json_path = Path(res["history_path"])
         assert json_path.exists()
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             assert len(data["episodes"]) == 4
             assert len(data["loss_history"]) == 2
+            assert data["training_metadata"]["geometry_features"] is True
+            assert data["training_metadata"]["in_dim"] == 88
+
+    def test_training_uses_88dim_geometry_features(self, tmp_path: Path):
+        """Verify that training states and model.get_action use identical 88-dim geometry features."""
+        from evacuation_simulation.simulation.rl_environment import ExitPlacementEnv
+        from evacuation_simulation.simulation.rl_policy import extract_features
+
+        # Run 2 episodes of training in tmp_path
+        res = train_stage18b(
+            episodes=2,
+            batch_size=2,
+            output_dir=tmp_path,
+            summary_interval=2,
+            checkpoint_every=2,
+            geometry_features=True,
+            checkpoint_name="model_stage18b_geom.pt",
+        )
+
+        model_path = Path(res["model_path"])
+        assert model_path.exists()
+        assert model_path.name == "model_stage18b_geom.pt"
+
+        # Load checkpoint and verify geometry architecture
+        model, meta = MaskedActorCritic.load(model_path)
+        assert model.in_dim == 88
+        assert model.geometry_features is True
+        assert meta["geometry_features"] is True
+        assert meta["in_dim"] == 88
+
+        # Verify environment observation produces 88-dim feature tensor matching model.get_action
+        env = ExitPlacementEnv()
+        sc = make_diverse_training_scenario(seed=101)
+        obs = env.reset(sc, exit_count=2)
+
+        # 1. Direct feature extraction with model's geometry setting
+        state, mask = extract_features(obs, max_candidates=8, geometry_features=model.geometry_features)
+        assert state.shape == (1, 88)
+        assert mask.shape == (1, 8)
+
+        # 2. Forward pass with extracted state tensor
+        probs, val = model(state, mask)
+        assert probs.shape == (1, 8)
+        assert val.shape == (1, 1)
+
+        # 3. get_action() internally uses identical 88-dim extraction
+        action, log_prob, v = model.get_action(obs, deterministic=True)
+        assert isinstance(action, int)
+        assert 0 <= action < len(obs.candidate_exits)
+        assert mask[0, action].item() is True
+
+        # Verify existing Stage 18 and 18B models were never overwritten
+        p18 = Path("experiment_output/rl/model_stage18.pt")
+        p18b = Path("experiment_output/rl/model_stage18b.pt")
+        assert p18.exists()
+        assert p18b.exists()
 
     def test_diagnostic_plot_creation(self, tmp_path: Path):
         """Verify diagnostic plot generator creates PNG file from sample history."""
@@ -139,3 +200,55 @@ class TestStage18BExtended:
 
         eval_json = tmp_path / "evaluation_results_stage18b.json"
         assert eval_json.exists()
+
+    def test_eval_benchmark_runner_with_geometry_model(self, tmp_path: Path):
+        """Verify held-out benchmark runner evaluates 88-dim geometry model alongside baselines."""
+        # Create models
+        m18 = MaskedActorCritic(max_candidates=4)
+        p18 = tmp_path / "m18.pt"
+        m18.save(p18, metadata={"stage": "18"})
+
+        m18b = MaskedActorCritic(max_candidates=8)
+        p18b = tmp_path / "m18b.pt"
+        m18b.save(p18b, metadata={"stage": "18B"})
+
+        m_geom = MaskedActorCritic(max_candidates=8, geometry_features=True)
+        assert m_geom.in_dim == 88
+        p_geom = tmp_path / "model_stage18b_geom.pt"
+        m_geom.save(p_geom, metadata={"stage": "18B_geom", "geometry_features": True})
+
+        test_seeds = [5002, 5004]
+        benchmark = run_heldout_benchmark(
+            model_18_path=p18,
+            model_18b_path=p18b,
+            model_geom_path=p_geom,
+            seeds=test_seeds,
+            output_dir=tmp_path,
+        )
+
+        assert benchmark["total_scenarios"] == 2
+        assert len(benchmark["scenario_results"]) == 2
+        assert "stage_18" in benchmark["summary"]
+        assert "stage_18b" in benchmark["summary"]
+        assert "stage_18b_geom" in benchmark["summary"]
+        assert "exhaustive_search" in benchmark["summary"]
+        assert "random_baseline" in benchmark["summary"]
+
+        geom_summary = benchmark["summary"]["stage_18b_geom"]
+        assert geom_summary["total_scenarios"] == 2
+        assert "feasibility_rate" in geom_summary
+        assert "mean_inference_latency_ms" in geom_summary
+        assert "mean_decision_latency_ms" in geom_summary
+        assert geom_summary["mean_decision_latency_ms"] >= 0
+
+        # Check paired gap
+        assert "stage_18b_geom_mean_gap_steps" in benchmark["summary"]["paired_optimality_gap"]
+
+        # Check individual scenario results
+        for sc_res in benchmark["scenario_results"]:
+            assert "stage_18b_geom" in sc_res
+            geom_res = sc_res["stage_18b_geom"]
+            assert geom_res["method"] == "Stage_18B_Geometry"
+            assert isinstance(geom_res["is_feasible"], bool)
+            assert "inference_latency_ms" in geom_res
+            assert "decision_latency_ms" in geom_res

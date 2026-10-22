@@ -243,6 +243,8 @@ def train_stage18b(
     seed_pool_size: int = 500,
     checkpoint_every: int = 200,
     summary_interval: int = 50,
+    geometry_features: bool = True,
+    checkpoint_name: str = "model_stage18b_geom.pt",
 ) -> dict[str, Any]:
     """
     Execute Stage 18B extended training with live terminal feedback.
@@ -250,11 +252,12 @@ def train_stage18b(
     out_dir = output_dir or _RL_OUTPUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    model_checkpoint_path = out_dir / "model_stage18b.pt"
-    best_model_path = out_dir / "model_stage18b_best.pt"
-    history_json_path = out_dir / "training_history_stage18b.json"
-    history_csv_path = out_dir / "training_history_stage18b.csv"
-    plot_path = out_dir / "training_plot_stage18b.png"
+    model_checkpoint_path = out_dir / checkpoint_name
+    stem = Path(checkpoint_name).stem
+    best_model_path = out_dir / f"{stem}_best.pt"
+    history_json_path = out_dir / f"training_history_{stem}.json"
+    history_csv_path = out_dir / f"training_history_{stem}.csv"
+    plot_path = out_dir / f"training_plot_{stem}.png"
 
     # Seed generation: pool of unique training seeds strictly excluding reserved eval seeds
     rng = random.Random(42)
@@ -279,13 +282,17 @@ def train_stage18b(
     print(f"  Entropy Coefficient   : {entropy_coef}", flush=True)
     print(f"  Exits to Select (k)   : {exit_count}", flush=True)
     print(f"  Max Candidates Slot   : {max_candidates}", flush=True)
+    print(f"  Geometry Features     : {geometry_features} (Input dim: {8 + max_candidates * 10 if geometry_features else 4 + max_candidates * 5})", flush=True)
     print(f"  Output Directory      : {out_dir}", flush=True)
     print(f"  Model Target          : {model_checkpoint_path.name}", flush=True)
     print("-" * 76, flush=True)
     print("  Initializing environment and neural policy network...", flush=True)
 
     env = ExitPlacementEnv()
-    model = MaskedActorCritic(max_candidates=max_candidates).to(device)
+    model = MaskedActorCritic(
+        max_candidates=max_candidates,
+        geometry_features=geometry_features,
+    ).to(device)
     optimizer = optim.Adam(model.parameters(), lr=lr)
 
     # Initialize CSV header if file does not exist or starting fresh
@@ -359,7 +366,11 @@ def train_stage18b(
 
             # Episode Step Loop
             while not terminated:
-                state, mask = extract_features(obs, max_candidates=max_candidates)
+                state, mask = extract_features(
+                    obs,
+                    max_candidates=max_candidates,
+                    geometry_features=model.geometry_features,
+                )
                 action, log_prob, val = model.get_action(obs, deterministic=False)
 
                 ep_states.append(state)
@@ -485,7 +496,10 @@ def train_stage18b(
                 model.save(
                     best_model_path,
                     metadata={
-                        "stage": "18B",
+                        "stage": "18B_geom" if geometry_features else "18B",
+                        "geometry_features": geometry_features,
+                        "in_dim": model.in_dim,
+                        "max_candidates": model.max_candidates,
                         "episodes": ep,
                         "best_feasible_reward": best_feasible_reward,
                         "learning_rate": lr,
@@ -528,7 +542,8 @@ def train_stage18b(
                 # Periodic JSON dump so crash loses at most summary_interval items
                 _dump_json_history(
                     history_json_path, history, loss_history, episodes,
-                    elapsed, candidate_train_seeds, lr, model_checkpoint_path, updates_completed
+                    elapsed, candidate_train_seeds, lr, model_checkpoint_path, updates_completed,
+                    geometry_features=geometry_features, in_dim=model.in_dim,
                 )
 
             # Periodic checkpoint save
@@ -536,7 +551,10 @@ def train_stage18b(
                 model.save(
                     model_checkpoint_path,
                     metadata={
-                        "stage": "18B",
+                        "stage": "18B_geom" if geometry_features else "18B",
+                        "geometry_features": geometry_features,
+                        "in_dim": model.in_dim,
+                        "max_candidates": model.max_candidates,
                         "episodes": ep,
                         "total_target_episodes": episodes,
                         "learning_rate": lr,
@@ -553,7 +571,10 @@ def train_stage18b(
     model.save(
         model_checkpoint_path,
         metadata={
-            "stage": "18B",
+            "stage": "18B_geom" if geometry_features else "18B",
+            "geometry_features": geometry_features,
+            "in_dim": model.in_dim,
+            "max_candidates": model.max_candidates,
             "episodes": len(history),
             "total_target_episodes": episodes,
             "runtime_seconds": round(total_time, 2),
@@ -567,7 +588,8 @@ def train_stage18b(
     # Save complete JSON history
     _dump_json_history(
         history_json_path, history, loss_history, len(history),
-        total_time, candidate_train_seeds, lr, model_checkpoint_path, updates_completed
+        total_time, candidate_train_seeds, lr, model_checkpoint_path, updates_completed,
+        geometry_features=geometry_features, in_dim=model.in_dim,
     )
 
     # Generate diagnostic plots
@@ -617,13 +639,17 @@ def _dump_json_history(
     lr: float,
     model_path: Path,
     updates: int,
+    geometry_features: bool = True,
+    in_dim: int = 88,
 ) -> None:
     """Helper to dump structured JSON training log."""
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(
             {
                 "training_metadata": {
-                    "stage": "18B",
+                    "stage": "18B_geom" if geometry_features else "18B",
+                    "geometry_features": geometry_features,
+                    "in_dim": in_dim,
                     "algorithm": "MaskedActorCritic",
                     "episodes": episodes,
                     "updates_completed": updates,
@@ -653,6 +679,8 @@ def main() -> int:
     parser.add_argument("--entropy-coef", type=float, default=0.03, help="Entropy bonus coefficient (default: 0.03)")
     parser.add_argument("--checkpoint-every", type=int, default=200, help="Episodes between checkpoints (default: 200)")
     parser.add_argument("--summary-interval", type=int, default=50, help="Episodes between summary tables (default: 50)")
+    parser.add_argument("--checkpoint-name", type=str, default="model_stage18b_geom.pt", help="Checkpoint model filename (default: model_stage18b_geom.pt)")
+    parser.add_argument("--no-geometry", dest="geometry_features", action="store_false", default=True, help="Disable 88-dim geometry features and fall back to legacy 44-dim")
     args = parser.parse_args()
 
     train_stage18b(
@@ -662,6 +690,8 @@ def main() -> int:
         entropy_coef=args.entropy_coef,
         checkpoint_every=args.checkpoint_every,
         summary_interval=args.summary_interval,
+        checkpoint_name=args.checkpoint_name,
+        geometry_features=args.geometry_features,
     )
     return 0
 

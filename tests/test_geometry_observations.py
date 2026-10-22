@@ -311,3 +311,26 @@ class TestGeometryAwareObservationSpace:
         assert terminated is True
         assert reward == ExitPlacementEnv.PENALTY_INVALID_ACTION
         assert info["reason"] == "invalid_action"
+
+    def test_evaluator_evaluates_geometry_model(self, tmp_path: Path):
+        """Verify evaluation pipeline correctly loads and evaluates geometry model with separate latencies."""
+        from evacuation_simulation.evaluate_stage18b import evaluate_rl_agent
+
+        m_geom = MaskedActorCritic(max_candidates=8, geometry_features=True)
+        ckpt_path = tmp_path / "model_stage18b_geom.pt"
+        m_geom.save(ckpt_path, metadata={"stage": "18B_geom", "geometry_features": True})
+
+        loaded_geom, meta = MaskedActorCritic.load(ckpt_path)
+        assert loaded_geom.in_dim == 88
+        assert loaded_geom.geometry_features is True
+
+        cfg = _make_test_config(doors=[(0, 5), (0, 15), (19, 5), (19, 15)])
+        res = evaluate_rl_agent(loaded_geom, cfg, exit_count=2, method_name="Stage_18B_Geometry")
+
+        assert res["method"] == "Stage_18B_Geometry"
+        assert isinstance(res["is_feasible"], bool)
+        assert len(res["selected_indices"]) == 2
+        assert "inference_latency_ms" in res
+        assert "decision_latency_ms" in res
+        assert res["inference_latency_ms"] >= 0.0
+        assert res["decision_latency_ms"] >= res["inference_latency_ms"]

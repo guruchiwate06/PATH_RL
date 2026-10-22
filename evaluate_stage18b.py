@@ -122,25 +122,23 @@ def evaluate_rl_agent(
     obs = env.reset(scenario, exit_count=exit_count)
 
     t0 = time.perf_counter()
+    inference_seconds = 0.0
     terminated = False
     info: dict[str, Any] = {}
 
     while not terminated:
+        t_inf_start = time.perf_counter()
         action, _, _ = model.get_action(obs, deterministic=True)
+        inference_seconds += (time.perf_counter() - t_inf_start)
+
         obs, reward, terminated, info = env.step(action)
 
-    latency_ms = (time.perf_counter() - t0) * 1000.0
+    decision_latency_ms = (time.perf_counter() - t0) * 1000.0
+    inference_latency_ms = inference_seconds * 1000.0
 
     selected_exits = [
         list(env.candidates[idx].position) for idx in env.selected_indices
     ]
-
-    # Detailed metrics if simulation ran
-    mean_evac = None
-    mean_wait = None
-    if info.get("is_feasible") and env._evaluator:
-        # Retrieve metrics from last evaluation result
-        last_eval = getattr(env._evaluator, "_last_result", None)
 
     return {
         "method": method_name,
@@ -148,7 +146,8 @@ def evaluate_rl_agent(
         "is_compliant": bool(info.get("is_compliant", False)),
         "total_evacuation_time": info.get("total_evacuation_time"),
         "reward": float(reward),
-        "decision_latency_ms": round(latency_ms, 3),
+        "inference_latency_ms": round(inference_latency_ms, 3),
+        "decision_latency_ms": round(decision_latency_ms, 3),
         "selected_indices": list(env.selected_indices),
         "selected_exits": selected_exits,
         "violations": info.get("violations", []),
@@ -167,18 +166,23 @@ def evaluate_random_baseline(
 
     rng = random.Random(seed)
     t0 = time.perf_counter()
+    inference_seconds = 0.0
     terminated = False
     info: dict[str, Any] = {}
 
     while not terminated:
+        t_inf_start = time.perf_counter()
         legal_actions = [i for i, mask in enumerate(obs.action_mask) if mask]
         if not legal_actions:
             action = 0
         else:
             action = rng.choice(legal_actions)
+        inference_seconds += (time.perf_counter() - t_inf_start)
+
         obs, reward, terminated, info = env.step(action)
 
-    latency_ms = (time.perf_counter() - t0) * 1000.0
+    decision_latency_ms = (time.perf_counter() - t0) * 1000.0
+    inference_latency_ms = inference_seconds * 1000.0
     selected_exits = [
         list(env.candidates[idx].position) for idx in env.selected_indices
     ]
@@ -189,7 +193,8 @@ def evaluate_random_baseline(
         "is_compliant": bool(info.get("is_compliant", False)),
         "total_evacuation_time": info.get("total_evacuation_time"),
         "reward": float(reward),
-        "decision_latency_ms": round(latency_ms, 3),
+        "inference_latency_ms": round(inference_latency_ms, 3),
+        "decision_latency_ms": round(decision_latency_ms, 3),
         "selected_indices": list(env.selected_indices),
         "selected_exits": selected_exits,
         "violations": info.get("violations", []),
@@ -222,6 +227,7 @@ def evaluate_exhaustive_search(
             "is_compliant": True,
             "total_evacuation_time": total_time,
             "reward": -float(best_eval.score) if best_eval.score is not None else -float(total_time),
+            "inference_latency_ms": None,
             "decision_latency_ms": round(latency_ms, 3),
             "selected_exits": [list(e) for e in best_cfg.exits],
             "total_configurations": search_result.total_configurations,
@@ -235,6 +241,7 @@ def evaluate_exhaustive_search(
             "is_compliant": False,
             "total_evacuation_time": None,
             "reward": -2000.0,
+            "inference_latency_ms": None,
             "decision_latency_ms": round(latency_ms, 3),
             "selected_exits": [],
             "total_configurations": search_result.total_configurations,
@@ -248,8 +255,9 @@ def evaluate_exhaustive_search(
 # ---------------------------------------------------------------------------
 
 def run_heldout_benchmark(
-    model_18_path: Path,
-    model_18b_path: Path,
+    model_18_path: Optional[Path] = None,
+    model_18b_path: Optional[Path] = None,
+    model_geom_path: Optional[Path] = None,
     seeds: Optional[list[int]] = None,
     output_dir: Optional[Path] = None,
     exit_count: int = 2,
@@ -257,56 +265,103 @@ def run_heldout_benchmark(
 ) -> dict[str, Any]:
     """
     Run comprehensive held-out benchmark across 30 distinct scenarios.
+
+    Compares:
+    1. Stage 18 Original Policy (model_stage18.pt)
+    2. Stage 18B Extended Policy (model_stage18b.pt)
+    3. Stage 18B Geometry Policy (model_stage18b_geom.pt, if available)
+    4. Random Valid Action Baseline
+    5. Combinatorial Exhaustive Search Baseline
     """
     out_dir = output_dir or _RL_OUTPUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
     eval_seeds = seeds or EVAL_SEEDS_STAGE18B
 
-    print("=" * 80, flush=True)
-    print("  PATH_RL -- Stage 18 vs Stage 18B Held-Out Benchmark Evaluation", flush=True)
-    print("=" * 80, flush=True)
-    print(f"  Test Scenarios Count : {len(eval_seeds)} distinct held-out procedural buildings", flush=True)
-    print(f"  Evaluation Seeds     : {eval_seeds[0]} .. {eval_seeds[-1]} (strictly unseen)", flush=True)
-    print(f"  Model Stage 18       : {model_18_path.name} ({'found' if model_18_path.exists() else 'MISSING'})", flush=True)
-    print(f"  Model Stage 18B      : {model_18b_path.name} ({'found' if model_18b_path.exists() else 'MISSING'})", flush=True)
-    print("-" * 80, flush=True)
+    p18 = model_18_path or (_RL_OUTPUT_DIR / "model_stage18.pt")
+    p18b = model_18b_path or (_RL_OUTPUT_DIR / "model_stage18b.pt")
+    p_geom = model_geom_path or (_RL_OUTPUT_DIR / "model_stage18b_geom.pt")
 
-    # Load models
-    model_18, meta_18 = MaskedActorCritic.load(model_18_path)
-    model_18.eval()
+    has_18 = p18.exists()
+    has_18b = p18b.exists()
+    has_geom = p_geom.exists()
 
-    model_18b, meta_18b = MaskedActorCritic.load(model_18b_path)
-    model_18b.eval()
+    if verbose:
+        print("=" * 84, flush=True)
+        print("  PATH_RL -- Multi-Model Held-Out Benchmark Evaluation", flush=True)
+        print("=" * 84, flush=True)
+        print(f"  Test Scenarios Count : {len(eval_seeds)} distinct held-out procedural buildings", flush=True)
+        print(f"  Evaluation Seeds     : {eval_seeds[0]} .. {eval_seeds[-1]} (strictly unseen)", flush=True)
+        print(f"  Model Stage 18       : {p18.name} ({'found' if has_18 else 'MISSING'})", flush=True)
+        print(f"  Model Stage 18B      : {p18b.name} ({'found' if has_18b else 'MISSING'})", flush=True)
+        print(f"  Model Stage 18B Geom : {p_geom.name} ({'found' if has_geom else 'not found / skipped'})", flush=True)
+        print("-" * 84, flush=True)
+
+    # Load available models
+    model_18 = None
+    if has_18:
+        model_18, _ = MaskedActorCritic.load(p18)
+        model_18.eval()
+
+    model_18b = None
+    if has_18b:
+        model_18b, _ = MaskedActorCritic.load(p18b)
+        model_18b.eval()
+
+    model_geom = None
+    if has_geom:
+        model_geom, _ = MaskedActorCritic.load(p_geom)
+        model_geom.eval()
 
     results_per_scenario: list[dict[str, Any]] = []
 
-    print(f"  {'Seed':>5s} | {'Stage 18 (orig)':>15s} | {'Stage 18B (ext)':>15s} | {'Random Base':>14s} | {'Exhaustive':>12s}", flush=True)
-    print(f"  {'-'*5} | {'-'*15} | {'-'*15} | {'-'*14} | {'-'*12}", flush=True)
+    if verbose:
+        header_geom = f" | {'Stage 18B Geom':>15s}" if has_geom else ""
+        print(f"  {'Seed':>5s} | {'Stage 18 (orig)':>15s} | {'Stage 18B (ext)':>15s}{header_geom} | {'Random Base':>14s} | {'Exhaustive':>12s}", flush=True)
+        sep_geom = f" | {'-'*15}" if has_geom else ""
+        print(f"  {'-'*5} | {'-'*15} | {'-'*15}{sep_geom} | {'-'*14} | {'-'*12}", flush=True)
 
     for i, seed in enumerate(eval_seeds, 1):
         scenario = create_eval_scenario(seed=seed)
 
         # 1. Stage 18 Original Policy
-        res_18 = evaluate_rl_agent(model_18, scenario, exit_count=exit_count, method_name="Stage_18_Original")
+        res_18 = (
+            evaluate_rl_agent(model_18, scenario, exit_count=exit_count, method_name="Stage_18_Original")
+            if model_18 is not None
+            else {"method": "Stage_18_Original", "is_feasible": False, "total_evacuation_time": None, "inference_latency_ms": 0.0, "decision_latency_ms": 0.0}
+        )
 
         # 2. Stage 18B Extended Policy
-        res_18b = evaluate_rl_agent(model_18b, scenario, exit_count=exit_count, method_name="Stage_18B_Extended")
+        res_18b = (
+            evaluate_rl_agent(model_18b, scenario, exit_count=exit_count, method_name="Stage_18B_Extended")
+            if model_18b is not None
+            else {"method": "Stage_18B_Extended", "is_feasible": False, "total_evacuation_time": None, "inference_latency_ms": 0.0, "decision_latency_ms": 0.0}
+        )
 
-        # 3. Random Baseline
+        # 3. Stage 18B Geometry Policy (if available)
+        res_geom = (
+            evaluate_rl_agent(model_geom, scenario, exit_count=exit_count, method_name="Stage_18B_Geometry")
+            if model_geom is not None
+            else None
+        )
+
+        # 4. Random Baseline
         res_rnd = evaluate_random_baseline(scenario, exit_count=exit_count, seed=seed)
 
-        # 4. Exhaustive Search
+        # 5. Exhaustive Search
         res_exh = evaluate_exhaustive_search(scenario, exit_count=exit_count)
 
-        # Formatting row
-        s18_str = f"{res_18['total_evacuation_time']} steps" if res_18["is_feasible"] else "FAIL (Infeas)"
-        s18b_str = f"{res_18b['total_evacuation_time']} steps" if res_18b["is_feasible"] else "FAIL (Infeas)"
-        rnd_str = f"{res_rnd['total_evacuation_time']} steps" if res_rnd["is_feasible"] else "FAIL (Infeas)"
-        exh_str = f"{res_exh['total_evacuation_time']} steps" if res_exh["is_feasible"] else "FAIL (Infeas)"
+        if verbose:
+            s18_str = f"{res_18['total_evacuation_time']} steps" if res_18.get("is_feasible") else "FAIL (Infeas)"
+            s18b_str = f"{res_18b['total_evacuation_time']} steps" if res_18b.get("is_feasible") else "FAIL (Infeas)"
+            rnd_str = f"{res_rnd['total_evacuation_time']} steps" if res_rnd.get("is_feasible") else "FAIL (Infeas)"
+            exh_str = f"{res_exh['total_evacuation_time']} steps" if res_exh.get("is_feasible") else "FAIL (Infeas)"
+            geom_str = ""
+            if has_geom and res_geom is not None:
+                g_val = f"{res_geom['total_evacuation_time']} steps" if res_geom.get("is_feasible") else "FAIL (Infeas)"
+                geom_str = f" | {g_val:>15s}"
+            print(f"  {seed:5d} | {s18_str:>15s} | {s18b_str:>15s}{geom_str} | {rnd_str:>14s} | {exh_str:>12s}", flush=True)
 
-        print(f"  {seed:5d} | {s18_str:>15s} | {s18b_str:>15s} | {rnd_str:>14s} | {exh_str:>12s}", flush=True)
-
-        results_per_scenario.append({
+        sc_rec: dict[str, Any] = {
             "seed": seed,
             "scenario_name": scenario.scenario_name,
             "grid_rows": scenario.floor_plan.grid.rows,
@@ -316,110 +371,138 @@ def run_heldout_benchmark(
             "stage_18b": res_18b,
             "random_baseline": res_rnd,
             "exhaustive_search": res_exh,
-        })
+        }
+        if res_geom is not None:
+            sc_rec["stage_18b_geom"] = res_geom
+
+        results_per_scenario.append(sc_rec)
 
     # Summary Statistics Aggregation
     def compute_summary(records: list[dict[str, Any]], key: str) -> dict[str, Any]:
-        methods = [r[key] for r in records]
+        methods = [r[key] for r in records if key in r]
         total = len(methods)
-        feasible = [m for m in methods if m["is_feasible"]]
+        if total == 0:
+            return {"total_scenarios": 0, "feasible_count": 0, "infeasible_count": 0, "feasibility_rate": 0.0}
+
+        feasible = [m for m in methods if m.get("is_feasible")]
         feas_count = len(feasible)
         feas_rate = feas_count / total if total > 0 else 0.0
 
-        times = [m["total_evacuation_time"] for m in feasible if m["total_evacuation_time"] is not None]
+        times = [m["total_evacuation_time"] for m in feasible if m.get("total_evacuation_time") is not None]
         mean_time = float(np.mean(times)) if times else None
         median_time = float(np.median(times)) if times else None
         std_time = float(np.std(times)) if len(times) > 1 else 0.0
 
-        latencies = [m["decision_latency_ms"] for m in methods]
-        mean_latency = float(np.mean(latencies)) if latencies else 0.0
+        inf_latencies = [m["inference_latency_ms"] for m in methods if m.get("inference_latency_ms") is not None]
+        mean_inf_latency = float(np.mean(inf_latencies)) if inf_latencies else None
+
+        dec_latencies = [m["decision_latency_ms"] for m in methods if m.get("decision_latency_ms") is not None]
+        mean_dec_latency = float(np.mean(dec_latencies)) if dec_latencies else 0.0
 
         return {
             "total_scenarios": total,
             "feasible_count": feas_count,
             "infeasible_count": total - feas_count,
             "feasibility_rate": round(feas_rate, 4),
+            "feasible_scenarios_evaluated": len(times),
             "mean_evacuation_time": round(mean_time, 2) if mean_time else None,
             "median_evacuation_time": round(median_time, 2) if median_time else None,
             "std_evacuation_time": round(std_time, 2) if std_time else None,
-            "mean_latency_ms": round(mean_latency, 2),
+            "mean_inference_latency_ms": round(mean_inf_latency, 3) if mean_inf_latency is not None else None,
+            "mean_decision_latency_ms": round(mean_dec_latency, 3),
         }
 
     summary_18 = compute_summary(results_per_scenario, "stage_18")
     summary_18b = compute_summary(results_per_scenario, "stage_18b")
     summary_rnd = compute_summary(results_per_scenario, "random_baseline")
     summary_exh = compute_summary(results_per_scenario, "exhaustive_search")
+    summary_geom = compute_summary(results_per_scenario, "stage_18b_geom") if has_geom else None
 
     # Paired Optimality Gap vs Exhaustive Search on mutually feasible scenarios
-    paired_gaps_18 = []
-    paired_gaps_18b = []
-    for r in results_per_scenario:
-        exh_t = r["exhaustive_search"]["total_evacuation_time"]
-        if exh_t is not None:
-            if r["stage_18"]["is_feasible"] and r["stage_18"]["total_evacuation_time"] is not None:
-                paired_gaps_18.append(r["stage_18"]["total_evacuation_time"] - exh_t)
-            if r["stage_18b"]["is_feasible"] and r["stage_18b"]["total_evacuation_time"] is not None:
-                paired_gaps_18b.append(r["stage_18b"]["total_evacuation_time"] - exh_t)
+    def compute_gap(key: str) -> Optional[float]:
+        gaps = []
+        for r in results_per_scenario:
+            exh_t = r["exhaustive_search"]["total_evacuation_time"]
+            if exh_t is not None and key in r:
+                t = r[key].get("total_evacuation_time")
+                if r[key].get("is_feasible") and t is not None:
+                    gaps.append(t - exh_t)
+        return float(np.mean(gaps)) if gaps else None
 
-    mean_gap_18 = float(np.mean(paired_gaps_18)) if paired_gaps_18 else None
-    mean_gap_18b = float(np.mean(paired_gaps_18b)) if paired_gaps_18b else None
+    mean_gap_18 = compute_gap("stage_18")
+    mean_gap_18b = compute_gap("stage_18b")
+    mean_gap_geom = compute_gap("stage_18b_geom") if has_geom else None
 
-    # Print Summary Table
-    print("\n" + "=" * 80, flush=True)
-    print("  HELD-OUT EVALUATION SUMMARY ACROSS 30 PROCEDURAL BUILDINGS", flush=True)
-    print("=" * 80, flush=True)
-    print(f"  {'Metric':<28s} | {'Stage 18 (orig)':>14s} | {'Stage 18B (ext)':>14s} | {'Random':>10s} | {'Exhaustive':>12s}", flush=True)
-    print(f"  {'-'*28} | {'-'*14} | {'-'*14} | {'-'*10} | {'-'*12}", flush=True)
+    if verbose:
+        # Print Summary Table
+        print("\n" + "=" * 84, flush=True)
+        print("  HELD-OUT EVALUATION SUMMARY ACROSS 30 PROCEDURAL BUILDINGS", flush=True)
+        print("=" * 84, flush=True)
 
-    f18 = f"{summary_18['feasibility_rate']:.1%} ({summary_18['feasible_count']}/{summary_18['total_scenarios']})"
-    f18b = f"{summary_18b['feasibility_rate']:.1%} ({summary_18b['feasible_count']}/{summary_18b['total_scenarios']})"
-    frnd = f"{summary_rnd['feasibility_rate']:.1%} ({summary_rnd['feasible_count']}/{summary_rnd['total_scenarios']})"
-    fexh = f"{summary_exh['feasibility_rate']:.1%} ({summary_exh['feasible_count']}/{summary_exh['total_scenarios']})"
-    print(f"  {'Feasibility Rate':<28s} | {f18:>14s} | {f18b:>14s} | {frnd:>10s} | {fexh:>12s}", flush=True)
+        header = f"  {'Metric':<28s} | {'Stage 18':>12s} | {'Stage 18B':>12s}"
+        sep = f"  {'-'*28} | {'-'*12} | {'-'*12}"
+        if has_geom:
+            header += f" | {'18B Geom':>12s}"
+            sep += f" | {'-'*12}"
+        header += f" | {'Random':>10s} | {'Exhaustive':>12s}"
+        sep += f" | {'-'*10} | {'-'*12}"
+        print(header, flush=True)
+        print(sep, flush=True)
 
-    t18 = f"{summary_18['mean_evacuation_time']} steps" if summary_18['mean_evacuation_time'] else "N/A"
-    t18b = f"{summary_18b['mean_evacuation_time']} steps" if summary_18b['mean_evacuation_time'] else "N/A"
-    trnd = f"{summary_rnd['mean_evacuation_time']} steps" if summary_rnd['mean_evacuation_time'] else "N/A"
-    texh = f"{summary_exh['mean_evacuation_time']} steps" if summary_exh['mean_evacuation_time'] else "N/A"
-    print(f"  {'Mean Evacuation Time':<28s} | {t18:>14s} | {t18b:>14s} | {trnd:>10s} | {texh:>12s}", flush=True)
+        def row_str(metric_name: str, get_val) -> str:
+            v18 = get_val(summary_18)
+            v18b = get_val(summary_18b)
+            vrnd = get_val(summary_rnd)
+            vexh = get_val(summary_exh)
+            r = f"  {metric_name:<28s} | {v18:>12s} | {v18b:>12s}"
+            if has_geom and summary_geom:
+                r += f" | {get_val(summary_geom):>12s}"
+            r += f" | {vrnd:>10s} | {vexh:>12s}"
+            return r
 
-    med18 = f"{summary_18['median_evacuation_time']} steps" if summary_18['median_evacuation_time'] else "N/A"
-    med18b = f"{summary_18b['median_evacuation_time']} steps" if summary_18b['median_evacuation_time'] else "N/A"
-    medrnd = f"{summary_rnd['median_evacuation_time']} steps" if summary_rnd['median_evacuation_time'] else "N/A"
-    medexh = f"{summary_exh['median_evacuation_time']} steps" if summary_exh['median_evacuation_time'] else "N/A"
-    print(f"  {'Median Evacuation Time':<28s} | {med18:>14s} | {med18b:>14s} | {medrnd:>10s} | {medexh:>12s}", flush=True)
+        print(row_str("Feasibility Rate", lambda s: f"{s['feasibility_rate']:.1%}"), flush=True)
+        print(row_str("Feasible Count", lambda s: f"{s['feasible_count']}/{s['total_scenarios']}"), flush=True)
+        print(row_str("Mean Evacuation Time", lambda s: f"{s['mean_evacuation_time']} st" if s.get('mean_evacuation_time') else "N/A"), flush=True)
+        print(row_str("Median Evacuation Time", lambda s: f"{s['median_evacuation_time']} st" if s.get('median_evacuation_time') else "N/A"), flush=True)
+        print(row_str("Mean Inference Latency", lambda s: f"{s['mean_inference_latency_ms']:.2f} ms" if s.get('mean_inference_latency_ms') is not None else "N/A"), flush=True)
+        print(row_str("Mean Decision Latency", lambda s: f"{s['mean_decision_latency_ms']:.2f} ms"), flush=True)
 
-    gap18_str = f"+{mean_gap_18:.2f} steps" if mean_gap_18 is not None else "N/A"
-    gap18b_str = f"+{mean_gap_18b:.2f} steps" if mean_gap_18b is not None else "N/A"
-    print(f"  {'Mean Optimality Gap vs Exh':<28s} | {gap18_str:>14s} | {gap18b_str:>14s} | {'N/A':>10s} | {'0.00 (base)':>12s}", flush=True)
+        # Gap row
+        gap_line = f"  {'Mean Gap vs Exhaustive':<28s} | {('+' + str(round(mean_gap_18, 2)) if mean_gap_18 else 'N/A'):>12s} | {('+' + str(round(mean_gap_18b, 2)) if mean_gap_18b else 'N/A'):>12s}"
+        if has_geom:
+            gap_line += f" | {('+' + str(round(mean_gap_geom, 2)) if mean_gap_geom else 'N/A'):>12s}"
+        gap_line += f" | {'N/A':>10s} | {'0.00 (base)':>12s}"
+        print(gap_line, flush=True)
 
-    l18 = f"{summary_18['mean_latency_ms']:.1f} ms"
-    l18b = f"{summary_18b['mean_latency_ms']:.1f} ms"
-    lrnd = f"{summary_rnd['mean_latency_ms']:.1f} ms"
-    lexh = f"{summary_exh['mean_latency_ms']:.1f} ms"
-    print(f"  {'Mean Decision Latency':<28s} | {l18:>14s} | {l18b:>14s} | {lrnd:>10s} | {lexh:>12s}", flush=True)
-
-    print("=" * 80, flush=True)
-    print("  Note: Exhaustive Search guarantees candidate-level discrete optimality.", flush=True)
-    print("  It evaluates all feasible combinations C(N, k) to find the fastest compliant doors.", flush=True)
-    print("=" * 80 + "\n", flush=True)
+        print("=" * 84, flush=True)
+        print("  Methodology Notes:", flush=True)
+        print("  1. Exhaustive Search guarantees candidate-level combinatorial optimality across", flush=True)
+        print("     all discrete combinations enumerated in the candidate pool for each building.", flush=True)
+        print("  2. Decision Latency measures the end-to-end exit selection process.", flush=True)
+        print("  3. Inference Latency measures pure policy neural-network computation per scenario.", flush=True)
+        print("=" * 84 + "\n", flush=True)
 
     # Save output JSON
+    output_summary: dict[str, Any] = {
+        "stage_18": summary_18,
+        "stage_18b": summary_18b,
+        "random_baseline": summary_rnd,
+        "exhaustive_search": summary_exh,
+        "paired_optimality_gap": {
+            "stage_18_mean_gap_steps": mean_gap_18,
+            "stage_18b_mean_gap_steps": mean_gap_18b,
+        },
+    }
+    if summary_geom is not None:
+        output_summary["stage_18b_geom"] = summary_geom
+        output_summary["paired_optimality_gap"]["stage_18b_geom_mean_gap_steps"] = mean_gap_geom
+
     output_payload = {
-        "benchmark": "Stage_18_vs_Stage_18B_HeldOut_Suite",
+        "benchmark": "Multi_Model_HeldOut_Suite",
         "timestamp": datetime.now().strftime("%Y%m%d_%H%M%S"),
         "total_scenarios": len(eval_seeds),
         "evaluation_seeds": eval_seeds,
-        "summary": {
-            "stage_18": summary_18,
-            "stage_18b": summary_18b,
-            "random_baseline": summary_rnd,
-            "exhaustive_search": summary_exh,
-            "paired_optimality_gap": {
-                "stage_18_mean_gap_steps": mean_gap_18,
-                "stage_18b_mean_gap_steps": mean_gap_18b,
-            },
-        },
+        "summary": output_summary,
         "scenario_results": results_per_scenario,
     }
 
@@ -427,7 +510,8 @@ def run_heldout_benchmark(
     with open(eval_json_path, "w", encoding="utf-8") as f:
         json.dump(output_payload, f, indent=2)
 
-    print(f"  Saved full structured evaluation JSON: {eval_json_path}\n", flush=True)
+    if verbose:
+        print(f"  Saved full structured evaluation JSON: {eval_json_path}\n", flush=True)
     return output_payload
 
 
@@ -436,7 +520,7 @@ def run_heldout_benchmark(
 # ---------------------------------------------------------------------------
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PATH_RL Stage 18 vs Stage 18B Held-Out Benchmark")
+    parser = argparse.ArgumentParser(description="PATH_RL Multi-Model Held-Out Benchmark")
     parser.add_argument(
         "--model-18",
         type=Path,
@@ -450,6 +534,12 @@ def main() -> int:
         help="Path to Stage 18B model checkpoint",
     )
     parser.add_argument(
+        "--model-geom",
+        type=Path,
+        default=_RL_OUTPUT_DIR / "model_stage18b_geom.pt",
+        help="Path to Stage 18B geometry-aware model checkpoint",
+    )
+    parser.add_argument(
         "--seeds-count",
         type=int,
         default=30,
@@ -461,6 +551,7 @@ def main() -> int:
     run_heldout_benchmark(
         model_18_path=args.model_18,
         model_18b_path=args.model_18b,
+        model_geom_path=args.model_geom,
         seeds=eval_seeds,
     )
     return 0
