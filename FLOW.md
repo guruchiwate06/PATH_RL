@@ -188,3 +188,38 @@ run_baseline_experiment.py
         └─► Exports structured JSON benchmark to experiment_output/baseline/
 ```
 
+---
+
+## 7. Masked Actor-Critic RL Pipeline (`train_rl.py`, `evaluate_rl.py`)
+
+Execution flow for training and benchmarking the exit-placement RL policy:
+
+```
+Training Flow (train_rl.py):
+train_rl_agent(episodes, train_seeds)
+  │
+  ├─► Generates diverse training layouts & occupant configurations
+  │
+  └─► For each episode:
+        ├─ ExitPlacementEnv.reset(config, exit_count)
+        │
+        ├─ While not terminated (k sequential exit selections):
+        │     ├─ extract_features(obs) -> state (1x44), mask (1x8)     [rl_policy.py]
+        │     ├─ MaskedActorCritic.get_action(obs, deterministic=False) [rl_policy.py]
+        │     │     └─ Zeros masked logits (-1e8) -> samples valid action
+        │     └─ ExitPlacementEnv.step(action)                         [rl_environment.py]
+        │           └─ If final step: runs simulation, returns -total_evacuation_time
+        │
+        └─ Advantage Actor-Critic update:
+              ├─ Normalizes advantages across batch
+              ├─ Updates Actor (policy gradient) + Critic (value MSE) + Entropy
+              └─ Checkpoints best model to experiment_output/rl/model_stage18.pt
+
+Evaluation Flow (evaluate_rl.py):
+evaluate_policy_on_scenario(model, scenario)
+  ├─ Uses greedy argmax action selection (deterministic=True)
+  ├─ Benchmarks against Random Valid Baseline and Stage 17 Exhaustive Optimum
+  └─ Exports comparison metrics to experiment_output/rl/evaluation_results.json
+```
+
+

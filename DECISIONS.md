@@ -66,3 +66,12 @@ Record of major architectural, algorithmic, and data-handling decisions for the 
 - **Why**: Provides an unambiguous, reproducible ground-truth reference benchmark to measure whether subsequent RL policies achieve or approximate optimal building evacuation safety.
 - **Trade-off**: Combinatorial scaling $\binom{N}{k}$ is feasible for building candidate doors ($N \le 12, k \le 4$), but requires heuristics/RL when scaling to massive architectural spaces.
 
+---
+
+## 9. Action-Masked Policy Optimization for Regulatory Exit Placement (Stage 18)
+
+- **Decision**: Formulate policy learning via a Masked Actor-Critic network where invalid/illegal actions are zeroed in the action distribution, trained across diverse procedural layouts with terminal rewards $R = -\text{total\_evacuation\_time}$ and non-compliance penalties ($-2000$).
+- **Why**: Enforces hard safety constraints during action selection without trial-and-error exploration of illegal doors, focusing policy capacity on global multi-exit coordination and evacuation time minimization.
+- **Trade-off**: Requires computing the per-step legal action mask `action_mask()` from the validator.
+
+

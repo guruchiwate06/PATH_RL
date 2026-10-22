@@ -21,7 +21,7 @@ _PACKAGE_PARENT = Path(__file__).parent.parent.resolve()
 if str(_PACKAGE_PARENT) not in sys.path:
     sys.path.insert(0, str(_PACKAGE_PARENT))
 
-from flask import Flask, jsonify, render_template_string
+from flask import Flask, jsonify, render_template_string, send_file
 
 from evacuation_simulation.simulation.config import ExitConfiguration, SimulationConfig
 from evacuation_simulation.simulation.generation import (
@@ -484,7 +484,13 @@ HTML = r"""<!DOCTYPE html>
         <div class="logo-sub">Regulatory &amp; Exit-Placement Constraint Layer</div>
       </div>
     </div>
-    <div class="disclaimer-badge">&#9888; Research Tool Only &mdash; Not Legal Certification</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <a href="/visualize.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(59,130,246,0.18); border: 1px solid rgba(59,130,246,0.4); color: #93c5fd; padding: 6px 14px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 0.2s;">
+        ▶ Evacuation Simulation Visualizer &rarr;
+      </a>
+      <div class="disclaimer-badge">&#9888; Research Tool Only &mdash; Not Legal Certification</div>
+    </div>
+
   </div>
 </header>
 
@@ -937,13 +943,32 @@ init();
 """
 
 @app.route("/")
+@app.route("/validator")
 def index():
     return render_template_string(HTML)
 
 
+@app.route("/visualize")
+@app.route("/visualize.html")
+def visualize():
+    return send_file(Path(__file__).parent / "visualize.html")
+
+
+@app.route("/simulation_data.json")
+def simulation_data():
+    return send_file(Path(__file__).parent / "simulation_data.json")
+
+
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="PATH_RL Stage 11 Web Validator & Visualizer")
+    parser.add_argument("--port", type=int, default=8000, help="Port to run server on (default: 8000)")
+    parser.add_argument("--host", type=str, default="0.0.0.0", help="Host (default: 0.0.0.0)")
+    args = parser.parse_args()
+
     print("=" * 60)
-    print("  PATH_RL Stage 11 — Web Validator")
-    print("  http://localhost:5111")
+    print("  PATH_RL Evacuation Simulation & Regulatory Web Platform")
+    print(f"  Visualizer: http://localhost:{args.port}/visualize.html")
+    print(f"  Validator:  http://localhost:{args.port}/")
     print("=" * 60)
-    app.run(host="0.0.0.0", port=5111, debug=False)
+    app.run(host=args.host, port=args.port, debug=False)

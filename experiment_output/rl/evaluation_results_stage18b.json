@@ -1,0 +1,3241 @@
+{
+  "benchmark": "Stage_18_vs_Stage_18B_HeldOut_Suite",
+  "timestamp": "20261022_192903",
+  "total_scenarios": 30,
+  "evaluation_seeds": [
+    5002,
+    5004,
+    5005,
+    5006,
+    5008,
+    5009,
+    5011,
+    5012,
+    5013,
+    5015,
+    5018,
+    5019,
+    5026,
+    5037,
+    5042,
+    5045,
+    5048,
+    5049,
+    5051,
+    5053,
+    5054,
+    5055,
+    5056,
+    5066,
+    5070,
+    5076,
+    5078,
+    5085,
+    5090,
+    5091
+  ],
+  "summary": {
+    "stage_18": {
+      "total_scenarios": 30,
+      "feasible_count": 27,
+      "infeasible_count": 3,
+      "feasibility_rate": 0.9,
+      "mean_evacuation_time": 27.56,
+      "median_evacuation_time": 27.0,
+      "std_evacuation_time": 2.47,
+      "mean_latency_ms": 94.95
+    },
+    "stage_18b": {
+      "total_scenarios": 30,
+      "feasible_count": 14,
+      "infeasible_count": 16,
+      "feasibility_rate": 0.4667,
+      "mean_evacuation_time": 27.36,
+      "median_evacuation_time": 26.5,
+      "std_evacuation_time": 2.66,
+      "mean_latency_ms": 51.97
+    },
+    "random_baseline": {
+      "total_scenarios": 30,
+      "feasible_count": 15,
+      "infeasible_count": 15,
+      "feasibility_rate": 0.5,
+      "mean_evacuation_time": 27.07,
+      "median_evacuation_time": 26.0,
+      "std_evacuation_time": 2.46,
+      "mean_latency_ms": 55.06
+    },
+    "exhaustive_search": {
+      "total_scenarios": 30,
+      "feasible_count": 30,
+      "infeasible_count": 0,
+      "feasibility_rate": 1.0,
+      "mean_evacuation_time": 26.57,
+      "median_evacuation_time": 26.0,
+      "std_evacuation_time": 2.58,
+      "mean_latency_ms": 285.64
+    },
+    "paired_optimality_gap": {
+      "stage_18_mean_gap_steps": 1.0,
+      "stage_18b_mean_gap_steps": 1.4285714285714286
+    }
+  },
+  "scenario_results": [
+    {
+      "seed": 5002,
+      "scenario_name": "held_out_seed_5002_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 24,
+        "reward": -24.0,
+        "decision_latency_ms": 107.579,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.498,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "reward": -28.0,
+        "decision_latency_ms": 103.373,
+        "selected_indices": [
+          2,
+          0
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            0,
+            7
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 24,
+        "reward": -24.0,
+        "decision_latency_ms": 227.303,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 2,
+        "valid_configurations": 2
+      }
+    },
+    {
+      "seed": 5004,
+      "scenario_name": "held_out_seed_5004_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 110.94,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 95.663,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 100.74,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 419.739,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5005,
+      "scenario_name": "held_out_seed_5005_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 93.14,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.652,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.635,
+        "selected_indices": [
+          1,
+          0
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            0,
+            7
+          ]
+        ],
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 24,
+        "reward": -24.0,
+        "decision_latency_ms": 223.403,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 2,
+        "valid_configurations": 2
+      }
+    },
+    {
+      "seed": 5006,
+      "scenario_name": "held_out_seed_5006_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 30,
+        "reward": -30.0,
+        "decision_latency_ms": 111.496,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 29,
+        "reward": -29.0,
+        "decision_latency_ms": 108.405,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 30,
+        "reward": -30.0,
+        "decision_latency_ms": 114.249,
+        "selected_indices": [
+          1,
+          3
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "reward": -28.0,
+        "decision_latency_ms": 447.12,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5008,
+      "scenario_name": "held_out_seed_5008_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 29,
+        "reward": -29.0,
+        "decision_latency_ms": 110.512,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 10.612,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.37,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 29,
+        "reward": -29.0,
+        "decision_latency_ms": 159.731,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 1,
+        "valid_configurations": 1
+      }
+    },
+    {
+      "seed": 5009,
+      "scenario_name": "held_out_seed_5009_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 31,
+        "reward": -31.0,
+        "decision_latency_ms": 99.933,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.206,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.864,
+        "selected_indices": [
+          2,
+          3
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 31,
+        "reward": -31.0,
+        "decision_latency_ms": 143.758,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 1,
+        "valid_configurations": 1
+      }
+    },
+    {
+      "seed": 5011,
+      "scenario_name": "held_out_seed_5011_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 87.19,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 91.971,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 88.632,
+        "selected_indices": [
+          1,
+          3
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 387.87,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5012,
+      "scenario_name": "held_out_seed_5012_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.068,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 107.582,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 107.702,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 244.102,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 2,
+        "valid_configurations": 2
+      }
+    },
+    {
+      "seed": 5013,
+      "scenario_name": "held_out_seed_5013_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 31,
+        "reward": -31.0,
+        "decision_latency_ms": 112.833,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 35,
+        "reward": -35.0,
+        "decision_latency_ms": 113.507,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 7.811,
+        "selected_indices": [
+          2,
+          3
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 31,
+        "reward": -31.0,
+        "decision_latency_ms": 466.787,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5015,
+      "scenario_name": "held_out_seed_5015_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 88.103,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 82.42,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 88.783,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 24,
+        "reward": -24.0,
+        "decision_latency_ms": 355.672,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5018,
+      "scenario_name": "held_out_seed_5018_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 110.253,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 106.135,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 104.293,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 465.963,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5019,
+      "scenario_name": "held_out_seed_5019_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 117.317,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.826,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.321,
+        "selected_indices": [
+          1,
+          3
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 156.498,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 1,
+        "valid_configurations": 1
+      }
+    },
+    {
+      "seed": 5026,
+      "scenario_name": "held_out_seed_5026_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "reward": -28.0,
+        "decision_latency_ms": 100.634,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.468,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.444,
+        "selected_indices": [
+          1,
+          3
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "reward": -28.0,
+        "decision_latency_ms": 142.089,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 1,
+        "valid_configurations": 1
+      }
+    },
+    {
+      "seed": 5037,
+      "scenario_name": "held_out_seed_5037_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 89.532,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.152,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 90.177,
+        "selected_indices": [
+          1,
+          2
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 24,
+        "reward": -24.0,
+        "decision_latency_ms": 218.655,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 2,
+        "valid_configurations": 2
+      }
+    },
+    {
+      "seed": 5042,
+      "scenario_name": "held_out_seed_5042_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 86.243,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "reward": -28.0,
+        "decision_latency_ms": 87.543,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 97.822,
+        "selected_indices": [
+          1,
+          3
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 371.892,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5045,
+      "scenario_name": "held_out_seed_5045_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "reward": -28.0,
+        "decision_latency_ms": 111.458,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.812,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.005,
+        "selected_indices": [
+          1,
+          0
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            0,
+            7
+          ]
+        ],
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "reward": -28.0,
+        "decision_latency_ms": 265.549,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 2,
+        "valid_configurations": 2
+      }
+    },
+    {
+      "seed": 5048,
+      "scenario_name": "held_out_seed_5048_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 30,
+        "reward": -30.0,
+        "decision_latency_ms": 103.593,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 101.556,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.569,
+        "selected_indices": [
+          2,
+          3
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 24,
+        "reward": -24.0,
+        "decision_latency_ms": 425.532,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5049,
+      "scenario_name": "held_out_seed_5049_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 106.306,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 11.066,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.832,
+        "selected_indices": [
+          0,
+          2
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 23,
+        "reward": -23.0,
+        "decision_latency_ms": 227.129,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 2,
+        "valid_configurations": 2
+      }
+    },
+    {
+      "seed": 5051,
+      "scenario_name": "held_out_seed_5051_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.624,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 115.361,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.77,
+        "selected_indices": [
+          1,
+          0
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            0,
+            7
+          ]
+        ],
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 165.828,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 1,
+        "valid_configurations": 1
+      }
+    },
+    {
+      "seed": 5053,
+      "scenario_name": "held_out_seed_5053_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 35,
+        "reward": -35.0,
+        "decision_latency_ms": 102.7,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.962,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 35,
+        "reward": -35.0,
+        "decision_latency_ms": 97.101,
+        "selected_indices": [
+          1,
+          3
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 35,
+        "reward": -35.0,
+        "decision_latency_ms": 233.25,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 2,
+        "valid_configurations": 2
+      }
+    },
+    {
+      "seed": 5054,
+      "scenario_name": "held_out_seed_5054_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "reward": -28.0,
+        "decision_latency_ms": 112.778,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.944,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "reward": -28.0,
+        "decision_latency_ms": 112.479,
+        "selected_indices": [
+          1,
+          2
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 235.339,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 2,
+        "valid_configurations": 2
+      }
+    },
+    {
+      "seed": 5055,
+      "scenario_name": "held_out_seed_5055_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 110.871,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 10.382,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.021,
+        "selected_indices": [
+          2,
+          0
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            0,
+            7
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 165.177,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 1,
+        "valid_configurations": 1
+      }
+    },
+    {
+      "seed": 5056,
+      "scenario_name": "held_out_seed_5056_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 30,
+        "reward": -30.0,
+        "decision_latency_ms": 112.795,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.842,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.648,
+        "selected_indices": [
+          3,
+          2
+        ],
+        "selected_exits": [
+          [
+            19,
+            22
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 29,
+        "reward": -29.0,
+        "decision_latency_ms": 261.34,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 2,
+        "valid_configurations": 2
+      }
+    },
+    {
+      "seed": 5066,
+      "scenario_name": "held_out_seed_5066_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 30,
+        "reward": -30.0,
+        "decision_latency_ms": 123.017,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 101.677,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 116.3,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 481.608,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5070,
+      "scenario_name": "held_out_seed_5070_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 105.741,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 102.748,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 103.474,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "decision_latency_ms": 422.058,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5076,
+      "scenario_name": "held_out_seed_5076_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 10.248,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.133,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.786,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "reward": -28.0,
+        "decision_latency_ms": 155.425,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 1,
+        "valid_configurations": 1
+      }
+    },
+    {
+      "seed": 5078,
+      "scenario_name": "held_out_seed_5078_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 105.382,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 31,
+        "reward": -31.0,
+        "decision_latency_ms": 96.119,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.372,
+        "selected_indices": [
+          3,
+          2
+        ],
+        "selected_exits": [
+          [
+            19,
+            22
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 414.725,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    },
+    {
+      "seed": 5085,
+      "scenario_name": "held_out_seed_5085_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 105.38,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.446,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 8.864,
+        "selected_indices": [
+          3,
+          1
+        ],
+        "selected_exits": [
+          [
+            19,
+            22
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "decision_latency_ms": 154.079,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 1,
+        "valid_configurations": 1
+      }
+    },
+    {
+      "seed": 5090,
+      "scenario_name": "held_out_seed_5090_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 103.256,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "decision_latency_ms": 9.388,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 100.082,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 144.965,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 1,
+        "valid_configurations": 1
+      }
+    },
+    {
+      "seed": 5091,
+      "scenario_name": "held_out_seed_5091_20x30_occ20",
+      "grid_rows": 20,
+      "grid_cols": 30,
+      "occupants_count": 20,
+      "stage_18": {
+        "method": "Stage_18_Original",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 24,
+        "reward": -24.0,
+        "decision_latency_ms": 90.571,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "stage_18b": {
+        "method": "Stage_18B_Extended",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 97.058,
+        "selected_indices": [
+          0,
+          3
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 26,
+        "reward": -26.0,
+        "decision_latency_ms": 94.369,
+        "selected_indices": [
+          2,
+          0
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            0,
+            7
+          ]
+        ],
+        "violations": [],
+        "reason": "episode_complete"
+      },
+      "exhaustive_search": {
+        "method": "Exhaustive_Search_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 24,
+        "reward": -24.0,
+        "decision_latency_ms": 386.637,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "total_configurations": 6,
+        "evaluated_configurations": 4,
+        "valid_configurations": 4
+      }
+    }
+  ]
+}

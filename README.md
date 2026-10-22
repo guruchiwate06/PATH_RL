@@ -60,9 +60,10 @@ The codebase separates static geometry, dynamic routing, regulatory rules, and a
   - CubiCasa5K architectural SVG floor-plan ingestion pipeline.
   - Interactive HTML5 canvas visualizer and command-line experiment runner.
   - **End-to-end synthetic evacuation pipeline** (`run_e2e_experiment.py`): connects layout generator → NBC validator → occupant seeder → BFS simulation → structured results.
-  - **Exhaustive exit-configuration baseline** (`run_baseline_experiment.py`, Stage 17): evaluates all candidate exit combinations against fixed building and occupant scenario, enforcing hard NBC constraints and ranking by evacuation time. 633 tests passing.
+  - **Exhaustive exit-configuration baseline** (`run_baseline_experiment.py`, Stage 17): evaluates all candidate exit combinations against fixed building and occupant scenario, enforcing hard NBC constraints and ranking by evacuation time.
+  - **Masked Actor-Critic RL training & evaluation** (`train_rl.py`, `evaluate_rl.py`, Stage 18): trains neural policy on diverse synthetic layouts with strict action-masking and NBC constraint enforcement; evaluated on unseen held-out buildings against random and exhaustive baselines.
+  - **Stage 18B Extended RL Training, Live Progress & Evaluation** (`train_stage18b.py`, `evaluate_stage18b.py`): 1,000-episode training across 500 unique layout seeds with live `tqdm` monitoring, incremental CSV/JSON logging, diagnostic plotting, and a 30-scenario paired held-out benchmark. 682 tests passing.
 - **In Progress / Planned**:
-  - Policy training baseline using standard RL algorithms (PPO/DQN).
   - Multi-story 3D IFC/BIM extraction pipeline (`scratch/kit_ifc`).
   - Dynamic hazard propagation (smoke and fire spread).
 
@@ -110,25 +111,54 @@ python run_baseline_experiment.py --seeds 42,20,32,43
 ```
 Results are saved as structured JSON benchmarks to `experiment_output/baseline/`.
 
-### 5. Multi-Seed Batch Experiments
+### 5. Reinforcement Learning Training (Stage 18)
+Train the Masked Actor-Critic RL policy on synthetic building layouts:
+```bash
+python train_rl.py --episodes 200 --lr 0.001
+```
+Weights and training logs are saved to `experiment_output/rl/`.
+
+### 6. Reinforcement Learning Evaluation vs Baselines (Stage 18)
+Benchmark the trained RL policy against random and exhaustive search on held-out unseen seeds:
+```bash
+python evaluate_rl.py
+```
+Outputs comparison metrics and optimality gaps to `experiment_output/rl/evaluation_results.json`.
+
+### 7. Extended RL Training & Live Terminal Monitoring (Stage 18B)
+Run the 1,000-episode extended training engine with live `tqdm` progress bar and diagnostics:
+```bash
+python train_stage18b.py --episodes 1000 --lr 0.0007 --batch-size 8
+```
+Outputs model weights (`model_stage18b.pt`), CSV/JSON trajectories, and diagnostic plot (`training_plot_stage18b.png`).
+
+### 8. Robust 30-Scenario Held-Out Benchmark (Stage 18B)
+Run paired comparison across 30 unseen procedural buildings:
+```bash
+python evaluate_stage18b.py
+```
+Outputs full results to `experiment_output/rl/evaluation_results_stage18b.json`.
+
+### 9. Multi-Seed Batch Experiments
 Run parameter sweeps across multiple seeds with aggregate statistics:
 ```bash
 python main.py --experiment --seeds 1,2,3,4,5 --output-dir experiment_output/
 ```
 
-### 6. Exhaustive Search Baseline Demo
+### 10. Exhaustive Search Baseline Demo
 Run the Stage 13 scenario baseline optimizer:
 ```bash
 python stage13_demo.py
 ```
 
-### 7. Reinforcement Learning Environment Demo
+### 11. Reinforcement Learning Environment Demo
 Run the sequential exit-placement MDP demo:
 ```bash
 python stage14_demo.py
 ```
 
-### 7. Run Test Suite
+### 12. Run Test Suite
 ```bash
 python -m pytest tests
 ```
+

@@ -1,0 +1,664 @@
+{
+  "evaluation_type": "rl_vs_baselines_benchmark",
+  "stage": 18,
+  "timestamp": "20261019_231314",
+  "model_path": "F:\\02.Projects\\RL_ENV\\evacuation_simulation\\experiment_output\\rl\\model_stage18.pt",
+  "held_out_summary": {
+    "total_scenarios": 4,
+    "rl_agent": {
+      "feasibility_rate": 0.75,
+      "mean_evacuation_time": 27.0,
+      "mean_latency_ms": 89.67
+    },
+    "random_baseline": {
+      "feasibility_rate": 0.0,
+      "mean_evacuation_time": null
+    },
+    "exhaustive_search": {
+      "feasibility_rate": 1.0,
+      "mean_evacuation_time": 27.25,
+      "mean_latency_ms": 218.53
+    }
+  },
+  "training_seen_summary": {
+    "total_scenarios": 4,
+    "rl_agent": {
+      "feasibility_rate": 0.75,
+      "mean_evacuation_time": 28.67,
+      "mean_latency_ms": 75.49
+    },
+    "random_baseline": {
+      "feasibility_rate": 0.25,
+      "mean_evacuation_time": 23.0
+    },
+    "exhaustive_search": {
+      "feasibility_rate": 1.0,
+      "mean_evacuation_time": 27.75,
+      "mean_latency_ms": 238.08
+    }
+  },
+  "held_out_scenarios": [
+    {
+      "seed": 2,
+      "group": "held_out_unseen",
+      "rl_agent": {
+        "method": "Trained_RL_Agent",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "reward": -27.0,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.12561,
+        "violations": []
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "selected_indices": [
+          0,
+          1
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.0089,
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ]
+      },
+      "exhaustive_baseline": {
+        "method": "Stage17_Exhaustive_Search",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 27,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.16505,
+        "total_evaluated_combinations": 1,
+        "total_combinations": 6
+      },
+      "rl_optimality_gap_percent": 0.0
+    },
+    {
+      "seed": 5,
+      "group": "held_out_unseen",
+      "rl_agent": {
+        "method": "Trained_RL_Agent",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "reward": -25.0,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.09773,
+        "violations": []
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "selected_indices": [
+          2,
+          3
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "decision_time_seconds": 0.00797,
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ]
+      },
+      "exhaustive_baseline": {
+        "method": "Stage17_Exhaustive_Search",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.14331,
+        "total_evaluated_combinations": 1,
+        "total_combinations": 6
+      },
+      "rl_optimality_gap_percent": 0.0
+    },
+    {
+      "seed": 43,
+      "group": "held_out_unseen",
+      "rl_agent": {
+        "method": "Trained_RL_Agent",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.00971,
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ]
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "selected_indices": [
+          0,
+          2
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.00917,
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ]
+      },
+      "exhaustive_baseline": {
+        "method": "Stage17_Exhaustive_Search",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 28,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            19,
+            22
+          ]
+        ],
+        "decision_time_seconds": 0.28447,
+        "total_evaluated_combinations": 2,
+        "total_combinations": 6
+      },
+      "rl_optimality_gap_percent": null
+    },
+    {
+      "seed": 49,
+      "group": "held_out_unseen",
+      "rl_agent": {
+        "method": "Trained_RL_Agent",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 29,
+        "reward": -29.0,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.12564,
+        "violations": []
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "selected_indices": [
+          0,
+          2
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.00849,
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ]
+      },
+      "exhaustive_baseline": {
+        "method": "Stage17_Exhaustive_Search",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 29,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.28129,
+        "total_evaluated_combinations": 2,
+        "total_combinations": 6
+      },
+      "rl_optimality_gap_percent": 0.0
+    }
+  ],
+  "training_scenarios": [
+    {
+      "seed": 42,
+      "group": "training_seen",
+      "rl_agent": {
+        "method": "Trained_RL_Agent",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.01005,
+        "violations": [
+          "R5_TRAVEL_DISTANCE"
+        ]
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "selected_indices": [
+          0,
+          1
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.00928,
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ]
+      },
+      "exhaustive_baseline": {
+        "method": "Stage17_Exhaustive_Search",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 25,
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.25401,
+        "total_evaluated_combinations": 2,
+        "total_combinations": 6
+      },
+      "rl_optimality_gap_percent": null
+    },
+    {
+      "seed": 20,
+      "group": "training_seen",
+      "rl_agent": {
+        "method": "Trained_RL_Agent",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 23,
+        "reward": -23.0,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.08834,
+        "violations": []
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 23,
+        "reward": -23.0,
+        "selected_indices": [
+          1,
+          2
+        ],
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.0888,
+        "violations": []
+      },
+      "exhaustive_baseline": {
+        "method": "Stage17_Exhaustive_Search",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 23,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.20774,
+        "total_evaluated_combinations": 2,
+        "total_combinations": 6
+      },
+      "rl_optimality_gap_percent": 0.0
+    },
+    {
+      "seed": 32,
+      "group": "training_seen",
+      "rl_agent": {
+        "method": "Trained_RL_Agent",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 29,
+        "reward": -29.0,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.1043,
+        "violations": []
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "selected_indices": [
+          0,
+          1
+        ],
+        "selected_exits": [
+          [
+            0,
+            7
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.00916,
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ]
+      },
+      "exhaustive_baseline": {
+        "method": "Stage17_Exhaustive_Search",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 29,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.24906,
+        "total_evaluated_combinations": 2,
+        "total_combinations": 6
+      },
+      "rl_optimality_gap_percent": 0.0
+    },
+    {
+      "seed": 24,
+      "group": "training_seen",
+      "rl_agent": {
+        "method": "Trained_RL_Agent",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 34,
+        "reward": -34.0,
+        "selected_indices": [
+          2,
+          1
+        ],
+        "selected_exits": [
+          [
+            10,
+            29
+          ],
+          [
+            10,
+            0
+          ]
+        ],
+        "decision_time_seconds": 0.09927,
+        "violations": []
+      },
+      "random_baseline": {
+        "method": "Random_Valid_Baseline",
+        "is_feasible": false,
+        "is_compliant": false,
+        "total_evacuation_time": null,
+        "reward": -2000.0,
+        "selected_indices": [
+          3,
+          2
+        ],
+        "selected_exits": [
+          [
+            19,
+            22
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.01001,
+        "violations": [
+          "R3_EXIT_SEPARATION",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE",
+          "R5_TRAVEL_DISTANCE"
+        ]
+      },
+      "exhaustive_baseline": {
+        "method": "Stage17_Exhaustive_Search",
+        "is_feasible": true,
+        "is_compliant": true,
+        "total_evacuation_time": 34,
+        "selected_exits": [
+          [
+            10,
+            0
+          ],
+          [
+            10,
+            29
+          ]
+        ],
+        "decision_time_seconds": 0.2415,
+        "total_evaluated_combinations": 2,
+        "total_combinations": 6
+      },
+      "rl_optimality_gap_percent": 0.0
+    }
+  ]
+}

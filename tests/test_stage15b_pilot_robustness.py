@@ -30,7 +30,8 @@ from evacuation_simulation.simulation.converters import (
 from evacuation_simulation.simulation.environment import Environment
 from evacuation_simulation.simulation.pathfinding import NavigationGraph
 
-DATASET_ARCH = Path(r"F:\Projects\RL_ENV\dataset\cubicasa5k\high_quality_architectural")
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+DATASET_ARCH = _REPO_ROOT / "dataset" / "cubicasa5k" / "high_quality_architectural"
 PILOT_IDS = ["333", "1611", "1654", "7842", "6257", "6244"]
 
 

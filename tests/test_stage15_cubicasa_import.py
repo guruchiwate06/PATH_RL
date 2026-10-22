@@ -46,7 +46,8 @@ from evacuation_simulation.simulation.environment import Environment
 from evacuation_simulation.simulation.generation import generate_candidate_exits
 from evacuation_simulation.simulation.pathfinding import NavigationGraph
 
-SAMPLE_333_PATH = Path(r"F:\Projects\RL_ENV\dataset\cubicasa5k\high_quality_architectural\333\model.svg")
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+SAMPLE_333_PATH = _REPO_ROOT / "dataset" / "cubicasa5k" / "high_quality_architectural" / "333" / "model.svg"
 
 
 # ==============================================================================

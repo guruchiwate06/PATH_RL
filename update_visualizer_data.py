@@ -140,23 +140,24 @@ def record_scenario_simulation(config_path: Path) -> dict:
 
 
 def main() -> None:
+    _HERE = Path(__file__).parent.resolve()
     scenarios = ["bottleneck.json", "basic_building.json"]
     sim_data = {}
 
     for name in scenarios:
-        p = Path("scenarios") / name
+        p = _HERE / "scenarios" / name
         if p.exists():
             key = p.stem
             print(f"Generating simulation trace for {key}...")
             sim_data[key] = record_scenario_simulation(p)
 
-    out_file = Path("simulation_data.json")
+    out_file = _HERE / "simulation_data.json"
     with out_file.open("w", encoding="utf-8") as f:
         json.dump(sim_data, f, indent=2)
     print(f"Saved {out_file} ({out_file.stat().st_size} bytes)")
 
     # Also update embedded SIM_DATA in visualize.html
-    html_path = Path("visualize.html")
+    html_path = _HERE / "visualize.html"
     if html_path.exists():
         content = html_path.read_text(encoding="utf-8")
         marker = "const SIM_DATA = "
@@ -168,6 +169,7 @@ def main() -> None:
                 new_content = content[:idx + len(marker)] + json_str + content[end_idx:]
                 html_path.write_text(new_content, encoding="utf-8")
                 print(f"Updated embedded SIM_DATA in {html_path}")
+
 
 
 if __name__ == "__main__":
